@@ -23,14 +23,7 @@ import { CustomSignOut } from './custom-sign-out';
 import { FirebaseSignOut } from './firebase-sign-out';
 import { SupabaseSignOut } from './supabase-sign-out';
 
-const user = {
-  id: 'USR-000',
-  name: 'Sofia Rivers',
-  avatar: '/assets/avatar.png',
-  email: 'sofia@devias.io',
-};
-
-export function UserPopover({ anchorEl, onClose, open }) {
+export function UserPopover({ anchorEl, onClose, open, user }) {
   return (
     <Popover
       anchorEl={anchorEl}

@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useDialog } from '@/hooks/use-dialog';
 import { usePopover } from '@/hooks/use-popover';
+import { useUser } from '@/hooks/use-user';
 
 import { ContactsPopover } from '../contacts-popover';
 import { languageFlags, LanguagePopover } from '../language-popover';
@@ -26,6 +27,7 @@ import { UserPopover } from '../user-popover/user-popover';
 
 export function MainNav({ items }) {
   const [openNav, setOpenNav] = React.useState(false);
+  const { user, error, isLoading } = useUser();
 
   return (
     <React.Fragment>
@@ -77,7 +79,7 @@ export function MainNav({ items }) {
               sx={{ borderColor: 'var(--MainNav-divider)', display: { xs: 'none', lg: 'block' } }}
             />
             <LanguageSwitch />
-            <UserButton />
+            <UserButton user={user} />
           </Stack>
         </Box>
       </Box>
@@ -167,14 +169,7 @@ function LanguageSwitch() {
   );
 }
 
-const user = {
-  id: 'USR-000',
-  name: 'Sofia Rivers',
-  avatar: '/assets/avatar.png',
-  email: 'sofia@devias.io',
-};
-
-function UserButton() {
+function UserButton({ user }) {
   const popover = usePopover();
 
   return (
@@ -203,7 +198,7 @@ function UserButton() {
           <Avatar src={user.avatar} />
         </Badge>
       </Box>
-      <UserPopover anchorEl={popover.anchorRef.current} onClose={popover.handleClose} open={popover.open} />
+      <UserPopover anchorEl={popover.anchorRef.current} onClose={popover.handleClose} open={popover.open} user={user} />
     </React.Fragment>
   );
 }

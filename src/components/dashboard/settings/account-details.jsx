@@ -22,7 +22,7 @@ import { User as UserIcon } from '@phosphor-icons/react/dist/ssr/User';
 
 import { Option } from '@/components/core/option';
 
-export function AccountDetails() {
+export function AccountDetails({ user }) {
   return (
     <Card>
       <CardHeader
@@ -71,7 +71,7 @@ export function AccountDetails() {
                     </Typography>
                   </Stack>
                 </Box>
-                <Avatar src="/assets/avatar.png" sx={{ '--Avatar-size': '100px' }} />
+                <Avatar src={user.avatar} sx={{ '--Avatar-size': '100px' }} />
               </Box>
             </Box>
             <Button color="secondary" size="small">
@@ -81,11 +81,11 @@ export function AccountDetails() {
           <Stack spacing={2}>
             <FormControl>
               <InputLabel>Full name</InputLabel>
-              <OutlinedInput defaultValue="Sofia Rivers" name="fullName" />
+              <OutlinedInput defaultValue={user.name} name="fullName" />
             </FormControl>
             <FormControl disabled>
               <InputLabel>Email address</InputLabel>
-              <OutlinedInput name="email" type="email" value="sofia@devias.io" />
+              <OutlinedInput name="email" type="email" value={user.email} />
               <FormHelperText>
                 Please <Link variant="inherit">contact us</Link> to change your email
               </FormHelperText>

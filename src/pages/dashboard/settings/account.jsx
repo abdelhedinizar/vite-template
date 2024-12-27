@@ -4,6 +4,7 @@ import Typography from '@mui/material/Typography';
 import { Helmet } from 'react-helmet-async';
 
 import { config } from '@/config';
+import { useUser } from '@/hooks/use-user';
 import { AccountDetails } from '@/components/dashboard/settings/account-details';
 import { DeleteAccount } from '@/components/dashboard/settings/delete-account';
 import { Privacy } from '@/components/dashboard/settings/privacy';
@@ -12,6 +13,7 @@ import { ThemeSwitch } from '@/components/dashboard/settings/theme-switch';
 const metadata = { title: `Account | Settings | Dashboard | ${config.site.name}` };
 
 export function Page() {
+  const { user } = useUser();
   return (
     <React.Fragment>
       <Helmet>
@@ -22,7 +24,7 @@ export function Page() {
           <Typography variant="h4">Account</Typography>
         </div>
         <Stack spacing={4}>
-          <AccountDetails />
+          <AccountDetails user={user} />
           <ThemeSwitch />
           <Privacy />
           <DeleteAccount />
