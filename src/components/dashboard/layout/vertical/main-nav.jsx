@@ -27,7 +27,7 @@ import { UserPopover } from '../user-popover/user-popover';
 
 export function MainNav({ items }) {
   const [openNav, setOpenNav] = React.useState(false);
-  const { user, error, isLoading } = useUser();
+  const { user } = useUser();
 
   return (
     <React.Fragment>

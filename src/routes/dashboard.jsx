@@ -24,6 +24,13 @@ export const route = {
       },
     },
     {
+      path: 'home',
+      lazy: async () => {
+        const { Page } = await import('@/pages/dashboard/home');
+        return { Component: Page };
+      },
+    },
+    {
       path: 'academy',
       children: [
         {
