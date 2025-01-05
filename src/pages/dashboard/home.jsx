@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { fetchDishes } from '@/stores/slices/DishSlice';
 import { Card, CardMedia, Divider, IconButton, Select, Tooltip } from '@mui/material';
 import Box from '@mui/material/Box';
@@ -22,10 +22,24 @@ const metadata = { title: `home | Dashboard | ${config.site.name}` };
 export function Page() {
   const dispatch = useDispatch();
   const { categories, status } = useSelector((state) => state.categories);
+  const [selectedCategries, setSelectedCategries] = useState(categories);
+  const [selectedCategrie, setSelectedCategrie] = useState('All');
 
+  const handleCategoriesChange = (event) => {
+    const { value } = event.target;
+    setSelectedCategrie(value);
+    if (value === 'All') {
+      setSelectedCategries(categories);
+    } else {
+      setSelectedCategries(categories.filter((category) => category.name === value));
+    }
+  };
   useEffect(() => {
     dispatch(fetchDishes());
-  }, [dispatch]);
+    if (selectedCategrie === 'All') {
+        setSelectedCategries(categories);
+    }
+  }, [categories, dispatch]);
 
   return (
     <React.Fragment>
@@ -47,8 +61,16 @@ export function Page() {
             </Box>
           </Stack>
           <Stack direction="row" spacing={2} sx={{ alignItems: 'center', flexWrap: 'wrap', px: 3, py: 2 }}>
-            <Select name="sort" sx={{ maxWidth: '100%', width: '120px' }} value="All" label="Category">
-              <Option value="All">All</Option>
+            <Select
+              name="sort"
+              sx={{ maxWidth: '100%', width: '120px' }}
+              value={selectedCategrie}
+              label="Category"
+              onChange={handleCategoriesChange}
+            >
+              <Option key="All" value="All">
+                All
+              </Option>
               {categories.map((category) => (
                 <Option key={category.id} value={category.name}>
                   {category.name}
@@ -56,7 +78,7 @@ export function Page() {
               ))}
             </Select>
           </Stack>
-          {categories.map((category) => (
+          {selectedCategries.map((category) => (
             <Previewer key={category.id} title={category.name}>
               <Box sx={{ bgcolor: 'var(--mui-palette-background-level1)', p: 3 }}>
                 <Grid container spacing={3}>
