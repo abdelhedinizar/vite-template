@@ -12,6 +12,7 @@ import { Heart as HeartIcon } from '@phosphor-icons/react/dist/ssr/Heart';
 import { Timer as TimerIcon } from '@phosphor-icons/react/dist/ssr/Timer';
 import { Helmet } from 'react-helmet-async';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 import { config } from '@/config';
 import { Option } from '@/components/core/option';
@@ -21,6 +22,7 @@ const metadata = { title: `home | Dashboard | ${config.site.name}` };
 
 export function Page() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { categories, status } = useSelector((state) => state.categories);
   const [selectedCategries, setSelectedCategries] = useState(categories);
   const [selectedCategrie, setSelectedCategrie] = useState('All');
@@ -34,10 +36,14 @@ export function Page() {
       setSelectedCategries(categories.filter((category) => category.name === value));
     }
   };
+
+  const handleOpenCreateBasket = (dish) => {
+    navigate('/dashboard/basket', { state: { selectedDish: dish } });
+  };
   useEffect(() => {
     dispatch(fetchDishes());
     if (selectedCategrie === 'All') {
-        setSelectedCategries(categories);
+      setSelectedCategries(categories);
     }
   }, [categories, dispatch]);
 
@@ -156,7 +162,11 @@ export function Page() {
                               </Typography>
                             </Stack>
                           </Stack>
-                          <Button startIcon={<Basket weight="fill" />} variant="contained">
+                          <Button
+                            startIcon={<Basket weight="fill" />}
+                            variant="contained"
+                            onClick={() => handleOpenCreateBasket(dish)}
+                          >
                             Order now !
                           </Button>
                         </Stack>

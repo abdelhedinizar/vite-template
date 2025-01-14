@@ -31,6 +31,13 @@ export const route = {
       },
     },
     {
+      path: 'basket',
+      lazy: async () => {
+        const { Page } = await import('@/pages/dashboard/basket/create');
+        return { Component: Page };
+      },
+    },
+    {
       path: 'academy',
       children: [
         {
