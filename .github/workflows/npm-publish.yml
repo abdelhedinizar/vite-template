@@ -55,5 +55,5 @@ jobs:
             npm run build  # Build the project explicitly in production mode
             pm2 stop Vite || true  # Stop the old process if it exists
             pm2 delete Vite || true  # Remove it from the PM2 process list if it exists           
-            pm2 start --name Vite
+            pm2 start
             pm2 save
