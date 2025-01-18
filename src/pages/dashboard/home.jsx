@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { fetchDishes } from '@/stores/slices/DishSlice';
-import { Card, CardMedia, Divider, IconButton, Select, Tooltip } from '@mui/material';
+import { Card, CardMedia, Divider, IconButton, Select, Tooltip, useMediaQuery, useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid2';
@@ -27,6 +27,9 @@ export function Page() {
   const [selectedCategries, setSelectedCategries] = useState(categories);
   const [selectedCategrie, setSelectedCategrie] = useState('All');
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // Detect if the screen is mobile
+
   const handleCategoriesChange = (event) => {
     const { value } = event.target;
     setSelectedCategrie(value);
@@ -40,6 +43,7 @@ export function Page() {
   const handleOpenCreateBasket = (dish) => {
     navigate('/dashboard/basket', { state: { selectedDish: dish } });
   };
+
   useEffect(() => {
     dispatch(fetchDishes());
     if (selectedCategrie === 'All') {
@@ -86,15 +90,22 @@ export function Page() {
           </Stack>
           {selectedCategries.map((category) => (
             <Previewer key={category.id} title={category.name}>
-              <Box sx={{ bgcolor: 'var(--mui-palette-background-level1)', p: 3 }}>
-                <Grid container spacing={3}>
+              {isMobile ? (
+                // Mobile layout: Horizontal scrolling
+                <Box
+                  sx={{
+                    display: 'flex',
+                    overflowX: 'auto',
+                    gap: 2,
+                    p: 2,
+                  }}
+                >
                   {category?.dishes?.map((dish) => (
-                    <Grid
+                    <Box
                       key={dish.id}
-                      size={{
-                        md: 4,
-                        sm: 6,
-                        xs: 12,
+                      sx={{
+                        flex: '0 0 auto',
+                        width: 280, // Fixed width for horizontal scroll
                       }}
                     >
                       <Card sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -167,14 +178,105 @@ export function Page() {
                             variant="contained"
                             onClick={() => handleOpenCreateBasket(dish)}
                           >
-                            Order now !
+                            Order now!
                           </Button>
                         </Stack>
                       </Card>
-                    </Grid>
+                    </Box>
                   ))}
-                </Grid>
-              </Box>
+                </Box>
+              ) : (
+                // Desktop layout: Grid
+                <Box sx={{ bgcolor: 'var(--mui-palette-background-level1)', p: 3 }}>
+                  <Grid container spacing={3}>
+                    {category?.dishes?.map((dish) => (
+                      <Grid
+                        key={dish.id}
+                        size={{
+                          md: 4,
+                          sm: 6,
+                          xs: 12,
+                        }}
+                      >
+                        <Card sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                          <CardMedia
+                            image={dish.image}
+                            sx={{ bgcolor: 'var(--mui-palette-background-level2)', height: '220px' }}
+                          />
+                          <Stack spacing={2} sx={{ flex: '1 1 auto', p: 2 }}>
+                            <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+                              <div>
+                                <Link color="text.primary" variant="h5">
+                                  {dish.name}
+                                </Link>
+                              </div>
+                            </Stack>
+                            <Typography color="text.secondary" variant="body2">
+                              {dish.ingredients}
+                            </Typography>
+                            <Stack
+                              direction="row"
+                              spacing={3}
+                              sx={{ alignItems: 'center', justifyContent: 'space-between' }}
+                            >
+                              <div>
+                                <Typography variant="subtitle2">
+                                  {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(
+                                    dish.price
+                                  )}
+                                </Typography>
+                                <Typography color="text.secondary" variant="body2">
+                                  Price
+                                </Typography>
+                              </div>
+                              <div>
+                                <Typography variant="subtitle2">
+                                  {dish.PreparationTime} <TimerIcon size={16} />
+                                </Typography>
+                                <Typography color="text.secondary" variant="body2">
+                                  Preparation Time
+                                </Typography>
+                              </div>
+                              <div>
+                                <Typography variant="subtitle2">
+                                  <Pepper weight="fill" fill="var(--mui-palette-error-main)" size={22} />
+                                  <Pepper weight="fill" fill="var(--mui-palette-error-main)" size={22} />
+                                  <Pepper weight="fill" fill="var(--mui-palette-error-main)" size={22} />
+                                </Typography>
+                                <Typography color="text.secondary" variant="body2">
+                                  Spice Level
+                                </Typography>
+                              </div>
+                            </Stack>
+                          </Stack>
+                          <Divider />
+                          <Stack direction="row" spacing={2} sx={{ alignItems: 'center', p: 2 }}>
+                            <Stack direction="row" spacing={2} sx={{ flex: '1 1 auto' }}>
+                              <Stack direction="row" sx={{ alignItems: 'center' }}>
+                                <Tooltip title="Unlike">
+                                  <IconButton>
+                                    <HeartIcon fill="var(--mui-palette-error-main)" weight="fill" />
+                                  </IconButton>
+                                </Tooltip>
+                                <Typography color="text.secondary" variant="subtitle2">
+                                  18
+                                </Typography>
+                              </Stack>
+                            </Stack>
+                            <Button
+                              startIcon={<Basket weight="fill" />}
+                              variant="contained"
+                              onClick={() => handleOpenCreateBasket(dish)}
+                            >
+                              Order now !
+                            </Button>
+                          </Stack>
+                        </Card>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Box>
+              )}
             </Previewer>
           ))}
         </Stack>
