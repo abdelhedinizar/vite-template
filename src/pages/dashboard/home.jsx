@@ -111,12 +111,12 @@ export function Page() {
                       <Card sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                         <CardMedia
                           image={dish.image}
-                          sx={{ bgcolor: 'var(--mui-palette-background-level2)', height: '220px' }}
+                          sx={{ bgcolor: 'var(--mui-palette-background-level2)', height: '160px' }}
                         />
-                        <Stack spacing={2} sx={{ flex: '1 1 auto', p: 2 }}>
+                        <Stack spacing={1} sx={{ flex: '1 1 auto', p: 2 }}>
                           <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
                             <div>
-                              <Link color="text.primary" variant="h5">
+                              <Link color="text.primary" variant="h6">
                                 {dish.name}
                               </Link>
                             </div>
@@ -126,35 +126,26 @@ export function Page() {
                           </Typography>
                           <Stack
                             direction="row"
-                            spacing={3}
+                            spacing={1}
                             sx={{ alignItems: 'center', justifyContent: 'space-between' }}
                           >
                             <div>
-                              <Typography variant="subtitle2">
+                              <Typography variant="subtitle1">
                                 {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(
                                   dish.price
                                 )}
-                              </Typography>
-                              <Typography color="text.secondary" variant="body2">
-                                Price
                               </Typography>
                             </div>
                             <div>
                               <Typography variant="subtitle2">
                                 {dish.PreparationTime} <TimerIcon size={16} />
                               </Typography>
-                              <Typography color="text.secondary" variant="body2">
-                                Preparation Time
-                              </Typography>
                             </div>
                             <div>
                               <Typography variant="subtitle2">
                                 <Pepper weight="fill" fill="var(--mui-palette-error-main)" size={22} />
                                 <Pepper weight="fill" fill="var(--mui-palette-error-main)" size={22} />
                                 <Pepper weight="fill" fill="var(--mui-palette-error-main)" size={22} />
-                              </Typography>
-                              <Typography color="text.secondary" variant="body2">
-                                Spice Level
                               </Typography>
                             </div>
                           </Stack>
