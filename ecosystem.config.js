@@ -3,7 +3,7 @@ module.exports = {
     {
       name: "Vite",
       script: "npx",
-      args: "serve -s build -l 5000",
+      args: "vite preview --port 5000",
       env: {
         NODE_ENV: "production",
       },
