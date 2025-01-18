@@ -105,10 +105,10 @@ export function Page() {
                       key={dish.id}
                       sx={{
                         flex: '0 0 auto',
-                        width: 280, // Fixed width for horizontal scroll
+                        width: 240,
                       }}
                     >
-                      <Card sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                      <Card sx={{ display: 'flex', flexDirection: 'column' }}>
                         <CardMedia
                           image={dish.image}
                           sx={{ bgcolor: 'var(--mui-palette-background-level2)', height: '160px' }}
