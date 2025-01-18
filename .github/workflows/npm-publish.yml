@@ -1,4 +1,4 @@
-name: React CI
+name: Vite CI
 
 on:
   push:
@@ -19,7 +19,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "18.x"
+          node-version: '18.x'
 
       - name: Install dependencies
         run: npm install --legacy-peer-deps
@@ -51,3 +51,9 @@ jobs:
             cd /home/nizar/Projects/vite-template/  # Path to your application on the server
             git fetch
             git reset --hard origin/Restaurant  # Forcefully pull the latest changes
+            npm install --legacy-peer-deps # Install dependencies if necessary
+            npm run build  # Build the project explicitly in production mode
+            pm2 stop Vite || true  # Stop the old process if it exists
+            pm2 delete Vite || true  # Remove it from the PM2 process list if it exists           
+            pm2 start --name Vite
+            pm2 save
