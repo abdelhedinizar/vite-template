@@ -56,17 +56,17 @@ export function Page() {
         sx={{
           maxWidth: 'var(--Content-maxWidth)',
           m: 'var(--Content-margin)',
-          p: 'var(--Content-padding)',
+
           width: 'var(--Content-width)',
         }}
       >
         <Stack spacing={isMobile ? 2 : 4}>
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} sx={{ alignItems: 'flex-start' }}>
+          <Stack direction={{ xs: 'column', sm: 'row' }} sx={{ p: 2, alignItems: 'flex-start' }}>
             <Box sx={{ flex: '1 1 auto' }}>
               <Typography variant="h4">Menu</Typography>
             </Box>
           </Stack>
-          <Stack direction="row" spacing={2} sx={{ alignItems: 'center', flexWrap: 'wrap', px: 3, py: 2 }}>
+          <Stack direction="row" spacing={2} sx={{ alignItems: 'center', flexWrap: 'wrap', px: 4 }}>
             <Select
               name="sort"
               sx={{ maxWidth: '100%', width: '120px' }}
@@ -88,10 +88,16 @@ export function Page() {
             isMobile ? (
               // Mobile layout: Horizontal scrolling
               <>
-                <Box sx={{ flex: '1 1 auto' }}>
+                <Box sx={{ flex: '1 1 auto', px: 3 }}>
                   <Typography variant="h5">{category.name}</Typography>
                 </Box>
-                <CategoryLayout key={category.id} category={category} handleOpenCreateBasket={handleOpenCreateBasket} />
+                <Box sx={{ flex: '1 1 auto' }}>
+                  <CategoryLayout
+                    key={category.id}
+                    category={category}
+                    handleOpenCreateBasket={handleOpenCreateBasket}
+                  />
+                </Box>
               </>
             ) : (
               <Previewer key={category.id} title={category.name}>
