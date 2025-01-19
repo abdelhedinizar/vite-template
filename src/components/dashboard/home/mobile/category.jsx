@@ -85,7 +85,7 @@ export default function CategoryLayout({ category, handleOpenCreateBasket }) {
               Order now!
             </Button>
           </Stack>
-        </Card>
+        </Card> 
       ))}
     </Box>
   );
