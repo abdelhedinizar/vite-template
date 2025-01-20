@@ -27,7 +27,7 @@ export function Page() {
           overflow: 'hidden',
         }}
       >
-        <CardMedia component="img" height="400" image={selectedDish.image} alt={selectedDish.name} />
+        <CardMedia component="img" height="300" image={selectedDish.image} alt={selectedDish.name} />
         <CardContent>
           <Stack spacing={1} sx={{ flex: '1 1 auto', p: 1 }}>
             <Stack
