@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import { Box, Button, Card, CardContent, CardMedia, IconButton, Link, Stack, Typography } from '@mui/material';
 import { ArrowLeft as ArrowLeftIcon } from '@phosphor-icons/react/dist/ssr/ArrowLeft';
 import { Heart as HeartIcon } from '@phosphor-icons/react/dist/ssr/Heart';
@@ -14,7 +15,15 @@ const metadata = { title: `Create | Customers | Dashboard | ${config.site.name}`
 export function Page() {
   const location = useLocation();
   const selectedDish = location.state?.selectedDish;
-
+  const [selectedSize, setSelectedSize] = useState(null);
+  const handleSizeChange = (size) => {
+    setSelectedSize(size);
+  };
+  const sizeMap = {
+  Small: 'S',
+  Meduim: 'M',
+  Large: 'L'
+};
   return (
     <React.Fragment>
       <Helmet>
@@ -44,56 +53,39 @@ export function Page() {
             <Typography color="text.secondary" variant="body2">
               {selectedDish.ingredients}
             </Typography>
-            <Stack direction="row" spacing={1} sx={{ alignItems: 'center', justifyContent: 'center' }}>
-              <Button
-                sx={{
-                  backgroundColor: 'var(--mui-palette-grey-400)',
-                  color: 'white',
-                  height: '40px',
-                  width: '40px',
-                  borderRadius: '25%',
-                  fontWeight: 'bold',
-                  boxShadow: '0px 4px 6px var(--mui-palette-grey-200)',
-                  '&:hover': {
-                    backgroundColor: 'var(--mui-palette-primary-800)',
-                  },
-                }}
-              >
-                S
-              </Button>
-              <Button
-                sx={{
-                  backgroundColor: 'var(--mui-palette-primary-700)',
-                  color: 'white',
-                  height: '40px',
-                  width: '40px',
-                  borderRadius: '25%',
-                  fontWeight: 'bold',
-                  boxShadow: '0px 4px 6px var(--mui-palette-primary-300)',
-                  '&:hover': {
-                    backgroundColor: 'var(--mui-palette-primary-800)',
-                  },
-                }}
-              >
-                M
-              </Button>
-              <Button
-                sx={{
-                  backgroundColor: 'var(--mui-palette-grey-400)',
-                  color: 'white',
-                  height: '40px',
-                  width: '40px',
-                  borderRadius: '25%',
-                  fontWeight: 'bold',
-                  boxShadow: '0px 4px 6px var(--mui-palette-grey-200)',
-                  '&:hover': {
-                    backgroundColor: 'var(--mui-palette-primary-800)',
-                  },
-                }}
-              >
-                L
-              </Button>
-            </Stack>
+            {selectedDish?.Size && selectedDish?.Size.length > 0 ? (
+              <Stack direction="row" spacing={1} sx={{ alignItems: 'center', justifyContent: 'center' }}>
+                {selectedDish.Size.map((size) => (
+                  <Button
+                    key={size.name}
+                    onClick={() => handleSizeChange(size)}
+                    sx={{
+                      backgroundColor:
+                        selectedSize?.name === size.name || (selectedSize === null && size.price === 0)
+                          ? 'var(--mui-palette-primary-700)'
+                          : 'var(--mui-palette-grey-400)',
+                      color: 'white',
+                      height: '40px',
+                      width: '40px',
+                      borderRadius: '25%',
+                      fontWeight: 'bold',
+                      boxShadow:
+                        selectedSize?.name === size.name || (selectedSize === null && size.price === 0)
+                          ? '0px 4px 6px var(--mui-palette-primary-300)'
+                          : '0px 4px 6px var(--mui-palette-grey-200)',
+                      '&:hover': {
+                        backgroundColor: 'var(--mui-palette-primary-800)',
+                      },
+                    }}
+                  >
+                    {' '}
+                    {sizeMap[size.name]}
+                  </Button>
+                ))}
+              </Stack>
+            ) : (
+              <></>
+            )}
           </Stack>
         </CardContent>
       </Card>
@@ -214,7 +206,7 @@ export function Page() {
                   },
                 }}
               >
-                Order for €{selectedDish.price}
+                Order for €{selectedDish.price + selectedSize?.price}
               </Button>
             </Stack>
           </CardContent>
