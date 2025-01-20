@@ -25,11 +25,12 @@ export function Page() {
           borderRadius: 0,
           boxShadow: 2,
           overflow: 'hidden',
+          height: '100%',
         }}
       >
         <CardMedia component="img" height="300" image={selectedDish.image} alt={selectedDish.name} />
-        <CardContent>
-          <Stack spacing={1} sx={{ flex: '1 1 auto', p: 1 }}>
+        <CardContent sx={{ height: '100%' }}>
+          <Stack spacing={2} sx={{ flex: '1 1 auto', p: 1 }}>
             <Stack
               direction="row"
               spacing={2}
@@ -43,6 +44,56 @@ export function Page() {
             <Typography color="text.secondary" variant="body2">
               {selectedDish.ingredients}
             </Typography>
+            <Stack direction="row" spacing={1} sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
+              <Button
+                sx={{
+                  backgroundColor: 'var(--mui-palette-grey-400)',
+                  color: 'white',
+                  height: '40px',
+                  width: '40px',
+                  borderRadius: '25%',
+                  fontWeight: 'bold',
+                  boxShadow: '0px 4px 6px var(--mui-palette-grey-200)',
+                  '&:hover': {
+                    backgroundColor: 'var(--mui-palette-primary-800)',
+                  },
+                }}
+              >
+                S
+              </Button>
+              <Button
+                sx={{
+                  backgroundColor: 'var(--mui-palette-primary-700)',
+                  color: 'white',
+                  height: '40px',
+                  width: '40px',
+                  borderRadius: '25%',
+                  fontWeight: 'bold',
+                  boxShadow: '0px 4px 6px var(--mui-palette-primary-300)',
+                  '&:hover': {
+                    backgroundColor: 'var(--mui-palette-primary-800)',
+                  },
+                }}
+              >
+                M
+              </Button>
+              <Button
+                sx={{
+                  backgroundColor: 'var(--mui-palette-grey-400)',
+                  color: 'white',
+                  height: '40px',
+                  width: '40px',
+                  borderRadius: '25%',
+                  fontWeight: 'bold',
+                  boxShadow: '0px 4px 6px var(--mui-palette-grey-200)',
+                  '&:hover': {
+                    backgroundColor: 'var(--mui-palette-primary-800)',
+                  },
+                }}
+              >
+                L
+              </Button>
+            </Stack>
           </Stack>
         </CardContent>
       </Card>
@@ -112,9 +163,9 @@ export function Page() {
                     width: '40px',
                     borderRadius: '25%',
                     fontWeight: 'bold',
-                    boxShadow: '0px 4px 6px var(--mui-palette-primary-300)', // Subtle shadow
+                    boxShadow: '0px 4px 6px var(--mui-palette-primary-300)',
                     '&:hover': {
-                      backgroundColor: 'var(--mui-palette-primary-800)', // Slightly darker shade on hover
+                      backgroundColor: 'var(--mui-palette-primary-800)',
                     },
                   }}
                 >
