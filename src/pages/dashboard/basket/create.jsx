@@ -87,11 +87,21 @@ export function Page() {
             overflow: 'hidden',
           }}
         >
-          <CardContent>
+          <CardContent
+            sx={{
+              px: '20px !important',
+              pt: '20px !important',
+              pb: '20px !important',
+            }}
+          >
             <Stack
               direction="row"
-              spacing={2}
-              sx={{ alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}
+              spacing={1}
+              sx={{
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                justifyContent: 'space-between',
+              }}
             >
               <Stack direction="row">
                 <Button
