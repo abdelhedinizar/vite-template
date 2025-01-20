@@ -20,10 +20,10 @@ export function Page() {
     setSelectedSize(size);
   };
   const sizeMap = {
-  Small: 'S',
-  Meduim: 'M',
-  Large: 'L'
-};
+    Small: 'S',
+    Meduim: 'M',
+    Large: 'L',
+  };
   return (
     <React.Fragment>
       <Helmet>
@@ -206,7 +206,7 @@ export function Page() {
                   },
                 }}
               >
-                Order for €{selectedDish.price + selectedSize?.price}
+                Order for €{selectedSize ? selectedDish.price + selectedSize?.price : selectedDish.price}
               </Button>
             </Stack>
           </CardContent>
