@@ -44,7 +44,7 @@ export function Page() {
             <Typography color="text.secondary" variant="body2">
               {selectedDish.ingredients}
             </Typography>
-            <Stack direction="row" spacing={1} sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
+            <Stack direction="row" spacing={1} sx={{ alignItems: 'center', justifyContent: 'center' }}>
               <Button
                 sx={{
                   backgroundColor: 'var(--mui-palette-grey-400)',
