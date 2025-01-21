@@ -1,6 +1,19 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { Box, Button, Card, CardContent, CardMedia, IconButton, Link, Stack, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardMedia,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  IconButton,
+  Link,
+  Stack,
+  Typography,
+} from '@mui/material';
 import { ArrowLeft as ArrowLeftIcon } from '@phosphor-icons/react/dist/ssr/ArrowLeft';
 import { Heart as HeartIcon } from '@phosphor-icons/react/dist/ssr/Heart';
 import { Helmet } from 'react-helmet-async';
@@ -16,6 +29,13 @@ export function Page() {
   const location = useLocation();
   const selectedDish = location.state?.selectedDish;
   const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
+  const handleQuantityChange = (add) => {
+    const newQuantity = add ? selectedQuantity + 1 : selectedQuantity - 1;
+    if (newQuantity > 0) {
+      setSelectedQuantity(newQuantity);
+    }
+  };
   const handleSizeChange = (size) => {
     setSelectedSize(size);
   };
@@ -83,9 +103,22 @@ export function Page() {
                   </Button>
                 ))}
               </Stack>
-            ) : (
-              <></>
-            )}
+            ) : null}
+
+            {selectedDish?.Accompaniments && selectedDish?.Accompaniments.length > 0 ? (
+              <>
+                <Typography color="text.secondary" variant="h6">
+                  Accompaniment of your choice ?
+                </Typography>
+                <Stack direction="row" spacing={1} sx={{ alignItems: 'center', justifyContent: 'start' }}>
+                  <FormGroup>
+                    {selectedDish.Accompaniments.map((accompaniment) => (
+                      <FormControlLabel key={accompaniment.name} control={<Checkbox />} label={accompaniment.name} />
+                    ))}
+                  </FormGroup>
+                </Stack>
+              </>
+            ) : null}
           </Stack>
         </CardContent>
       </Card>
@@ -148,6 +181,7 @@ export function Page() {
             >
               <Stack direction="row">
                 <Button
+                  onClick={() => handleQuantityChange(false)}
                   sx={{
                     backgroundColor: 'var(--mui-palette-primary-700)',
                     color: 'white',
@@ -174,10 +208,11 @@ export function Page() {
                   }}
                   variant="h6"
                 >
-                  1x
+                  {selectedQuantity}x
                 </Typography>
 
                 <Button
+                  onClick={() => handleQuantityChange(true)}
                   sx={{
                     backgroundColor: 'var(--mui-palette-primary-700)',
                     color: 'white',
@@ -206,7 +241,8 @@ export function Page() {
                   },
                 }}
               >
-                Order for €{selectedSize ? selectedDish.price + selectedSize?.price : selectedDish.price}
+                Order for €
+                {(selectedSize ? selectedDish.price + selectedSize?.price : selectedDish.price) * selectedQuantity}
               </Button>
             </Stack>
           </CardContent>
