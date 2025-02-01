@@ -19,7 +19,7 @@ import { ArrowLeft as ArrowLeftIcon } from '@phosphor-icons/react/dist/ssr/Arrow
 import { Heart as HeartIcon } from '@phosphor-icons/react/dist/ssr/Heart';
 import { Helmet } from 'react-helmet-async';
 import { useDispatch } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { config } from '@/config';
 import { paths } from '@/paths';
@@ -28,6 +28,7 @@ import { RouterLink } from '@/components/core/link';
 const metadata = { title: `Create | Customers | Dashboard | ${config.site.name}` };
 export function Page() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const location = useLocation();
   const selectedDish = location.state?.selectedDish;
   const [selectedSize, setSelectedSize] = useState(null);
@@ -289,6 +290,7 @@ export function Page() {
 
   function handleBasket() {
     dispatch(addToBasket(basketElement));
+    navigate('/dashboard/home');
   }
 
   function updateBasketAndCalculateThePrice(newQuantity, newSize, newAccompaniments) {
