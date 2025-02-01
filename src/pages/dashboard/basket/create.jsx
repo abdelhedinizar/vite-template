@@ -110,7 +110,7 @@ export function Page() {
                 <Typography color="text.secondary" variant="h6">
                   Accompaniment of your choice ?
                 </Typography>
-                <Stack direction="row" spacing={1} sx={{ alignItems: 'center', justifyContent: 'start' }}>
+                <Stack direction="row" spacing={1} sx={{ alignItems: 'center', justifyContent: 'start', pb: 8 }}>
                   <FormGroup>
                     {selectedDish.Accompaniments.map((accompaniment) => (
                       <FormControlLabel key={accompaniment.name} control={<Checkbox />} label={accompaniment.name} />
