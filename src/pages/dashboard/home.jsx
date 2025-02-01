@@ -41,11 +41,13 @@ export function Page() {
   };
 
   useEffect(() => {
-    dispatch(fetchDishes());
+    if (status === 'idle') {
+      dispatch(fetchDishes());
+    }
     if (selectedCategrie === 'All') {
       setSelectedCategries(categories);
     }
-  }, [categories, dispatch]);
+  }, [status, dispatch]);
 
   return (
     <React.Fragment>

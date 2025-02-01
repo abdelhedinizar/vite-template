@@ -8,7 +8,7 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
-import { Bell as BellIcon } from '@phosphor-icons/react/dist/ssr/Bell';
+import { ShoppingCart as BasketIcon } from '@phosphor-icons/react/dist/ssr';
 import { List as ListIcon } from '@phosphor-icons/react/dist/ssr/List';
 import { MagnifyingGlass as MagnifyingGlassIcon } from '@phosphor-icons/react/dist/ssr/MagnifyingGlass';
 import { Users as UsersIcon } from '@phosphor-icons/react/dist/ssr/Users';
@@ -24,6 +24,8 @@ import { MobileNav } from '../mobile-nav';
 import { NotificationsPopover } from '../notifications-popover';
 import { SearchDialog } from '../search-dialog';
 import { UserPopover } from '../user-popover/user-popover';
+
+import { useSelector } from 'react-redux';
 
 export function MainNav({ items }) {
   const [openNav, setOpenNav] = React.useState(false);
@@ -71,7 +73,7 @@ export function MainNav({ items }) {
             spacing={2}
             sx={{ alignItems: 'center', flex: '1 1 auto', justifyContent: 'flex-end' }}
           >
-            <NotificationsButton />
+            <BasketButton />
             <ContactsButton />
             <Divider
               flexItem
@@ -124,19 +126,21 @@ function ContactsButton() {
   );
 }
 
-function NotificationsButton() {
+function BasketButton() {
   const popover = usePopover();
+  const { items } = useSelector((state) => state.basket);
 
   return (
     <React.Fragment>
       <Tooltip title="Notifications">
         <Badge
           color="error"
-          sx={{ '& .MuiBadge-dot': { borderRadius: '50%', height: '10px', right: '6px', top: '6px', width: '10px' } }}
-          variant="dot"
+          badgeContent={items.length}
+             sx={{ top: '3px' }}
+          max={9}
         >
           <IconButton onClick={popover.handleOpen} ref={popover.anchorRef}>
-            <BellIcon />
+            <BasketIcon />
           </IconButton>
         </Badge>
       </Tooltip>

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
+import { addToBasket } from '@/stores/slices/BasketSlice';
 import {
   Box,
   Button,
@@ -17,6 +18,7 @@ import {
 import { ArrowLeft as ArrowLeftIcon } from '@phosphor-icons/react/dist/ssr/ArrowLeft';
 import { Heart as HeartIcon } from '@phosphor-icons/react/dist/ssr/Heart';
 import { Helmet } from 'react-helmet-async';
+import { useDispatch } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 
 import { config } from '@/config';
@@ -24,20 +26,29 @@ import { paths } from '@/paths';
 import { RouterLink } from '@/components/core/link';
 
 const metadata = { title: `Create | Customers | Dashboard | ${config.site.name}` };
-
 export function Page() {
+  const dispatch = useDispatch();
   const location = useLocation();
   const selectedDish = location.state?.selectedDish;
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedQuantity, setSelectedQuantity] = useState(1);
+  const [selectedAccompaniments, setSelectedAccompaniments] = useState([]);
+  const [basketElement, setBasketElement] = useState({
+    dish: selectedDish,
+    price: selectedDish.price,
+    size: selectedSize,
+    quantity: selectedQuantity,
+  });
   const handleQuantityChange = (add) => {
     const newQuantity = add ? selectedQuantity + 1 : selectedQuantity - 1;
     if (newQuantity > 0) {
       setSelectedQuantity(newQuantity);
+      updateBasketAndCalculateThePrice(newQuantity, selectedSize, selectedAccompaniments);
     }
   };
   const handleSizeChange = (size) => {
     setSelectedSize(size);
+    updateBasketAndCalculateThePrice(selectedQuantity, size, selectedAccompaniments);
   };
   const sizeMap = {
     Small: 'S',
@@ -113,7 +124,32 @@ export function Page() {
                 <Stack direction="row" spacing={1} sx={{ alignItems: 'center', justifyContent: 'start', pb: 8 }}>
                   <FormGroup>
                     {selectedDish.Accompaniments.map((accompaniment) => (
-                      <FormControlLabel key={accompaniment.name} control={<Checkbox />} label={accompaniment.name} />
+                      <FormControlLabel
+                        key={accompaniment.name}
+                        control={
+                          <Checkbox
+                            onChange={(e) => {
+                              let accompaniments;
+                              if (e.target.checked) {
+                                accompaniments = [
+                                  ...selectedAccompaniments,
+                                  {
+                                    name: accompaniment.name,
+                                    price: accompaniment.price,
+                                    _id: accompaniment._id,
+                                    quantity: 1,
+                                  },
+                                ];
+                              } else {
+                                accompaniments = selectedAccompaniments.filter((acc) => acc._id !== accompaniment._id);
+                              }
+                              setSelectedAccompaniments(accompaniments);
+                              updateBasketAndCalculateThePrice(selectedQuantity, selectedSize, accompaniments);
+                            }}
+                          />
+                        }
+                        label={accompaniment.name}
+                      />
                     ))}
                   </FormGroup>
                 </Stack>
@@ -240,9 +276,9 @@ export function Page() {
                     backgroundColor: 'var(--mui-palette-primary-800)', // Slightly darker shade on hover
                   },
                 }}
+                onClick={handleBasket}
               >
-                Order for €
-                {(selectedSize ? selectedDish.price + selectedSize?.price : selectedDish.price) * selectedQuantity}
+                Order for €{basketElement.price}
               </Button>
             </Stack>
           </CardContent>
@@ -250,4 +286,19 @@ export function Page() {
       </Box>
     </React.Fragment>
   );
+
+  function handleBasket() {
+    dispatch(addToBasket(basketElement));
+  }
+
+  function updateBasketAndCalculateThePrice(newQuantity, newSize, newAccompaniments) {
+    const accompanimentsPrice = newAccompaniments.reduce((total, acc) => total + acc.price, 0);
+    setBasketElement({
+      dish: selectedDish,
+      size: newSize,
+      quantity: newQuantity,
+      addedAccompaniments: selectedAccompaniments,
+      price: ((newSize ? selectedDish.price + newSize?.price : selectedDish.price) + accompanimentsPrice) * newQuantity,
+    });
+  }
 }
