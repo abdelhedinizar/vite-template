@@ -13,6 +13,8 @@ import { List as ListIcon } from '@phosphor-icons/react/dist/ssr/List';
 import { MagnifyingGlass as MagnifyingGlassIcon } from '@phosphor-icons/react/dist/ssr/MagnifyingGlass';
 import { Users as UsersIcon } from '@phosphor-icons/react/dist/ssr/Users';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 import { useDialog } from '@/hooks/use-dialog';
 import { usePopover } from '@/hooks/use-popover';
@@ -24,8 +26,6 @@ import { MobileNav } from '../mobile-nav';
 import { NotificationsPopover } from '../notifications-popover';
 import { SearchDialog } from '../search-dialog';
 import { UserPopover } from '../user-popover/user-popover';
-
-import { useSelector } from 'react-redux';
 
 export function MainNav({ items }) {
   const [openNav, setOpenNav] = React.useState(false);
@@ -128,18 +128,17 @@ function ContactsButton() {
 
 function BasketButton() {
   const popover = usePopover();
+  const navigate = useNavigate();
   const { items } = useSelector((state) => state.basket);
+  const openBasketDetail = () => {
+    navigate('/dashboard/basket/detail');
+  };
 
   return (
     <React.Fragment>
-      <Tooltip title="Notifications">
-        <Badge
-          color="error"
-          badgeContent={items.length}
-             sx={{ top: '3px' }}
-          max={9}
-        >
-          <IconButton onClick={popover.handleOpen} ref={popover.anchorRef}>
+      <Tooltip title="Basket">
+        <Badge color="error" badgeContent={items.length} sx={{ top: '3px' }} max={9}>
+          <IconButton onClick={() => openBasketDetail()} ref={popover.anchorRef}>
             <BasketIcon />
           </IconButton>
         </Badge>

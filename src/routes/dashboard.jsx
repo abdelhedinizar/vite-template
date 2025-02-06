@@ -32,11 +32,24 @@ export const route = {
     },
     {
       path: 'basket',
-      lazy: async () => {
-        const { Page } = await import('@/pages/dashboard/basket/create');
-        return { Component: Page };
-      },
+      children: [
+        {
+          index: true,
+          lazy: async () => {
+            const { Page } = await import('@/pages/dashboard/basket/create');
+            return { Component: Page };
+          },
+        },
+        {
+          path: 'detail',
+          lazy: async () => {
+            const { Page } = await import('@/pages/dashboard/basket/detail');
+            return { Component: Page };
+          },
+        },
+      ],
     },
+
     {
       path: 'academy',
       children: [
