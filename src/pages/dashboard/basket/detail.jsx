@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Card, CardContent, Link, Stack, Typography } from '@mui/material';
+import { Box, Button, ButtonGroup, Card, CardContent, Link, Stack, Typography } from '@mui/material';
 import { ArrowLeftIcon } from '@mui/x-date-pickers';
 import { Helmet } from 'react-helmet-async';
 import { useSelector } from 'react-redux';
@@ -72,8 +72,23 @@ export function Page() {
                       <Stack spacing={0.5}>
                         <Typography variant="h6">{item.dish.name}</Typography>
                         <Typography variant="body2">{item.dish.ingredients}</Typography>
-                        <Stack direction="row" spacing={3}>
+                        <Stack direction="row" spacing={10}   sx={{alignItems: 'center'}}>
                           <Typography variant="h5">$ {item.price}</Typography>
+                          <Stack direction="row" spacing={1}
+                              sx={{
+                                backgroundColor: 'var(--mui-palette-primary-700)',
+                                color: 'white',
+                                borderRadius: 2,
+                                boxShadow: '0px 4px 6px var(--mui-palette-primary-300)', 
+                                '&:hover': {
+                                  backgroundColor: 'var(--mui-palette-primary-800)',
+                                },
+                              }}
+>
+  <Button sx={{color : 'white'}}>-</Button>
+  <Typography variant="body1" sx={{alignContent : 'center'}}>{item.quantity}</Typography>
+  <Button sx={{color : 'white'}}>+</Button>
+</Stack>
                         </Stack>
                       </Stack>
                     </Stack>
