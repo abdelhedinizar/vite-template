@@ -26,7 +26,7 @@ export function Page() {
           width: 'var(--Content-width)',
         }}
       >
-        <Stack spacing={4}>
+        <Stack spacing={4} sx={{ paddingBottom : '50px' }}>
           <Stack spacing={3}>
             <div>
               <Link
