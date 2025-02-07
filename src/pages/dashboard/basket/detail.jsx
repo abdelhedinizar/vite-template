@@ -12,6 +12,7 @@ const metadata = { title: `Create | Customers | Dashboard | ${config.site.name}`
 
 export function Page() {
   const { items } = useSelector((state) => state.basket);
+  const totalPrice = items.reduce((acc, item) => acc + item.price, 0);
   return (
     <React.Fragment>
       <Helmet>
@@ -72,8 +73,8 @@ export function Page() {
                       <Stack spacing={0.5}>
                         <Typography variant="h6">{item.dish.name}</Typography>
                         <Typography variant="body2">{item.dish.ingredients}</Typography>
-                        <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between', px : 2 }}>
-                          <Typography variant="h5">$ {item.price}</Typography>
+                        <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between', px: 2 }}>
+                          <Typography variant="h6">{item.price} $</Typography>
                           <Stack
                             direction="row"
                             spacing={1}
@@ -87,11 +88,11 @@ export function Page() {
                               },
                             }}
                           >
-                            <Button sx={{ color: 'white' }}>-</Button>
+                            <Button sx={{ color: 'white', width: '30px' }}>-</Button>
                             <Typography variant="body1" sx={{ alignContent: 'center' }}>
                               {item.quantity}
                             </Typography>
-                            <Button sx={{ color: 'white' }}>+</Button>
+                            <Button sx={{ color: 'white', width: '30px' }}>+</Button>
                           </Stack>
                         </Stack>
                       </Stack>
@@ -102,6 +103,55 @@ export function Page() {
             })}
           </Stack>
         </Stack>
+      </Box>
+      <Box
+        sx={{
+          position: 'absolute',
+          maxWidth: 'var(--Content-maxWidth)',
+          bottom: 0,
+          boxShadow: 'rgba(0, 0, 0, 0.1) 0px 10px 50px; !important;',
+          width: 'var(--Content-width)',
+        }}
+      >
+        <Card
+          sx={{
+            borderRadius: 0,
+            overflow: 'hidden',
+          }}
+        >
+          <CardContent
+            sx={{
+              px: '20px !important',
+              pt: '20px !important',
+              pb: '20px !important',
+            }}
+          >
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                justifyContent: 'space-between',
+              }}
+            >
+              <Typography variant="h6">Total : {totalPrice} $</Typography>
+              <Button
+                sx={{
+                  backgroundColor: 'var(--mui-palette-primary-700)',
+                  color: 'white',
+                  mx: 'auto',
+                  boxShadow: '0px 4px 6px var(--mui-palette-primary-300)', // Subtle shadow
+                  '&:hover': {
+                    backgroundColor: 'var(--mui-palette-primary-800)', // Slightly darker shade on hover
+                  },
+                }}
+              >
+                Order now !
+              </Button>
+            </Stack>
+          </CardContent>
+        </Card>
       </Box>
     </React.Fragment>
   );
