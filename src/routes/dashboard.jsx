@@ -47,6 +47,13 @@ export const route = {
             return { Component: Page };
           },
         },
+        {
+          path: 'success',
+          lazy: async () => {
+            const { Page } = await import('@/pages/dashboard/basket/success');
+            return { Component: Page };
+          },
+        },
       ],
     },
 

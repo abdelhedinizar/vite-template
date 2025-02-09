@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { Box, Button, Card, CardContent, Link, Stack, Typography } from '@mui/material';
 import { ArrowLeftIcon } from '@mui/x-date-pickers';
+import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
 import { useSelector } from 'react-redux';
 
 import { config } from '@/config';
 import { paths } from '@/paths';
+import { useUser } from '@/hooks/use-user';
 import { RouterLink } from '@/components/core/link';
 
 const metadata = { title: `Create | Customers | Dashboard | ${config.site.name}` };
@@ -13,6 +15,33 @@ const metadata = { title: `Create | Customers | Dashboard | ${config.site.name}`
 export function Page() {
   const { items } = useSelector((state) => state.basket);
   const totalPrice = items.reduce((acc, item) => acc + item.price, 0);
+  const { user } = useUser();
+  const onOrder = async () => {
+    const body = {
+      user: user?._id,
+      dishes: items.map((item) => {
+        return {
+          dish: item.dish._id,
+          quantity: item.quantity,
+          price: item.price,
+          addedAccompaniments: item.addedAccompaniments,
+          size: item.size,
+        };
+      }),
+      paymentMethod: 'card',
+      totalPrice,
+    };
+    const orderResponse = await axios.post(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/orders`, body, {
+      headers: {
+        'Content-Type': 'application/json', // Set the content type
+        // Add any other headers if needed (e.g., authorization token)
+      },
+    });
+    const createSessionResponse = await axios.get(
+      `${import.meta.env.VITE_REACT_APP_BACK_API_URL}/bookings/checkout-seesion/${orderResponse.data.data.order.id}`
+    );
+    window.location.href = createSessionResponse.data.session.url;
+  };
   return (
     <React.Fragment>
       <Helmet>
@@ -145,6 +174,9 @@ export function Page() {
                   '&:hover': {
                     backgroundColor: 'var(--mui-palette-primary-800)', // Slightly darker shade on hover
                   },
+                }}
+                onClick={() => {
+                  onOrder();
                 }}
               >
                 Order now !
