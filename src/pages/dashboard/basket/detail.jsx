@@ -106,7 +106,7 @@ export function Page() {
       </Box>
       <Box
         sx={{
-          position: 'absolute',
+          position: 'fixed',
           maxWidth: 'var(--Content-maxWidth)',
           bottom: 0,
           boxShadow: 'rgba(0, 0, 0, 0.1) 0px 10px 50px; !important;',
