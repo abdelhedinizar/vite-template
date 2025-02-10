@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { clear } from '@/stores/slices/BasketSlice';
 import { Backdrop, Button, CircularProgress, Stack, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import { Check } from '@phosphor-icons/react';
+import { Check, X } from '@phosphor-icons/react';
 import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
 import { useDispatch } from 'react-redux';
@@ -39,7 +39,7 @@ export function Page() {
       }
     };
     fetchOrder();
-  });
+  },[sessionId]);
   return (
     <React.Fragment>
       <Helmet>
@@ -86,7 +86,28 @@ export function Page() {
         )}
         {status === 'invalid' && (
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
-            <Typography variant="h1">Invalid order</Typography>
+          <Stack spacing={3} sx={{ alignItems: 'center' }}>
+          <Typography variant="h1">Invalid order</Typography>   
+            <X size={128} color="var(--mui-palette-error-800)" weight="fill"/>
+            <Typography variant="h4">OOPS !</Typography>
+              <Typography variant="body1">Something went wrong.</Typography>
+              <Button
+                sx={{
+                  backgroundColor: 'var(--mui-palette-error-700)',
+                  color: 'white',
+                  mx: 'auto',
+                  boxShadow: '0px 4px 6px var(--mui-palette-error-300)', // Subtle shadow
+                  '&:hover': {
+                    backgroundColor: 'var(--mui-palette-error-800)', // Slightly darker shade on hover
+                  },
+                }}
+                onClick={() => {
+                  backToMenu();
+                }}
+              >
+                Back to menu !
+              </Button>
+            </Stack>
           </Box>
         )}
         {status === 'unpaid' && (
