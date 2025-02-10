@@ -2,22 +2,22 @@
 
 import axios from 'axios';
 
-function generateToken() {
-  const arr = new Uint8Array(12);
-  window.crypto.getRandomValues(arr);
-  return Array.from(arr, (v) => v.toString(16).padStart(2, '0')).join('');
-}
-
 let user;
 
 class AuthClient {
   async signUp(_) {
     // Make API request
-
-    // We do not handle the API, so we'll just generate a token and store it in localStorage.
-    const token = generateToken();
-    localStorage.setItem('custom-auth-token', token);
-
+    const {firstname, lastname, email, password, confirmPassword} = _;
+  try {
+      const response = await axios.post(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/users/signup`, {
+        firstname,lastname,email,
+        password,confirmPassword
+      });
+      const { token } = response.data.data; // Assuming the API returns a `token`
+      localStorage.setItem('custom-auth-token', token);
+    } catch (error) {
+      return { error: 'Invalid credentials' };
+    }
     return {};
   }
 

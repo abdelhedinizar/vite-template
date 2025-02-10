@@ -31,14 +31,15 @@ const oAuthProviders = [
 ];
 
 const schema = zod.object({
-  firstName: zod.string().min(1, { message: 'First name is required' }),
-  lastName: zod.string().min(1, { message: 'Last name is required' }),
+  firstname: zod.string().min(1, { message: 'First name is required' }),
+  lastname: zod.string().min(1, { message: 'Last name is required' }),
   email: zod.string().min(1, { message: 'Email is required' }).email(),
-  password: zod.string().min(6, { message: 'Password should be at least 6 characters' }),
+  password: zod.string().min(5, { message: 'Password should be at least 6 characters' }),
+  confirmPassword: zod.string().min(5, { message: 'Password should be at least 6 characters' }),
   terms: zod.boolean().refine((value) => value, 'You must accept the terms and conditions'),
 });
 
-const defaultValues = { firstName: '', lastName: '', email: '', password: '', terms: false };
+const defaultValues = { firstname: '', lastname: '', email: '', password: '',confirmPassword:'', terms: false };
 
 export function SignUpForm() {
   const { checkSession } = useUser();
@@ -126,7 +127,7 @@ export function SignUpForm() {
           <Stack spacing={2}>
             <Controller
               control={control}
-              name="firstName"
+              name="firstname"
               render={({ field }) => (
                 <FormControl error={Boolean(errors.firstName)}>
                   <InputLabel>First name</InputLabel>
@@ -137,7 +138,7 @@ export function SignUpForm() {
             />
             <Controller
               control={control}
-              name="lastName"
+              name="lastname"
               render={({ field }) => (
                 <FormControl error={Boolean(errors.lastName)}>
                   <InputLabel>Last name</InputLabel>
@@ -170,6 +171,17 @@ export function SignUpForm() {
             />
             <Controller
               control={control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormControl error={Boolean(errors.confirmPassword)}>
+                  <InputLabel>Confirm Password</InputLabel>
+                  <OutlinedInput {...field} type="password" />
+                  {errors.password ? <FormHelperText>{errors.password.message}</FormHelperText> : null}
+                </FormControl>
+              )}
+            />
+            <Controller
+              control={control}
               name="terms"
               render={({ field }) => (
                 <div>
@@ -192,7 +204,6 @@ export function SignUpForm() {
           </Stack>
         </form>
       </Stack>
-      <Alert color="warning">Created users are not persisted</Alert>
     </Stack>
   );
 }
