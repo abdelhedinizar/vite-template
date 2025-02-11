@@ -24,6 +24,9 @@ const tabs = [
   { label: 'All', value: '', count: 5 },
   { label: 'Completed', value: 'completed', count: 2 },
   { label: 'Pending', value: 'pending', count: 1 },
+  { label: 'inProgress', value: 'inProgress', count: 0 },
+  { label: 'Processing', value: 'Processing', count: 0 },
+  { label: 'Dispatched', value: 'Dispatched', count: 0 },
   { label: 'Canceled', value: 'canceled', count: 1 },
   { label: 'Rejected', value: 'rejected', count: 1 },
 ];

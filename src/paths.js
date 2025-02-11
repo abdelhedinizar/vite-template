@@ -57,6 +57,7 @@ export const paths = {
     basket: '/dashboard/basket',
     basketDetail: '/dashboard/basket/detail',
     basketSuccess: '/dashboard/basket/success',
+    ordersDetail: '/dashboard/orders',
     settings: {
       account: '/dashboard/settings/account',
       billing: '/dashboard/settings/billing',
