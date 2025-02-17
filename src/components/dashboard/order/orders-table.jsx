@@ -32,35 +32,35 @@ const columns = [
             dishImage = dishImage.replace('..', '');
           }
           return row.dishes[0]?.dish.image ? (
-          <Box
-            sx={{
-              alignItems: 'center',
-              bgcolor: 'var(--mui-palette-background-level2)',
-              backgroundImage: `url(${dishImage})`,
-              backgroundPosition: 'center',
-              backgroundSize: 'cover',
-              borderRadius: 1,
-              display: 'flex',
-              height: '80px',
-              justifyContent: 'center',
-              overflow: 'hidden',
-              width: '80px',
-            }}
-          />
-        ) : (
-          <Box
-            sx={{
-              alignItems: 'center',
-              bgcolor: 'var(--mui-palette-background-level2)',
-              borderRadius: 1,
-              display: 'flex',
-              height: '80px',
-              justifyContent: 'center',
-              width: '80px',
-            }}
-          >
-            <ImageIcon fontSize="var(--icon-fontSize-lg)" />
-          </Box>
+            <Box
+              sx={{
+                alignItems: 'center',
+                bgcolor: 'var(--mui-palette-background-level2)',
+                backgroundImage: `url(${dishImage})`,
+                backgroundPosition: 'center',
+                backgroundSize: 'cover',
+                borderRadius: 1,
+                display: 'flex',
+                height: '80px',
+                justifyContent: 'center',
+                overflow: 'hidden',
+                width: '80px',
+              }}
+            />
+          ) : (
+            <Box
+              sx={{
+                alignItems: 'center',
+                bgcolor: 'var(--mui-palette-background-level2)',
+                borderRadius: 1,
+                display: 'flex',
+                height: '80px',
+                justifyContent: 'center',
+                width: '80px',
+              }}
+            >
+              <ImageIcon fontSize="var(--icon-fontSize-lg)" />
+            </Box>
           );
         })()}
         <Box
@@ -83,14 +83,19 @@ const columns = [
             sx={{ cursor: 'pointer' }}
             variant="subtitle2"
           >
-            {row.id}
+            <Typography color="text.secondary" variant="body2">
+              {row.user.name}{' '}
+            </Typography>
+            {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(row.totalPrice)}
           </Link>
-          <Typography color="text.secondary" variant="body2">
-            {row.lineItems} products •{' '}
-            <Box component="span" sx={{ whiteSpace: 'nowrap' }}>
-              {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(row.totalPrice)}
-            </Box>
-          </Typography>
+          {row.dishes.map((dish) => (
+            <Typography color="text.secondary" variant="body2" key={dish.id}>
+              {dish.quantity} {dish.dish.name} •{' '}
+              <Box component="span" sx={{ whiteSpace: 'nowrap' }}>
+                {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(dish.price)}
+              </Box>
+            </Typography>
+          ))}
         </div>
       </Stack>
     ),
