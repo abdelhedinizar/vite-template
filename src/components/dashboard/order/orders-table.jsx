@@ -100,7 +100,7 @@ const columns = [
       </Stack>
     ),
     name: 'Order',
-    width: '250px',
+    width: '360px',
   },
   {
     formatter: (row) => {
@@ -144,17 +144,7 @@ export function OrdersTable({ rows }) {
     <React.Fragment>
       <DataTable
         columns={columns}
-        onDeselectAll={deselectAll}
-        onDeselectOne={(_, row) => {
-          deselectOne(row.id);
-        }}
-        onSelectAll={selectAll}
-        onSelectOne={(_, row) => {
-          selectOne(row.id);
-        }}
         rows={rows}
-        selectable
-        selected={selected}
       />
       {!rows.length ? (
         <Box sx={{ p: 3 }}>
