@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Divider from '@mui/material/Divider';
@@ -17,8 +18,6 @@ import { OrdersSelectionProvider } from '@/components/dashboard/order/orders-sel
 import { OrdersTable } from '@/components/dashboard/order/orders-table';
 
 const metadata = { title: `List | Orders | Dashboard | ${config.site.name}` };
-
-const orderResponse = await axios.get(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/orders`);
 
 const orders = [
   {
@@ -74,9 +73,17 @@ const orders = [
 ];
 
 export function Page() {
+  let ordersRef = React.useRef([]);
+  useEffect(() => {
+    const fetchOrders = async () => {
+      const orderResponse = await axios.get(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/orders`);
+      ordersRef.current = orderResponse.data.data.orders;
+    };
+    fetchOrders();
+  }, []);
   const { customer, id, previewId, sortDir, status } = useExtractSearchParams();
 
-  const sortedOrders = applySort(orderResponse.data.data.orders, sortDir);
+  const sortedOrders = applySort(ordersRef.current, sortDir);
   const filteredOrders = applyFilters(sortedOrders, { customer, id, status });
 
   return (
