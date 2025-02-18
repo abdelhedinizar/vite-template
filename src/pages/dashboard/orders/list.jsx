@@ -82,7 +82,7 @@ export function Page() {
           </Stack>
           <OrdersSelectionProvider orders={filteredOrders}>
             <Card>
-              <OrdersFilters filters={{ customer, id, status }} sortDir={sortDir} />
+              <OrdersFilters filters={{ customer, id, status }} sortDir={sortDir} orders={orders} />
               <Divider />
               <Box sx={{ overflowX: 'auto' }}>
                 <OrdersTable rows={filteredOrders} />
