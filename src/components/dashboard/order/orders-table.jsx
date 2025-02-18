@@ -24,6 +24,17 @@ import { useOrdersSelection } from './orders-selection-context';
 
 const columns = [
   {
+    formatter: () => (
+      <IconButton component={RouterLink} href={paths.dashboard.orders.preview('1')}>
+        <EyeIcon />
+      </IconButton>
+    ),
+    name: 'Actions',
+    hideName: true,
+    width: 'auto',
+    align: 'center',
+  },
+  {
     formatter: (row) => (
       <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
         {(() => {
@@ -100,7 +111,7 @@ const columns = [
       </Stack>
     ),
     name: 'Order',
-    width: '360px',
+    width: '420px',
   },
   {
     formatter: (row) => {
@@ -124,17 +135,6 @@ const columns = [
     name: 'Status',
     width: '100px',
   },
-  {
-    formatter: () => (
-      <IconButton component={RouterLink} href={paths.dashboard.orders.preview('1')}>
-        <EyeIcon />
-      </IconButton>
-    ),
-    name: 'Actions',
-    hideName: true,
-    width: '100px',
-    align: 'right',
-  },
 ];
 
 export function OrdersTable({ rows }) {
@@ -142,10 +142,7 @@ export function OrdersTable({ rows }) {
 
   return (
     <React.Fragment>
-      <DataTable
-        columns={columns}
-        rows={rows}
-      />
+      <DataTable columns={columns} rows={rows} />
       {!rows.length ? (
         <Box sx={{ p: 3 }}>
           <Typography color="text.secondary" sx={{ textAlign: 'center' }} variant="body2">
