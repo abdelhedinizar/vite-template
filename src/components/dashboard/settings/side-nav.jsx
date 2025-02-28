@@ -16,6 +16,7 @@ import { paths } from '@/paths';
 import { isNavItemActive } from '@/lib/is-nav-item-active';
 import { usePathname } from '@/hooks/use-pathname';
 import { RouterLink } from '@/components/core/link';
+import { useUser } from '@/hooks/use-user';
 
 // NOTE: First level elements are groups.
 
@@ -56,6 +57,7 @@ const icons = {
 
 export function SideNav() {
   const pathname = usePathname();
+  const { user, error, isLoading } = useUser();
 
   return (
     <div>
@@ -88,11 +90,11 @@ export function SideNav() {
           ))}
         </Stack>
         <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
-          <Avatar src="/assets/avatar.png">AV</Avatar>
+          <Avatar src={user.avatar}>AV</Avatar>
           <div>
-            <Typography variant="subtitle1">Sofia Rivers</Typography>
+            <Typography variant="subtitle1">{user.name}</Typography>
             <Typography color="text.secondary" variant="caption">
-              sofia@devias.io
+              {user.email}
             </Typography>
           </div>
         </Stack>
