@@ -57,7 +57,7 @@ const icons = {
 
 export function SideNav() {
   const pathname = usePathname();
-  const { user, error, isLoading } = useUser();
+  const { user } = useUser();
 
   return (
     <div>

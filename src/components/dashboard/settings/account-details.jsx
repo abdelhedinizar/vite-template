@@ -23,6 +23,8 @@ import { User as UserIcon } from '@phosphor-icons/react/dist/ssr/User';
 import { Option } from '@/components/core/option';
 
 export function AccountDetails({ user }) {
+
+  const flag = {'+1' : '/assets/flag-us.svg', '+33' : '/assets/flag-fr.svg', '+34' : '/assets/flag-es.svg', '+49' : '/assets/flag-de.svg'};
   return (
     <Card>
       <CardHeader
@@ -100,21 +102,22 @@ export function AccountDetails({ user }) {
                       <Box
                         alt="Spain"
                         component="img"
-                        src="/assets/flag-es.svg"
+                        src={flag[user.phoneNumber?.dialCode]}
                         sx={{ display: 'block', height: '20px', width: 'auto' }}
                       />
                     </InputAdornment>
                   }
-                  value="+34"
+                  value={user.phoneNumber?.dialCode}
                 >
                   <Option value="+1">United States</Option>
                   <Option value="+49">Germany</Option>
                   <Option value="+34">Spain</Option>
+                  <Option value="+33">France</Option>
                 </Select>
               </FormControl>
               <FormControl sx={{ flex: '1 1 auto' }}>
                 <InputLabel>Phone number</InputLabel>
-                <OutlinedInput defaultValue="965 245 7623" name="phone" />
+                <OutlinedInput defaultValue={user.phoneNumber?.number} name="phone" />
               </FormControl>
             </Stack>
             <FormControl>
