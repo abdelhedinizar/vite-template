@@ -24,8 +24,8 @@ import { useOrdersSelection } from './orders-selection-context';
 
 const columns = [
   {
-    formatter: () => (
-      <IconButton component={RouterLink} href={paths.dashboard.orders.preview('1')}>
+    formatter: (row) => (
+      <IconButton component={RouterLink} to={paths.dashboard.orders.preview(row.id)}>
         <EyeIcon />
       </IconButton>
     ),
@@ -38,11 +38,11 @@ const columns = [
     formatter: (row) => (
       <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
         {(() => {
-          let dishImage = row.dishes[0]?.dish.image;
+          let dishImage = row.dishes[0]?.dish?.image;
           if (dishImage && dishImage.startsWith('../')) {
             dishImage = dishImage.replace('..', '');
           }
-          return row.dishes[0]?.dish.image ? (
+          return row.dishes[0]?.dish?.image ? (
             <Box
               sx={{
                 alignItems: 'center',
@@ -83,8 +83,8 @@ const columns = [
             textAlign: 'center',
           }}
         >
-          <Typography variant="caption">{dayjs(row.createdAt).format('MMM').toUpperCase()}</Typography>
-          <Typography variant="h6">{dayjs(row.createdAt).format('D')}</Typography>
+          <Typography variant="caption">{dayjs(row?.createdAt).format('MMM').toUpperCase()}</Typography>
+          <Typography variant="h6">{dayjs(row?.createdAt).format('D')}</Typography>
         </Box>
         <div>
           <Link
@@ -95,15 +95,15 @@ const columns = [
             variant="subtitle2"
           >
             <Typography color="text.secondary" variant="body2">
-              {row.user.name}{' '}
+              {row?.user?.name}{' '}
             </Typography>
-            {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(row.totalPrice)}
+            {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(row?.totalPrice)}
           </Link>
-          {row.dishes.map((dish) => (
+          {row?.dishes?.map((dish) => (
             <Typography color="text.secondary" variant="body2" key={dish.id}>
-              {dish.quantity} {dish.dish.name} •{' '}
+              {dish.quantity} {dish?.dish?.name} •{' '}
               <Box component="span" sx={{ whiteSpace: 'nowrap' }}>
-                {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(dish.price)}
+                {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(dish?.price)}
               </Box>
             </Typography>
           ))}
@@ -143,7 +143,7 @@ export function OrdersTable({ rows }) {
   return (
     <React.Fragment>
       <DataTable columns={columns} rows={rows} />
-      {!rows.length ? (
+      {!rows?.length ? (
         <Box sx={{ p: 3 }}>
           <Typography color="text.secondary" sx={{ textAlign: 'center' }} variant="body2">
             No orders found

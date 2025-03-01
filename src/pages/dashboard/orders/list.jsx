@@ -11,7 +11,6 @@ import { Helmet } from 'react-helmet-async';
 import { useSearchParams } from 'react-router-dom';
 
 import { config } from '@/config';
-import { dayjs } from '@/lib/dayjs';
 import { OrderModal } from '@/components/dashboard/order/order-modal';
 import { OrdersFilters } from '@/components/dashboard/order/orders-filters';
 import { OrdersPagination } from '@/components/dashboard/order/orders-pagination';
@@ -44,6 +43,7 @@ export function Page() {
 
   const sortedOrders = applySort(orders, sortDir);
   const filteredOrders = applyFilters(sortedOrders, { customer, id, status });
+  const selectedOrder = orders?.filter((order) => order.id === previewId)[0];
 
   if (loading) {
     return (
@@ -93,7 +93,7 @@ export function Page() {
           </OrdersSelectionProvider>
         </Stack>
       </Box>
-      <OrderModal open={Boolean(previewId)} />
+      <OrderModal open={Boolean(previewId)} order={selectedOrder} />
     </React.Fragment>
   );
 }

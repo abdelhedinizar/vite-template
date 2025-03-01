@@ -13,9 +13,13 @@ import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { HourglassMedium as HourglassMediumIcon } from '@phosphor-icons/react/dist/ssr';
 import { CheckCircle as CheckCircleIcon } from '@phosphor-icons/react/dist/ssr/CheckCircle';
+import { Clock as ClockIcon } from '@phosphor-icons/react/dist/ssr/Clock';
+import { Minus as MinusIcon } from '@phosphor-icons/react/dist/ssr/Minus';
 import { PencilSimple as PencilSimpleIcon } from '@phosphor-icons/react/dist/ssr/PencilSimple';
 import { X as XIcon } from '@phosphor-icons/react/dist/ssr/X';
+import { XCircle as XCircleIcon } from '@phosphor-icons/react/dist/ssr/XCircle';
 import { useNavigate } from 'react-router-dom';
 
 import { paths } from '@/paths';
@@ -26,28 +30,23 @@ import { PropertyList } from '@/components/core/property-list';
 
 import { LineItemsTable } from './line-items-table';
 
-const lineItems = [
-  {
-    id: 'LI-001',
-    product: 'Erbology Aloe Vera',
-    image: '/assets/product-1.png',
-    quantity: 1,
-    currency: 'USD',
-    unitAmount: 24,
-    totalAmount: 24,
+const mapping = {
+  pending: { label: 'Pending', icon: <ClockIcon color="var(--mui-palette-warning-main)" weight="fill" /> },
+  completed: {
+    label: 'Completed',
+    icon: <CheckCircleIcon color="var(--mui-palette-success-main)" weight="fill" />,
   },
-  {
-    id: 'LI-002',
-    product: 'Lancome Rouge',
-    image: '/assets/product-2.png',
-    quantity: 1,
-    currency: 'USD',
-    unitAmount: 35,
-    totalAmount: 35,
+  cancelled: { label: 'Canceled', icon: <XCircleIcon color="var(--mui-palette-error-main)" weight="fill" /> },
+  rejected: { label: 'Rejected', icon: <MinusIcon color="var(--mui-palette-error-main)" /> },
+  inProgress: {
+    label: 'InProgress',
+    icon: <HourglassMediumIcon color="var(--mui-palette-info-main)" weight="fill" />,
   },
-];
+};
 
-export function OrderModal({ open }) {
+export function OrderModal({ open, order }) {
+  const { label, icon } = mapping[order?.status] ?? { label: 'Unknown', icon: null };
+
   const navigate = useNavigate();
 
   // This component should load the order from the API based on the orderId prop.
@@ -69,7 +68,7 @@ export function OrderModal({ open }) {
     >
       <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, minHeight: 0 }}>
         <Stack direction="row" sx={{ alignItems: 'center', flex: '0 0 auto', justifyContent: 'space-between' }}>
-          <Typography variant="h6">ORD-001</Typography>
+          <Typography variant="h6">ORD-{order?.sequenceNumber}</Typography>
           <IconButton onClick={handleClose}>
             <XIcon />
           </IconButton>
@@ -90,30 +89,24 @@ export function OrderModal({ open }) {
             <Card sx={{ borderRadius: 1 }} variant="outlined">
               <PropertyList divider={<Divider />} sx={{ '--PropertyItem-padding': '12px 24px' }}>
                 {[
-                  { key: 'Customer', value: <Link variant="subtitle2">Miron Vitold</Link> },
+                  { key: 'Customer', value: <Link variant="subtitle2">{order?.user?.name}</Link> },
                   {
                     key: 'Address',
                     value: (
                       <Typography variant="subtitle2">
-                        1721 Bartlett Avenue
+                        {order?.user?.address?.line1}
                         <br />
-                        Southfield, Michigan, United States
+                        {order?.user?.address?.line2}
+                        {order?.user?.address?.city}
                         <br />
-                        48034
+                        {order?.user?.address?.state}, {order?.user?.address?.country}
                       </Typography>
                     ),
                   },
-                  { key: 'Date', value: dayjs().subtract(3, 'hour').format('MMMM D, YYYY hh:mm A') },
+                  { key: 'Date', value: dayjs(order?.createdAt).format('MMMM D, YYYY hh:mm A') },
                   {
                     key: 'Status',
-                    value: (
-                      <Chip
-                        icon={<CheckCircleIcon color="var(--mui-palette-success-main)" weight="fill" />}
-                        label="Completed"
-                        size="small"
-                        variant="outlined"
-                      />
-                    ),
+                    value: <Chip icon={icon} label={label} size="small" variant="outlined" />,
                   },
                   {
                     key: 'Payment method',
@@ -131,7 +124,7 @@ export function OrderModal({ open }) {
                         <div>
                           <Typography variant="body2">Mastercard</Typography>
                           <Typography color="text.secondary" variant="body2">
-                            **** 4242
+                            **** {order?.cardLast4}
                           </Typography>
                         </div>
                       </Stack>
@@ -144,10 +137,10 @@ export function OrderModal({ open }) {
             </Card>
           </Stack>
           <Stack spacing={3}>
-            <Typography variant="h6">Line items</Typography>
+            <Typography variant="h6">items</Typography>
             <Card sx={{ borderRadius: 1 }} variant="outlined">
               <Box sx={{ overflowX: 'auto' }}>
-                <LineItemsTable rows={lineItems} />
+                <LineItemsTable rows={order?.dishes} />
               </Box>
               <Divider />
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 3 }}>
@@ -155,29 +148,18 @@ export function OrderModal({ open }) {
                   <Stack direction="row" spacing={3} sx={{ justifyContent: 'space-between' }}>
                     <Typography variant="body2">Subtotal</Typography>
                     <Typography variant="body2">
-                      {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(59)}
+                      {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(order?.totalPrice)}
                     </Typography>
                   </Stack>
                   <Stack direction="row" spacing={3} sx={{ justifyContent: 'space-between' }}>
                     <Typography variant="body2">Discount</Typography>
                     <Typography variant="body2">-</Typography>
                   </Stack>
-                  <Stack direction="row" spacing={3} sx={{ justifyContent: 'space-between' }}>
-                    <Typography variant="body2">Shipping</Typography>
-                    <Typography variant="body2">
-                      {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(20)}
-                    </Typography>
-                  </Stack>
-                  <Stack direction="row" spacing={3} sx={{ justifyContent: 'space-between' }}>
-                    <Typography variant="body2">Taxes</Typography>
-                    <Typography variant="body2">
-                      {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(15.01)}
-                    </Typography>
-                  </Stack>
+
                   <Stack direction="row" spacing={3} sx={{ justifyContent: 'space-between' }}>
                     <Typography variant="subtitle1">Total</Typography>
                     <Typography variant="subtitle1">
-                      {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(94.01)}
+                      {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(order?.totalPrice)}
                     </Typography>
                   </Stack>
                 </Stack>
