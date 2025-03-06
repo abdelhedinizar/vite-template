@@ -9,6 +9,7 @@ import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import { ShoppingCart as BasketIcon } from '@phosphor-icons/react/dist/ssr';
+import { ChatsCircle as ChatsCircleIcon } from '@phosphor-icons/react/dist/ssr/ChatsCircle';
 import { List as ListIcon } from '@phosphor-icons/react/dist/ssr/List';
 import { MagnifyingGlass as MagnifyingGlassIcon } from '@phosphor-icons/react/dist/ssr/MagnifyingGlass';
 import { Users as UsersIcon } from '@phosphor-icons/react/dist/ssr/Users';
@@ -74,7 +75,7 @@ export function MainNav({ items }) {
             sx={{ alignItems: 'center', flex: '1 1 auto', justifyContent: 'flex-end' }}
           >
             <BasketButton />
-            <ContactsButton />
+            <ChatButton />
             <Divider
               flexItem
               orientation="vertical"
@@ -119,6 +120,25 @@ function ContactsButton() {
       <Tooltip title="Contacts">
         <IconButton onClick={popover.handleOpen} ref={popover.anchorRef}>
           <UsersIcon />
+        </IconButton>
+      </Tooltip>
+      <ContactsPopover anchorEl={popover.anchorRef.current} onClose={popover.handleClose} open={popover.open} />
+    </React.Fragment>
+  );
+}
+
+function ChatButton() {
+  const popover = usePopover();
+  const navigate = useNavigate();
+
+  const openChatBot = () => {
+    navigate('/dashboard/chat');
+  };
+  return (
+    <React.Fragment>
+      <Tooltip title="ChatBot">
+        <IconButton  onClick={() => openChatBot()} ref={popover.anchorRef}>
+          <ChatsCircleIcon />
         </IconButton>
       </Tooltip>
       <ContactsPopover anchorEl={popover.anchorRef.current} onClose={popover.handleClose} open={popover.open} />
