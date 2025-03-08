@@ -132,7 +132,7 @@ function ChatButton() {
   const navigate = useNavigate();
 
   const openChatBot = () => {
-    navigate('/dashboard/chat');
+    navigate('/dashboard/waiter');
   };
   return (
     <React.Fragment>
