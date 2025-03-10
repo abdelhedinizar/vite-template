@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 
 export function useFetchMessages() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const hasFetchedMessages = useRef(false);
 
   const fetchMessages = async (mess) => {
     try {
@@ -49,7 +50,10 @@ export function useFetchMessages() {
   };
 
   useEffect(() => {
-    fetchMessages([]);
+    if (!hasFetchedMessages.current) {
+      fetchMessages([]);
+      hasFetchedMessages.current = true;
+    }
   }, []);
 
   return { messages, loading, error, handleAddMessage };
