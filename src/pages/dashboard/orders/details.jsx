@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
@@ -11,14 +11,18 @@ import Grid from '@mui/material/Grid2';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { HourglassMedium as HourglassMediumIcon } from '@phosphor-icons/react/dist/ssr';
 import { ArrowLeft as ArrowLeftIcon } from '@phosphor-icons/react/dist/ssr/ArrowLeft';
-import { CaretDown as CaretDownIcon } from '@phosphor-icons/react/dist/ssr/CaretDown';
 import { CheckCircle as CheckCircleIcon } from '@phosphor-icons/react/dist/ssr/CheckCircle';
+import { Clock as ClockIcon } from '@phosphor-icons/react/dist/ssr/Clock';
 import { CreditCard as CreditCardIcon } from '@phosphor-icons/react/dist/ssr/CreditCard';
-import { PencilSimple as PencilSimpleIcon } from '@phosphor-icons/react/dist/ssr/PencilSimple';
+import { Minus as MinusIcon } from '@phosphor-icons/react/dist/ssr/Minus';
 import { ShoppingCartSimple as ShoppingCartSimpleIcon } from '@phosphor-icons/react/dist/ssr/ShoppingCartSimple';
 import { Timer as TimerIcon } from '@phosphor-icons/react/dist/ssr/Timer';
+import { XCircle as XCircleIcon } from '@phosphor-icons/react/dist/ssr/XCircle';
+import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
+import { useParams } from 'react-router-dom';
 
 import { config } from '@/config';
 import { paths } from '@/paths';
@@ -30,27 +34,6 @@ import { EventsTimeline } from '@/components/dashboard/order/events-timeline';
 import { LineItemsTable } from '@/components/dashboard/order/line-items-table';
 
 const metadata = { title: `Details | Orders | Dashboard | ${config.site.name}` };
-
-const lineItems = [
-  {
-    id: 'LI-001',
-    product: 'Erbology Aloe Vera',
-    image: '/assets/product-1.png',
-    quantity: 1,
-    currency: 'USD',
-    unitAmount: 24,
-    totalAmount: 24,
-  },
-  {
-    id: 'LI-002',
-    product: 'Lancome Rouge',
-    image: '/assets/product-2.png',
-    quantity: 1,
-    currency: 'USD',
-    unitAmount: 35,
-    totalAmount: 35,
-  },
-];
 
 const events = [
   {
@@ -76,7 +59,42 @@ const events = [
   { id: 'EV-001', createdAt: dayjs().subtract(21, 'hour').toDate(), type: 'order_created' },
 ];
 
+const mapping = {
+  pending: { label: 'Pending', icon: <ClockIcon color="var(--mui-palette-warning-main)" weight="fill" /> },
+  completed: {
+    label: 'Completed',
+    icon: <CheckCircleIcon color="var(--mui-palette-success-main)" weight="fill" />,
+  },
+  cancelled: { label: 'Canceled', icon: <XCircleIcon color="var(--mui-palette-error-main)" weight="fill" /> },
+  rejected: { label: 'Rejected', icon: <MinusIcon color="var(--mui-palette-error-main)" /> },
+  inProgress: {
+    label: 'InProgress',
+    icon: <HourglassMediumIcon color="var(--mui-palette-info-main)" weight="fill" />,
+  },
+};
+
 export function Page() {
+  const { orderId } = useParams();
+  const [order, setOrder] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { label, icon } = mapping[order?.status] ?? { label: 'Unknown', icon: null };
+
+  React.useEffect(() => {
+    const fetchOrderDetail = async () => {
+      try {
+        const orderResponse = await axios.get(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/orders/${orderId}`);
+        setOrder(orderResponse.data.data.order);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrderDetail();
+  }, []);
+
   return (
     <React.Fragment>
       <Helmet>
@@ -95,7 +113,7 @@ export function Page() {
             <Link
               color="text.primary"
               component={RouterLink}
-              href={paths.dashboard.orders.list}
+              href={paths.dashboard.orders.todaylist}
               sx={{ alignItems: 'center', display: 'inline-flex', gap: 1 }}
               variant="subtitle2"
             >
@@ -106,13 +124,8 @@ export function Page() {
           <div>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} sx={{ alignItems: 'flex-start' }}>
               <Box sx={{ flex: '1 1 auto' }}>
-                <Typography variant="h5">ORD-001</Typography>
+                <Typography variant="h5">ORD-{order?.sequenceNumber}</Typography>
               </Box>
-              <div>
-                <Button endIcon={<CaretDownIcon />} variant="contained">
-                  Action
-                </Button>
-              </div>
             </Stack>
           </div>
           <Grid container spacing={4}>
@@ -125,11 +138,6 @@ export function Page() {
               <Stack spacing={4}>
                 <Card>
                   <CardHeader
-                    action={
-                      <Button color="secondary" startIcon={<PencilSimpleIcon />}>
-                        Edit
-                      </Button>
-                    }
                     avatar={
                       <Avatar>
                         <CreditCardIcon fontSize="var(--Icon-fontSize)" />
@@ -141,30 +149,27 @@ export function Page() {
                     <Card sx={{ borderRadius: 1 }} variant="outlined">
                       <PropertyList divider={<Divider />} sx={{ '--PropertyItem-padding': '12px 24px' }}>
                         {[
-                          { key: 'Customer', value: <Link variant="subtitle2">Miron Vitold</Link> },
+                          { key: 'Customer', value: <Link variant="subtitle2">{order?.user?.name}</Link> },
                           {
                             key: 'Address',
                             value: (
                               <Typography variant="subtitle2">
-                                1721 Bartlett Avenue
+                                {order?.user?.address?.line1}
                                 <br />
-                                Southfield, Michigan, United States
+                                {order?.user?.address?.line2}
+                                {order?.user?.address?.city}
                                 <br />
-                                48034
+                                {order?.user?.address?.state}, {order?.user?.address?.country}
                               </Typography>
                             ),
                           },
-                          { key: 'Date', value: dayjs().subtract(3, 'hour').format('MMMM D, YYYY hh:mm A') },
+                          {
+                            key: 'Date',
+                            value: dayjs(order?.createdAt).subtract(3, 'hour').format('MMMM D, YYYY hh:mm A'),
+                          },
                           {
                             key: 'Status',
-                            value: (
-                              <Chip
-                                icon={<CheckCircleIcon color="var(--mui-palette-success-main)" weight="fill" />}
-                                label="Completed"
-                                size="small"
-                                variant="outlined"
-                              />
-                            ),
+                            value: <Chip icon={icon} label={label} size="small" variant="outlined" />,
                           },
                           {
                             key: 'Payment method',
@@ -185,7 +190,7 @@ export function Page() {
                                 <div>
                                   <Typography variant="body2">Mastercard</Typography>
                                   <Typography color="text.secondary" variant="body2">
-                                    **** 4242
+                                    **** {order?.cardLast4}
                                   </Typography>
                                 </div>
                               </Stack>
@@ -211,37 +216,30 @@ export function Page() {
                     <Stack spacing={2}>
                       <Card sx={{ borderRadius: 1 }} variant="outlined">
                         <Box sx={{ overflowX: 'auto' }}>
-                          <LineItemsTable rows={lineItems} />
+                          <LineItemsTable rows={order.dishes} />
                         </Box>
                       </Card>
-                      <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 3 }}>
                         <Stack spacing={2} sx={{ width: '300px', maxWidth: '100%' }}>
                           <Stack direction="row" spacing={3} sx={{ justifyContent: 'space-between' }}>
                             <Typography variant="body2">Subtotal</Typography>
                             <Typography variant="body2">
-                              {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(59)}
+                              {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
+                                order?.totalPrice
+                              )}
                             </Typography>
                           </Stack>
                           <Stack direction="row" spacing={3} sx={{ justifyContent: 'space-between' }}>
                             <Typography variant="body2">Discount</Typography>
                             <Typography variant="body2">-</Typography>
                           </Stack>
-                          <Stack direction="row" spacing={3} sx={{ justifyContent: 'space-between' }}>
-                            <Typography variant="body2">Shipping</Typography>
-                            <Typography variant="body2">
-                              {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(20)}
-                            </Typography>
-                          </Stack>
-                          <Stack direction="row" spacing={3} sx={{ justifyContent: 'space-between' }}>
-                            <Typography variant="body2">Taxes</Typography>
-                            <Typography variant="body2">
-                              {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(15.01)}
-                            </Typography>
-                          </Stack>
+
                           <Stack direction="row" spacing={3} sx={{ justifyContent: 'space-between' }}>
                             <Typography variant="subtitle1">Total</Typography>
                             <Typography variant="subtitle1">
-                              {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(94.01)}
+                              {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(
+                                order?.totalPrice
+                              )}
                             </Typography>
                           </Stack>
                         </Stack>

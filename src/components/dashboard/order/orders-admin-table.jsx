@@ -10,9 +10,9 @@ import Typography from '@mui/material/Typography';
 import { HourglassMedium as HourglassMediumIcon } from '@phosphor-icons/react/dist/ssr';
 import { CheckCircle as CheckCircleIcon } from '@phosphor-icons/react/dist/ssr/CheckCircle';
 import { Clock as ClockIcon } from '@phosphor-icons/react/dist/ssr/Clock';
-import { Eye as EyeIcon } from '@phosphor-icons/react/dist/ssr/Eye';
 import { Image as ImageIcon } from '@phosphor-icons/react/dist/ssr/Image';
 import { Minus as MinusIcon } from '@phosphor-icons/react/dist/ssr/Minus';
+import { Path as PathIcon } from '@phosphor-icons/react/dist/ssr/Path';
 import { XCircle as XCircleIcon } from '@phosphor-icons/react/dist/ssr/XCircle';
 
 import { paths } from '@/paths';
@@ -25,12 +25,13 @@ import { useOrdersSelection } from './orders-selection-context';
 const columns = [
   {
     formatter: (row) => (
-      <IconButton component={RouterLink} to={paths.dashboard.orders.preview(row.id)}>
-        <EyeIcon />
+      <IconButton component={RouterLink} to={paths.dashboard.orders.details(row.id)} type="error">
+        <PathIcon />
       </IconButton>
     ),
     name: 'Actions',
     hideName: true,
+    maxWidth: '40px',
     width: '40px',
     align: 'center',
   },
@@ -90,7 +91,7 @@ const columns = [
           <Link
             color="text.primary"
             component={RouterLink}
-            href={paths.dashboard.orders.preview(row.id)}
+            href={paths.dashboard.orders.preview('1')}
             sx={{ cursor: 'pointer' }}
             variant="subtitle2"
           >

@@ -371,6 +371,13 @@ export const route = {
           },
         },
         {
+          path: 'today',
+          lazy: async () => {
+            const { Page } = await import('@/pages/dashboard/orders/today');
+            return { Component: Page };
+          },
+        },
+        {
           path: 'create',
           lazy: async () => {
             const { Page } = await import('@/pages/dashboard/orders/create');

@@ -50,7 +50,8 @@ export const layoutConfig = {
           title: 'Orders',
           icon: 'shopping-cart-simple',
           items: [
-            { key: 'orders', title: 'List orders', href: paths.dashboard.orders.list },
+            { key: 'orders', title: 'order history', href: paths.dashboard.orders.list },
+            { key: 'orders', title: "today's orders", href: paths.dashboard.orders.todaylist },
             { key: 'orders:create', title: 'Create order', href: paths.dashboard.orders.create },
             { key: 'orders:details', title: 'Order details', href: paths.dashboard.orders.details('1') },
           ],

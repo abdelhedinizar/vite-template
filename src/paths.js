@@ -113,6 +113,7 @@ export const paths = {
     },
     orders: {
       list: '/dashboard/orders',
+      todaylist: '/dashboard/orders/today',
       create: '/dashboard/orders/create',
       preview: (orderId) => `/dashboard/orders?previewId=${orderId}`,
       details: (orderId) => `/dashboard/orders/${orderId}`,

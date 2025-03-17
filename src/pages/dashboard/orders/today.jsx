@@ -11,12 +11,11 @@ import { Helmet } from 'react-helmet-async';
 import { useSearchParams } from 'react-router-dom';
 
 import { config } from '@/config';
-import { useUser } from '@/hooks/use-user';
 import { OrderModal } from '@/components/dashboard/order/order-modal';
+import { OrdersTable } from '@/components/dashboard/order/orders-admin-table';
 import { OrdersFilters } from '@/components/dashboard/order/orders-filters';
 import { OrdersPagination } from '@/components/dashboard/order/orders-pagination';
 import { OrdersSelectionProvider } from '@/components/dashboard/order/orders-selection-context';
-import { OrdersTable } from '@/components/dashboard/order/orders-table';
 
 const metadata = { title: `List | Orders | Dashboard | ${config.site.name}` };
 
@@ -24,14 +23,11 @@ export function Page() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { user } = useUser();
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const orderResponse = await axios.get(
-          `${import.meta.env.VITE_REACT_APP_BACK_API_URL}/orders?user=${user._id}&sort=-createdAt`
-        );
+        const orderResponse = await axios.get(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/orders`);
         setOrders(orderResponse.data.data.orders);
       } catch (err) {
         setError(err);
