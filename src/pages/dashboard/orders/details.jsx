@@ -32,6 +32,7 @@ import { PropertyItem } from '@/components/core/property-item';
 import { PropertyList } from '@/components/core/property-list';
 import { EventsTimeline } from '@/components/dashboard/order/events-timeline';
 import { LineItemsTable } from '@/components/dashboard/order/line-items-table';
+import { OrderManageForm } from '@/components/dashboard/order/order-manage-form';
 
 const metadata = { title: `Details | Orders | Dashboard | ${config.site.name}` };
 
@@ -140,67 +141,13 @@ export function Page() {
                   <CardHeader
                     avatar={
                       <Avatar>
-                        <CreditCardIcon fontSize="var(--Icon-fontSize)" />
+                        <TimerIcon fontSize="var(--Icon-fontSize)" />
                       </Avatar>
                     }
-                    title="Order information"
+                    title="Timeline"
                   />
                   <CardContent>
-                    <Card sx={{ borderRadius: 1 }} variant="outlined">
-                      <PropertyList divider={<Divider />} sx={{ '--PropertyItem-padding': '12px 24px' }}>
-                        {[
-                          { key: 'Customer', value: <Link variant="subtitle2">{order?.user?.name}</Link> },
-                          {
-                            key: 'Address',
-                            value: (
-                              <Typography variant="subtitle2">
-                                {order?.user?.address?.line1}
-                                <br />
-                                {order?.user?.address?.line2}
-                                {order?.user?.address?.city}
-                                <br />
-                                {order?.user?.address?.state}, {order?.user?.address?.country}
-                              </Typography>
-                            ),
-                          },
-                          {
-                            key: 'Date',
-                            value: dayjs(order?.createdAt).subtract(3, 'hour').format('MMMM D, YYYY hh:mm A'),
-                          },
-                          {
-                            key: 'Status',
-                            value: <Chip icon={icon} label={label} size="small" variant="outlined" />,
-                          },
-                          {
-                            key: 'Payment method',
-                            value: (
-                              <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
-                                <Avatar
-                                  sx={{
-                                    bgcolor: 'var(--mui-palette-background-paper)',
-                                    boxShadow: 'var(--mui-shadows-8)',
-                                  }}
-                                >
-                                  <Box
-                                    component="img"
-                                    src="/assets/payment-method-1.png"
-                                    sx={{ borderRadius: '50px', height: 'auto', width: '35px' }}
-                                  />
-                                </Avatar>
-                                <div>
-                                  <Typography variant="body2">Mastercard</Typography>
-                                  <Typography color="text.secondary" variant="body2">
-                                    **** {order?.cardLast4}
-                                  </Typography>
-                                </div>
-                              </Stack>
-                            ),
-                          },
-                        ].map((item) => (
-                          <PropertyItem key={item.key} name={item.key} value={item.value} />
-                        ))}
-                      </PropertyList>
-                    </Card>
+                    <OrderManageForm />
                   </CardContent>
                 </Card>
                 <Card>
@@ -259,13 +206,67 @@ export function Page() {
                 <CardHeader
                   avatar={
                     <Avatar>
-                      <TimerIcon fontSize="var(--Icon-fontSize)" />
+                      <CreditCardIcon fontSize="var(--Icon-fontSize)" />
                     </Avatar>
                   }
-                  title="Timeline"
+                  title="Order information"
                 />
                 <CardContent>
-                  <EventsTimeline events={events} />
+                  <Card sx={{ borderRadius: 1 }} variant="outlined">
+                    <PropertyList divider={<Divider />} sx={{ '--PropertyItem-padding': '12px 24px' }}>
+                      {[
+                        { key: 'Customer', value: <Link variant="subtitle2">{order?.user?.name}</Link> },
+                        {
+                          key: 'Address',
+                          value: (
+                            <Typography variant="subtitle2">
+                              {order?.user?.address?.line1}
+                              <br />
+                              {order?.user?.address?.line2}
+                              {order?.user?.address?.city}
+                              <br />
+                              {order?.user?.address?.state}, {order?.user?.address?.country}
+                            </Typography>
+                          ),
+                        },
+                        {
+                          key: 'Date',
+                          value: dayjs(order?.createdAt).subtract(3, 'hour').format('MMMM D, YYYY hh:mm A'),
+                        },
+                        {
+                          key: 'Status',
+                          value: <Chip icon={icon} label={label} size="small" variant="outlined" />,
+                        },
+                        {
+                          key: 'Payment method',
+                          value: (
+                            <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
+                              <Avatar
+                                sx={{
+                                  bgcolor: 'var(--mui-palette-background-paper)',
+                                  boxShadow: 'var(--mui-shadows-8)',
+                                }}
+                              >
+                                <Box
+                                  component="img"
+                                  src="/assets/payment-method-1.png"
+                                  sx={{ borderRadius: '50px', height: 'auto', width: '35px' }}
+                                />
+                              </Avatar>
+                              <div>
+                                <Typography variant="body2">Mastercard</Typography>
+                                <Typography color="text.secondary" variant="body2">
+                                  **** {order?.cardLast4}
+                                </Typography>
+                              </div>
+                            </Stack>
+                          ),
+                        },
+                      ].map((item) => (
+                        <PropertyItem key={item.key} name={item.key} value={item.value} />
+                      ))}
+                    </PropertyList>
+                  </Card>
                 </CardContent>
               </Card>
             </Grid>
