@@ -10,10 +10,10 @@ import Stepper from '@mui/material/Stepper';
 import Typography from '@mui/material/Typography';
 import { Check as CheckIcon } from '@phosphor-icons/react/dist/ssr/Check';
 
-import { JobCategoryStep } from '../jobs/job-category-step';
-import { JobDescriptionStep } from '../jobs/job-description-step';
-import { JobDetailsStep } from '../jobs/job-details-step';
-import { JobPreview } from '../jobs/job-preview';
+import { OrderInProgressStep } from './order-inProgress-step';
+import { OrderProcessingStep } from './order-processing-step';
+import { OrderDispatchedStep } from './order-dispatched-step';
+import { OrderPreview } from './order-completed-preview';
 
 function StepIcon({ active, completed, icon }) {
   const highlight = active || completed;
@@ -51,14 +51,14 @@ export function OrderManageForm() {
 
   const steps = React.useMemo(() => {
     return [
-      { label: 'Cuisine en Cours 🧑🍳', content: <JobCategoryStep onBack={handleBack} onNext={handleNext} /> },
-      { label: 'Contrôle Qualité 🔍', content: <JobDetailsStep onBack={handleBack} onNext={handleNext} /> },
-      { label: 'Prête à Servir 🍽️', content: <JobDescriptionStep onBack={handleBack} onNext={handleComplete} /> },
+      { label: 'Order awaiting processing 🔍', content: <OrderInProgressStep onBack={handleBack} onNext={handleNext} /> },
+      { label: 'Cuisine en Cours 🧑🍳', content: <OrderProcessingStep onBack={handleBack} onNext={handleNext} /> },
+      { label: 'Prête à Servir 🍽️', content: <OrderDispatchedStep onBack={handleBack} onNext={handleComplete} /> },
     ];
   }, [handleBack, handleNext, handleComplete]);
 
   if (isComplete) {
-    return <JobPreview />;
+    return <OrderPreview />;
   }
 
   return (
