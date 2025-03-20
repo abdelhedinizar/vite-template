@@ -30,35 +30,10 @@ import { dayjs } from '@/lib/dayjs';
 import { RouterLink } from '@/components/core/link';
 import { PropertyItem } from '@/components/core/property-item';
 import { PropertyList } from '@/components/core/property-list';
-import { EventsTimeline } from '@/components/dashboard/order/events-timeline';
 import { LineItemsTable } from '@/components/dashboard/order/line-items-table';
 import { OrderManageForm } from '@/components/dashboard/order/order-manage-form';
 
 const metadata = { title: `Details | Orders | Dashboard | ${config.site.name}` };
-
-const events = [
-  {
-    id: 'EV-004',
-    createdAt: dayjs().subtract(3, 'hour').toDate(),
-    type: 'note_added',
-    author: { name: 'Fran Perez', avatar: '/assets/avatar-5.png' },
-    note: 'Customer states that the products have been damaged by the courier.',
-  },
-  {
-    id: 'EV-003',
-    createdAt: dayjs().subtract(12, 'hour').toDate(),
-    type: 'shipment_notice',
-    description: 'Left the package in front of the door',
-  },
-  {
-    id: 'EV-002',
-    createdAt: dayjs().subtract(18, 'hour').toDate(),
-    type: 'items_shipped',
-    carrier: 'USPS',
-    trackingNumber: '940011189',
-  },
-  { id: 'EV-001', createdAt: dayjs().subtract(21, 'hour').toDate(), type: 'order_created' },
-];
 
 const mapping = {
   pending: { label: 'Pending', icon: <ClockIcon color="var(--mui-palette-warning-main)" weight="fill" /> },
@@ -76,7 +51,7 @@ const mapping = {
 
 export function Page() {
   const { orderId } = useParams();
-  const [order, setOrder] = useState([]);
+  const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { label, icon } = mapping[order?.status] ?? { label: 'Unknown', icon: null };
@@ -144,10 +119,10 @@ export function Page() {
                         <TimerIcon fontSize="var(--Icon-fontSize)" />
                       </Avatar>
                     }
-                    title="Timeline"
+                    title="Order management"
                   />
                   <CardContent>
-                    <OrderManageForm />
+                    <OrderManageForm order={order} />
                   </CardContent>
                 </Card>
                 <Card>
@@ -163,7 +138,7 @@ export function Page() {
                     <Stack spacing={2}>
                       <Card sx={{ borderRadius: 1 }} variant="outlined">
                         <Box sx={{ overflowX: 'auto' }}>
-                          <LineItemsTable rows={order.dishes} />
+                          <LineItemsTable rows={order?.dishes} />
                         </Box>
                       </Card>
                       <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 3 }}>

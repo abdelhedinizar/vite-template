@@ -9,11 +9,12 @@ import StepLabel from '@mui/material/StepLabel';
 import Stepper from '@mui/material/Stepper';
 import Typography from '@mui/material/Typography';
 import { Check as CheckIcon } from '@phosphor-icons/react/dist/ssr/Check';
+import axios from 'axios';
 
+import { OrderPreview } from './order-completed-preview';
+import { OrderDispatchedStep } from './order-dispatched-step';
 import { OrderInProgressStep } from './order-inProgress-step';
 import { OrderProcessingStep } from './order-processing-step';
-import { OrderDispatchedStep } from './order-dispatched-step';
-import { OrderPreview } from './order-completed-preview';
 
 function StepIcon({ active, completed, icon }) {
   const highlight = active || completed;
@@ -33,32 +34,123 @@ function StepIcon({ active, completed, icon }) {
   );
 }
 
-export function OrderManageForm() {
-  const [activeStep, setActiveStep] = React.useState(0);
-  const [isComplete, setIsComplete] = React.useState(false);
+export function OrderManageForm({ order }) {
+  const getStatusStep = (status) => {
+    switch (status) {
+      case 'inProgress':
+        return 0;
+      case 'Processing':
+        return 1;
+      case 'Dispatched':
+        return 2;
+      case 'completed':
+        return 3;
+      default:
+        return 0;
+    }
+  };
+  const [activeStep, setActiveStep] = React.useState(getStatusStep(order?.status));
+  const [isComplete, setIsComplete] = React.useState(order?.status === 'completed');
 
+  const stepsTitles = [
+    {
+      active: {
+        title: 'Order Received 🛒',
+      },
+      completed: {
+        title: 'Order Processed ✅',
+      },
+    },
+    {
+      active: {
+        title: 'In the Kitchen 👨🔪',
+      },
+      completed: {
+        title: 'Cooking Completed 🍳🎯',
+      },
+    },
+    {
+      active: {
+        title: 'Ready to Serve 🍽️',
+      },
+      completed: {
+        title: 'Meal Enjoyed! 😊',
+      },
+    },
+  ];
+  const changeOrderStatus = async (status) => {
+    const token = localStorage.getItem('custom-auth-token');
+    const orderResponse = await axios.patch(
+      `${import.meta.env.VITE_REACT_APP_BACK_API_URL}/orders/${order?._id}`,
+      {
+        status,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json', // Set the content type
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return orderResponse;
+  };
+
+  const handleStepChange = (newStep) => {
+    switch (newStep) {
+      case 0:
+        changeOrderStatus('inProgress');
+        break;
+      case 1:
+        changeOrderStatus('Processing');
+        break;
+      case 2:
+        changeOrderStatus('Dispatched');
+        break;
+      default:
+        changeOrderStatus('inProgress');
+    }
+  };
   const handleNext = React.useCallback(() => {
-    setActiveStep((prevState) => prevState + 1);
-  }, []);
+    setActiveStep((prevState) => {
+      const newStep = prevState + 1;
+      handleStepChange(newStep);
+      return newStep;
+    });
+  }, [order, handleStepChange]);
 
   const handleBack = React.useCallback(() => {
-    setActiveStep((prevState) => prevState - 1);
-  }, []);
+    setActiveStep((prevState) => {
+      const newStep = prevState - 1;
+      handleStepChange(newStep);
+      return newStep;
+    });
+    handleStepChange();
+  }, [order, handleStepChange]);
 
   const handleComplete = React.useCallback(() => {
     setIsComplete(true);
-  }, []);
+    changeOrderStatus('completed');
+  }, [order, handleStepChange]);
 
   const steps = React.useMemo(() => {
     return [
-      { label: 'Order awaiting processing 🔍', content: <OrderInProgressStep onBack={handleBack} onNext={handleNext} /> },
-      { label: 'Cuisine en Cours 🧑🍳', content: <OrderProcessingStep onBack={handleBack} onNext={handleNext} /> },
-      { label: 'Prête à Servir 🍽️', content: <OrderDispatchedStep onBack={handleBack} onNext={handleComplete} /> },
+      {
+        label: activeStep < 1 ? stepsTitles[0].active.title : stepsTitles[0].completed.title,
+        content: <OrderInProgressStep onBack={handleBack} onNext={handleNext} />,
+      },
+      {
+        label: activeStep < 2 ? stepsTitles[1].active.title : stepsTitles[1].completed.title,
+        content: <OrderProcessingStep onBack={handleBack} onNext={handleNext} />,
+      },
+      {
+        label: activeStep < 3 ? stepsTitles[2].active.title : stepsTitles[2].completed.title,
+        content: <OrderDispatchedStep onBack={handleBack} onNext={handleComplete} />,
+      },
     ];
-  }, [handleBack, handleNext, handleComplete]);
+  }, [activeStep, handleBack, handleNext, handleComplete]);
 
   if (isComplete) {
-    return <OrderPreview />;
+    return <OrderPreview order={order} />;
   }
 
   return (

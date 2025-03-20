@@ -6,7 +6,9 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { Check as CheckIcon } from '@phosphor-icons/react/dist/ssr/Check';
 
-export function OrderPreview() {
+export function OrderPreview({ order }) {
+  const totalQuantity = order.dishes.reduce((total, dish) => total + dish.quantity, 0);
+
   return (
     <Stack spacing={2}>
       <Avatar
@@ -19,9 +21,9 @@ export function OrderPreview() {
         <CheckIcon fontSize="var(--Icon-fontSize)" />
       </Avatar>
       <div>
-        <Typography variant="h6">All done!</Typography>
+        <Typography variant="h6">Order Completed!</Typography>
         <Typography color="text.secondary" variant="body2">
-          Here&apos;s a preview of your newly created job
+          Here's a summary of your completed order
         </Typography>
       </div>
       <Card variant="outlined">
@@ -30,23 +32,17 @@ export function OrderPreview() {
           sx={{ alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between', px: 2, py: 1.5 }}
         >
           <div>
-            <Typography variant="subtitle1">Senior Backend Engineer</Typography>
+            <Typography variant="subtitle1">ORD-{order?.sequenceNumber}</Typography>
             <Typography color="text.secondary" variant="caption">
-              Remote possible •{' '}
-              {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', notation: 'compact' }).format(
-                150000
-              )}{' '}
-              -{' '}
-              {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', notation: 'compact' }).format(
-                210000
-              )}
+              Total: {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(order?.totalPrice)}{' '}
+              • {totalQuantity} items
             </Typography>
           </div>
           <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
             <Typography color="text.secondary" variant="caption">
-              1 minute ago
+              Completed 5 minutes ago
             </Typography>
-            <Button size="small">Apply</Button>
+            <Button size="small">View Details</Button>
           </Stack>
         </Stack>
       </Card>

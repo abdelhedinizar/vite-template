@@ -10,6 +10,7 @@ import Typography from '@mui/material/Typography';
 import { HourglassMedium as HourglassMediumIcon } from '@phosphor-icons/react/dist/ssr';
 import { CheckCircle as CheckCircleIcon } from '@phosphor-icons/react/dist/ssr/CheckCircle';
 import { Clock as ClockIcon } from '@phosphor-icons/react/dist/ssr/Clock';
+import { CookingPot as CookingPotIcon } from '@phosphor-icons/react/dist/ssr/CookingPot';
 import { Eye as EyeIcon } from '@phosphor-icons/react/dist/ssr/Eye';
 import { Image as ImageIcon } from '@phosphor-icons/react/dist/ssr/Image';
 import { Minus as MinusIcon } from '@phosphor-icons/react/dist/ssr/Minus';
@@ -126,6 +127,10 @@ const columns = [
         inProgress: {
           label: 'InProgress',
           icon: <HourglassMediumIcon color="var(--mui-palette-info-main)" weight="fill" />,
+        },
+        Processing: {
+          label: 'Processing',
+          icon: <CookingPotIcon color="var(--mui-palette-info-main)" weight="fill" />,
         },
       };
       const { label, icon } = mapping[row.status] ?? { label: 'Unknown', icon: null };
