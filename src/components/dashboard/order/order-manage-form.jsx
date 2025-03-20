@@ -49,7 +49,7 @@ export function OrderManageForm({ order }) {
         return 0;
     }
   };
-  const [activeStep, setActiveStep] = React.useState(getStatusStep(order?.status));
+  const [activeStep, setActiveStep] = React.useState(0);
   const [isComplete, setIsComplete] = React.useState(order?.status === 'completed');
 
   const stepsTitles = [
@@ -78,6 +78,13 @@ export function OrderManageForm({ order }) {
       },
     },
   ];
+
+  React.useEffect(() => {
+    if (order?.status) {
+      setActiveStep(getStatusStep(order.status));
+    }
+  }, [order?.status]);
+
   const changeOrderStatus = async (status) => {
     const token = localStorage.getItem('custom-auth-token');
     const orderResponse = await axios.patch(
@@ -147,7 +154,7 @@ export function OrderManageForm({ order }) {
         content: <OrderDispatchedStep onBack={handleBack} onNext={handleComplete} />,
       },
     ];
-  }, [activeStep, handleBack, handleNext, handleComplete]);
+  }, [activeStep, getStatusStep, handleBack, handleNext, handleComplete]);
 
   if (isComplete) {
     return <OrderPreview order={order} />;
