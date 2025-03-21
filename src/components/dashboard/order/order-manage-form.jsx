@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import { Check as CheckIcon } from '@phosphor-icons/react/dist/ssr/Check';
 import axios from 'axios';
 
+import { OrderCanceledPreview } from './order-canceled-preview';
 import { OrderPreview } from './order-completed-preview';
 import { OrderDispatchedStep } from './order-dispatched-step';
 import { OrderInProgressStep } from './order-inProgress-step';
@@ -45,6 +46,8 @@ export function OrderManageForm({ order }) {
         return 2;
       case 'completed':
         return 3;
+      case 'cancelled':
+        return -1;
       default:
         return 0;
     }
@@ -83,6 +86,9 @@ export function OrderManageForm({ order }) {
     if (order?.status) {
       setActiveStep(getStatusStep(order.status));
     }
+    if (order?.status === 'completed') {
+      setIsComplete(true);
+    }
   }, [order?.status]);
 
   const changeOrderStatus = async (status) => {
@@ -113,6 +119,12 @@ export function OrderManageForm({ order }) {
       case 2:
         changeOrderStatus('Dispatched');
         break;
+      case 3:
+        changeOrderStatus('completed');
+        break;
+      case -1:
+        changeOrderStatus('cancelled');
+        break;
       default:
         changeOrderStatus('inProgress');
     }
@@ -129,36 +141,48 @@ export function OrderManageForm({ order }) {
     setActiveStep((prevState) => {
       const newStep = prevState - 1;
       handleStepChange(newStep);
+      setIsComplete(false);
       return newStep;
     });
     handleStepChange();
   }, [order, handleStepChange]);
 
   const handleComplete = React.useCallback(() => {
-    setIsComplete(true);
-    changeOrderStatus('completed');
+    setActiveStep((prevState) => {
+      const newStep = prevState + 1;
+      setIsComplete(true);
+      handleStepChange(newStep);
+      return newStep;
+    });
   }, [order, handleStepChange]);
 
+  const handleReset = () => {
+    setActiveStep(0);
+    setIsComplete(false);
+    handleStepChange(0);
+  };
+
+  const handleCanceled = () => {
+    setActiveStep(-1);
+    setIsComplete(false);
+    handleStepChange(-1);
+  };
   const steps = React.useMemo(() => {
     return [
       {
         label: activeStep < 1 ? stepsTitles[0].active.title : stepsTitles[0].completed.title,
-        content: <OrderInProgressStep onBack={handleBack} onNext={handleNext} />,
+        content: <OrderInProgressStep onBack={handleBack} onNext={handleNext} onCancel={handleCanceled} />,
       },
       {
         label: activeStep < 2 ? stepsTitles[1].active.title : stepsTitles[1].completed.title,
-        content: <OrderProcessingStep onBack={handleBack} onNext={handleNext} />,
+        content: <OrderProcessingStep onBack={handleBack} onNext={handleNext} onCancel={handleCanceled} />,
       },
       {
         label: activeStep < 3 ? stepsTitles[2].active.title : stepsTitles[2].completed.title,
-        content: <OrderDispatchedStep onBack={handleBack} onNext={handleComplete} />,
+        content: <OrderDispatchedStep onBack={handleBack} onNext={handleComplete} onCancel={handleCanceled} />,
       },
     ];
   }, [activeStep, getStatusStep, handleBack, handleNext, handleComplete]);
-
-  if (isComplete) {
-    return <OrderPreview order={order} />;
-  }
 
   return (
     <Stepper
@@ -184,6 +208,16 @@ export function OrderManageForm({ order }) {
           </Step>
         );
       })}
+      {isComplete ? (
+        <Box sx={{ py: 3 }}>
+          <OrderPreview order={order} onBack={handleBack} />
+        </Box>
+      ) : null}
+      {activeStep === -1 ? (
+        <Box sx={{ py: 3 }}>
+          <OrderCanceledPreview order={order} reset={handleReset} />
+        </Box>
+      ) : null}
     </Stepper>
   );
 }

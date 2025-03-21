@@ -4,9 +4,9 @@ import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { Check as CheckIcon } from '@phosphor-icons/react/dist/ssr/Check';
+import { X as XIcon } from '@phosphor-icons/react/dist/ssr/X'; // Changed icon
 
-export function OrderPreview({ order, onBack }) {
+export function OrderCanceledPreview({ order, reset }) {
   const totalQuantity = order.dishes.reduce((total, dish) => total + dish.quantity, 0);
 
   return (
@@ -14,16 +14,16 @@ export function OrderPreview({ order, onBack }) {
       <Avatar
         sx={{
           '--Icon-fontSize': 'var(--icon-fontSize-lg)',
-          bgcolor: 'var(--mui-palette-success-main)',
-          color: 'var(--mui-palette-success-contrastText)',
+          bgcolor: 'var(--mui-palette-error-main)', // Changed color
+          color: 'var(--mui-palette-error-contrastText)', // Changed color
         }}
       >
-        <CheckIcon fontSize="var(--Icon-fontSize)" />
+        <XIcon fontSize="var(--Icon-fontSize)" />
       </Avatar>
       <div>
-        <Typography variant="h6">Order Completed!</Typography>
+        <Typography variant="h6">Order Canceled!</Typography> {/* Changed title */}
         <Typography color="text.secondary" variant="body2">
-          Here's a summary of your completed order
+          Here's a summary of your canceled order {/* Changed subtitle */}
         </Typography>
       </div>
       <Card variant="outlined">
@@ -40,10 +40,10 @@ export function OrderPreview({ order, onBack }) {
           </div>
           <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
             <Typography color="text.secondary" variant="caption">
-              Completed 5 minutes ago
+              Canceled 5 minutes ago {/* Changed status text */}
             </Typography>
-            <Button size="small" onClick={onBack}>
-              go back
+            <Button size="small" onClick={reset}>
+              Reset Order
             </Button>
           </Stack>
         </Stack>

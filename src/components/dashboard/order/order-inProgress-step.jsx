@@ -12,15 +12,28 @@ import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/Arr
 
 const categoryOptions = [
   { title: 'Processing', description: 'The order is currently being prepared by the kitchen.', value: 'In Progress' },
-  { title: 'Cancelled', description: 'The order has been cancelled and will not be processed.', value: 'Cancelled', sensitive: true },
+  {
+    title: 'Cancelled',
+    description: 'The order has been cancelled and will not be processed.',
+    value: 'Cancelled',
+    sensitive: true,
+  },
 ];
 
-export function OrderInProgressStep({ onNext }) {
+export function OrderInProgressStep({ onNext, onCancel }) {
   const [category, setCategory] = React.useState(categoryOptions[0].value);
 
   const handleCategoryChange = React.useCallback((newCategory) => {
     setCategory(newCategory);
   }, []);
+
+  const handleNextClick = React.useCallback(() => {
+    if (category === 'Cancelled') {
+      onCancel();
+    } else {
+      onNext();
+    }
+  }, [onNext, onCancel, category]);
 
   return (
     <Stack spacing={3}>
@@ -88,7 +101,7 @@ export function OrderInProgressStep({ onNext }) {
         ))}
       </RadioGroup>
       <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <Button endIcon={<ArrowRightIcon />} onClick={onNext} variant="contained">
+        <Button endIcon={<ArrowRightIcon />} onClick={handleNextClick} variant="contained">
           Continue
         </Button>
       </Box>

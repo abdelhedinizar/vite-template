@@ -7,20 +7,33 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
 import { ArrowLeft as ArrowLeftIcon } from '@phosphor-icons/react/dist/ssr/ArrowLeft';
+import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
 
 const categoryOptions = [
   { title: 'Completed', description: 'The order has been successfully delivered and completed.', value: 'Completed' },
-  { title: 'Cancelled', description: 'The order has been cancelled and will not be processed.', value: 'Cancelled', sensitive: true },
+  {
+    title: 'Cancelled',
+    description: 'The order has been cancelled and will not be processed.',
+    value: 'Cancelled',
+    sensitive: true,
+  },
 ];
 
-export function OrderDispatchedStep({ onBack,onNext }) {
+export function OrderDispatchedStep({ onBack, onNext, onCancel }) {
   const [category, setCategory] = React.useState(categoryOptions[0].value);
 
   const handleCategoryChange = React.useCallback((newCategory) => {
     setCategory(newCategory);
   }, []);
+
+  const handleNextClick = React.useCallback(() => {
+    if (category === 'Cancelled') {
+      onCancel();
+    } else {
+      onNext();
+    }
+  }, [onNext, onCancel, category]);
 
   return (
     <Stack spacing={3}>
@@ -91,7 +104,7 @@ export function OrderDispatchedStep({ onBack,onNext }) {
         <Button color="secondary" onClick={onBack} startIcon={<ArrowLeftIcon />}>
           Back
         </Button>
-        <Button endIcon={<ArrowRightIcon />} onClick={onNext} variant="contained">
+        <Button endIcon={<ArrowRightIcon />} onClick={handleNextClick} variant="contained">
           Continue
         </Button>
       </Stack>

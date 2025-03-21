@@ -8,12 +8,12 @@ import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { HourglassMedium as HourglassMediumIcon } from '@phosphor-icons/react/dist/ssr';
+import { BowlSteam as BowlSteamIcon } from '@phosphor-icons/react/dist/ssr/BowlSteam';
 import { CheckCircle as CheckCircleIcon } from '@phosphor-icons/react/dist/ssr/CheckCircle';
+import { ChefHat as ChefHatIcon } from '@phosphor-icons/react/dist/ssr/ChefHat';
 import { Clock as ClockIcon } from '@phosphor-icons/react/dist/ssr/Clock';
-import { CookingPot as CookingPotIcon } from '@phosphor-icons/react/dist/ssr/CookingPot';
 import { Eye as EyeIcon } from '@phosphor-icons/react/dist/ssr/Eye';
 import { Image as ImageIcon } from '@phosphor-icons/react/dist/ssr/Image';
-import { Minus as MinusIcon } from '@phosphor-icons/react/dist/ssr/Minus';
 import { XCircle as XCircleIcon } from '@phosphor-icons/react/dist/ssr/XCircle';
 
 import { paths } from '@/paths';
@@ -123,14 +123,14 @@ const columns = [
           icon: <CheckCircleIcon color="var(--mui-palette-success-main)" weight="fill" />,
         },
         cancelled: { label: 'Canceled', icon: <XCircleIcon color="var(--mui-palette-error-main)" weight="fill" /> },
-        rejected: { label: 'Rejected', icon: <MinusIcon color="var(--mui-palette-error-main)" /> },
+        Dispatched: { label: 'Dispatched', icon: <BowlSteamIcon color="var(--mui-palette-info-main)" /> },
         inProgress: {
           label: 'InProgress',
           icon: <HourglassMediumIcon color="var(--mui-palette-info-main)" weight="fill" />,
         },
         Processing: {
           label: 'Processing',
-          icon: <CookingPotIcon color="var(--mui-palette-info-main)" weight="fill" />,
+          icon: <ChefHatIcon color="var(--mui-palette-info-main)" weight="fill" />,
         },
       };
       const { label, icon } = mapping[row.status] ?? { label: 'Unknown', icon: null };
