@@ -9,7 +9,6 @@ import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid2';
 import IconButton from '@mui/material/IconButton';
-import LinearProgress from '@mui/material/LinearProgress';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -22,7 +21,9 @@ import { PencilSimple as PencilSimpleIcon } from '@phosphor-icons/react/dist/ssr
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
 import { ShieldWarning as ShieldWarningIcon } from '@phosphor-icons/react/dist/ssr/ShieldWarning';
 import { User as UserIcon } from '@phosphor-icons/react/dist/ssr/User';
+import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
+import { useParams } from 'react-router-dom';
 
 import { config } from '@/config';
 import { paths } from '@/paths';
@@ -37,6 +38,40 @@ import { ShippingAddress } from '@/components/dashboard/customer/shipping-addres
 const metadata = { title: `Details | Customers | Dashboard | ${config.site.name}` };
 
 export function Page() {
+  const { customerId } = useParams();
+  const [user, setUser] = React.useState(null);
+  const [relatedOrders, setRelatedOrders] = React.useState([]);
+
+  React.useEffect(() => {
+    async function fetchData() {
+      const token = localStorage.getItem('custom-auth-token');
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/users/${customerId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.status === 200) {
+          setUser(response.data.data.user);
+          const relatedOrdersResponse = await axios.get(
+            `${import.meta.env.VITE_REACT_APP_BACK_API_URL}/orders?user=${customerId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          if (relatedOrdersResponse.status === 200) {
+            setRelatedOrders(relatedOrdersResponse.data.data.orders);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        setUser(null);
+      }
+    }
+    fetchData();
+  }, [customerId]);
   return (
     <React.Fragment>
       <Helmet>
@@ -61,7 +96,7 @@ export function Page() {
                 variant="subtitle2"
               >
                 <ArrowLeftIcon fontSize="var(--icon-fontSize-md)" />
-                Customers
+                {user?.role === 'Staff' ? 'Staff' : 'Customers'}
               </Link>
             </div>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} sx={{ alignItems: 'flex-start' }}>
@@ -71,7 +106,7 @@ export function Page() {
                 </Avatar>
                 <div>
                   <Stack direction="row" spacing={2} sx={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                    <Typography variant="h4">Miron Vitold</Typography>
+                    <Typography variant="h5">{user?.name}</Typography>
                     <Chip
                       icon={<CheckCircleIcon color="var(--mui-palette-success-main)" weight="fill" />}
                       label="Active"
@@ -80,7 +115,7 @@ export function Page() {
                     />
                   </Stack>
                   <Typography color="text.secondary" variant="body1">
-                    miron.vitold@domain.com
+                    {user?.email}
                   </Typography>
                 </div>
               </Stack>
@@ -119,22 +154,10 @@ export function Page() {
                     sx={{ '--PropertyItem-padding': '12px 24px' }}
                   >
                     {[
-                      { key: 'Customer ID', value: <Chip label="USR-001" size="small" variant="soft" /> },
-                      { key: 'Name', value: 'Miron Vitold' },
-                      { key: 'Email', value: 'miron.vitold@domain.com' },
-                      { key: 'Phone', value: '(425) 434-5535' },
-                      { key: 'Company', value: 'Devias IO' },
-                      {
-                        key: 'Quota',
-                        value: (
-                          <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
-                            <LinearProgress sx={{ flex: '1 1 auto' }} value={50} variant="determinate" />
-                            <Typography color="text.secondary" variant="body2">
-                              50%
-                            </Typography>
-                          </Stack>
-                        ),
-                      },
+                      { key: 'Role', value: <Chip label={user?.role} size="small" variant="soft" /> },
+                      { key: 'Name', value: user?.name },
+                      { key: 'Email', value: user?.email },
+                      { key: 'Phone', value: user?.phoneNumber?.dialCode + user?.phoneNumber?.number },
                     ].map((item) => (
                       <PropertyItem key={item.key} name={item.key} value={item.value} />
                     ))}
@@ -172,46 +195,22 @@ export function Page() {
             >
               <Stack spacing={4}>
                 <Payments
-                  ordersValue={2069.48}
-                  payments={[
-                    {
-                      currency: 'USD',
-                      amount: 500,
-                      invoiceId: 'INV-005',
-                      status: 'completed',
-                      createdAt: dayjs().subtract(5, 'minute').subtract(1, 'hour').toDate(),
-                    },
-                    {
-                      currency: 'USD',
-                      amount: 324.5,
-                      invoiceId: 'INV-004',
-                      status: 'refunded',
-                      createdAt: dayjs().subtract(21, 'minute').subtract(2, 'hour').toDate(),
-                    },
-                    {
-                      currency: 'USD',
-                      amount: 746.5,
-                      invoiceId: 'INV-003',
-                      status: 'completed',
-                      createdAt: dayjs().subtract(7, 'minute').subtract(3, 'hour').toDate(),
-                    },
-                    {
-                      currency: 'USD',
-                      amount: 56.89,
-                      invoiceId: 'INV-002',
-                      status: 'completed',
-                      createdAt: dayjs().subtract(48, 'minute').subtract(4, 'hour').toDate(),
-                    },
-                    {
-                      currency: 'USD',
-                      amount: 541.59,
-                      invoiceId: 'INV-001',
-                      status: 'completed',
-                      createdAt: dayjs().subtract(31, 'minute').subtract(5, 'hour').toDate(),
-                    },
-                  ]}
-                  refundsValue={324.5}
-                  totalOrders={5}
+                  ordersValue={relatedOrders
+                    .filter((order) => order.paymentStatus === 'unpaid' || order.paymentStatus === 'paid')
+                    .reduce((acc, order) => acc + order.totalPrice, 0)}
+                  payments={relatedOrders.map((order) => {
+                    return {
+                      currency: 'EUR',
+                      amount: order.totalPrice,
+                      invoiceId: `INV-${order.sequenceNumber}`,
+                      status: order.status,
+                      createdAt: dayjs().subtract(5, 'minute').subtract(1, 'hour').toDate(order.createdAt),
+                    };
+                  })}
+                  refundsValue={relatedOrders
+                    .filter((order) => order.paymentStatus === 'refunded')
+                    .reduce((acc, order) => acc + order.totalPrice, 0)}
+                  totalOrders={relatedOrders.length}
                 />
                 <Card>
                   <CardHeader
