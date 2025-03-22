@@ -123,7 +123,7 @@ export function CustomerCreateForm() {
         });
         if (response.status === 201) {
           toast.success('Customer updated');
-          navigate(paths.dashboard.customers.details('1'));
+          navigate(paths.dashboard.customers.details(response.data.data.user._id));
         } else {
           toast.error('Failed to update customer');
         }
