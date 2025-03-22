@@ -38,11 +38,11 @@ export function Page() {
                 variant="subtitle2"
               >
                 <ArrowLeftIcon fontSize="var(--icon-fontSize-md)" />
-                Customers
+                functionary
               </Link>
             </div>
             <div>
-              <Typography variant="h4">Create customer</Typography>
+              <Typography variant="h4">Create a Staff member</Typography>
             </div>
           </Stack>
           <CustomerCreateForm />
