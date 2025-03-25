@@ -15,10 +15,7 @@ import Typography from '@mui/material/Typography';
 import { ArrowLeft as ArrowLeftIcon } from '@phosphor-icons/react/dist/ssr/ArrowLeft';
 import { CaretDown as CaretDownIcon } from '@phosphor-icons/react/dist/ssr/CaretDown';
 import { CheckCircle as CheckCircleIcon } from '@phosphor-icons/react/dist/ssr/CheckCircle';
-import { CreditCard as CreditCardIcon } from '@phosphor-icons/react/dist/ssr/CreditCard';
-import { House as HouseIcon } from '@phosphor-icons/react/dist/ssr/House';
 import { PencilSimple as PencilSimpleIcon } from '@phosphor-icons/react/dist/ssr/PencilSimple';
-import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
 import { ShieldWarning as ShieldWarningIcon } from '@phosphor-icons/react/dist/ssr/ShieldWarning';
 import { User as UserIcon } from '@phosphor-icons/react/dist/ssr/User';
 import axios from 'axios';
@@ -33,7 +30,6 @@ import { PropertyItem } from '@/components/core/property-item';
 import { PropertyList } from '@/components/core/property-list';
 import { Notifications } from '@/components/dashboard/customer/notifications';
 import { Payments } from '@/components/dashboard/customer/payments';
-import { ShippingAddress } from '@/components/dashboard/customer/shipping-address';
 
 const metadata = { title: `Details | Customers | Dashboard | ${config.site.name}` };
 
@@ -66,7 +62,7 @@ export function Page() {
           }
         }
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        alert('Error fetching user data. Please try again later.');
         setUser(null);
       }
     }
@@ -96,7 +92,7 @@ export function Page() {
                 variant="subtitle2"
               >
                 <ArrowLeftIcon fontSize="var(--icon-fontSize-md)" />
-                {user?.role === 'Staff' ? 'Staff' : 'Customers'}
+                {user?.role === 'Staff' ? 'Staff' : user?.role === 'admin' ? 'Staff' : 'Customers'}
               </Link>
             </div>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} sx={{ alignItems: 'flex-start' }}>
@@ -212,85 +208,6 @@ export function Page() {
                     .reduce((acc, order) => acc + order.totalPrice, 0)}
                   totalOrders={relatedOrders.length}
                 />
-                <Card>
-                  <CardHeader
-                    action={
-                      <Button color="secondary" startIcon={<PencilSimpleIcon />}>
-                        Edit
-                      </Button>
-                    }
-                    avatar={
-                      <Avatar>
-                        <CreditCardIcon fontSize="var(--Icon-fontSize)" />
-                      </Avatar>
-                    }
-                    title="Billing details"
-                  />
-                  <CardContent>
-                    <Card sx={{ borderRadius: 1 }} variant="outlined">
-                      <PropertyList divider={<Divider />} sx={{ '--PropertyItem-padding': '16px' }}>
-                        {[
-                          { key: 'Credit card', value: '**** 4142' },
-                          { key: 'Country', value: 'United States' },
-                          { key: 'State', value: 'Michigan' },
-                          { key: 'City', value: 'Southfield' },
-                          { key: 'Address', value: '1721 Bartlett Avenue, 48034' },
-                          { key: 'Tax ID', value: 'EU87956621' },
-                        ].map((item) => (
-                          <PropertyItem key={item.key} name={item.key} value={item.value} />
-                        ))}
-                      </PropertyList>
-                    </Card>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader
-                    action={
-                      <Button color="secondary" startIcon={<PlusIcon />}>
-                        Add
-                      </Button>
-                    }
-                    avatar={
-                      <Avatar>
-                        <HouseIcon fontSize="var(--Icon-fontSize)" />
-                      </Avatar>
-                    }
-                    title="Shipping addresses"
-                  />
-                  <CardContent>
-                    <Grid container spacing={3}>
-                      {[
-                        {
-                          id: 'ADR-001',
-                          country: 'United States',
-                          state: 'Michigan',
-                          city: 'Lansing',
-                          zipCode: '48933',
-                          street: '480 Haven Lane',
-                          primary: true,
-                        },
-                        {
-                          id: 'ADR-002',
-                          country: 'United States',
-                          state: 'Missouri',
-                          city: 'Springfield',
-                          zipCode: '65804',
-                          street: '4807 Lighthouse Drive',
-                        },
-                      ].map((address) => (
-                        <Grid
-                          key={address.id}
-                          size={{
-                            md: 6,
-                            xs: 12,
-                          }}
-                        >
-                          <ShippingAddress address={address} />
-                        </Grid>
-                      ))}
-                    </Grid>
-                  </CardContent>
-                </Card>
                 <Notifications
                   notifications={[
                     {

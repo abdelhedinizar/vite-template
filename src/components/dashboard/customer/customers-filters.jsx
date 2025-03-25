@@ -19,15 +19,18 @@ import { Option } from '@/components/core/option';
 
 import { useCustomersSelection } from './customers-selection-context';
 
-// The tabs should be generated using API data.
-const tabs = [
-  { label: 'All', value: '', count: 5 },
-  { label: 'Active', value: 'active', count: 3 },
-  { label: 'Pending', value: 'pending', count: 1 },
-  { label: 'Blocked', value: 'blocked', count: 1 },
-];
-
-export function CustomersFilters({ filters = {}, sortDir = 'desc' }) {
+export function CustomersFilters({ filters = {}, sortDir = 'desc', customers, onDelete }) {
+  // The tabs should be generated using API data.
+  const tabs = [
+    { label: 'All', value: '', count: customers.length },
+    { label: 'Admin', value: 'Admin', count: customers.filter((customer) => customer.role === 'admin').length },
+    { label: 'Staff', value: 'Staff', count: customers.filter((customer) => customer.role === 'Staff').length },
+    {
+      label: 'Customer',
+      value: 'Customer',
+      count: customers.filter((customer) => customer.role === 'User' || customer.role === 'UserWithoutAccount').length,
+    },
+  ];
   const { email, phone, status } = filters;
 
   const navigate = useNavigate();
@@ -58,6 +61,11 @@ export function CustomersFilters({ filters = {}, sortDir = 'desc' }) {
     },
     [navigate]
   );
+
+  const handleDeleteChange = React.useCallback(() => {
+    onDelete(selection);
+    selection.deselectAll();
+  }, [onDelete, selection]);
 
   const handleClearFilters = React.useCallback(() => {
     updateSearchParams({}, sortDir);
@@ -142,7 +150,7 @@ export function CustomersFilters({ filters = {}, sortDir = 'desc' }) {
             <Typography color="text.secondary" variant="body2">
               {selection.selected.size} selected
             </Typography>
-            <Button color="error" variant="contained">
+            <Button color="error" variant="contained" onClick={handleDeleteChange}>
               Delete
             </Button>
           </Stack>
