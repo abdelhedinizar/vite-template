@@ -70,11 +70,10 @@ const columns = [
     name: 'Name',
     width: '300px',
   },
-  { field: 'sku', name: 'SKU', width: '150px' },
-  { field: 'quantity', name: 'Stock', width: '100px' },
+  { field: 'ingredients', name: 'ingredients', width: '150px' },
   {
     formatter(row) {
-      return new Intl.NumberFormat('en-US', { style: 'currency', currency: row.currency }).format(row.price);
+      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(row.price);
     },
     name: 'Price',
     width: '150px',

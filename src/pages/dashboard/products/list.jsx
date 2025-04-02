@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { CircularProgress } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -6,6 +7,7 @@ import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
+import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
 import { useSearchParams } from 'react-router-dom';
 
@@ -20,7 +22,7 @@ import { ProductsTable } from '@/components/dashboard/product/products-table';
 
 const metadata = { title: `List | Products | Dashboard | ${config.site.name}` };
 
-const products = [
+const products1 = [
   {
     id: 'PRD-005',
     name: 'Soja & Co. Eucalyptus',
@@ -89,10 +91,45 @@ const products = [
 ];
 
 export function Page() {
+  const [products, setProducts] = React.useState([]);
+  const [error, setError] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const dishResponse = await axios.get(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/dishs?sort=-createdAt`);
+        setProducts(dishResponse.data.data.dishs);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
   const { category, previewId, sortDir, sku, status } = useExtractSearchParams();
 
   const orderedProducts = applySort(products, sortDir);
   const filteredProducts = applyFilters(orderedProducts, { category, sku, status });
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <Typography color="error">Error loading orders: {error.message}</Typography>
+      </Box>
+    );
+  }
 
   return (
     <React.Fragment>
@@ -156,10 +193,10 @@ function useExtractSearchParams() {
 function applySort(row, sortDir) {
   return row.sort((a, b) => {
     if (sortDir === 'asc') {
-      return a.createdAt.getTime() - b.createdAt.getTime();
+      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
     }
 
-    return b.createdAt.getTime() - a.createdAt.getTime();
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
 }
 
