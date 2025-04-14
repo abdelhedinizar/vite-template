@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchDishes } from '@/stores/slices/DishSlice';
+import { fetchDishes, fetchDishImages } from '@/stores/slices/DishSlice';
 import { Select, useMediaQuery, useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -42,12 +42,19 @@ export function Page() {
 
   useEffect(() => {
     if (status === 'idle') {
-      dispatch(fetchDishes());
-    }
-    if (selectedCategrie === 'All') {
-      setSelectedCategries(categories);
+      dispatch(fetchDishes()).then(() => {
+        dispatch(fetchDishImages());
+      });
     }
   }, [status, dispatch]);
+
+  useEffect(() => {
+    if (selectedCategrie === 'All') {
+      setSelectedCategries(categories);
+    } else {
+      setSelectedCategries(categories.filter((category) => category.name === selectedCategrie));
+    }
+  }, [categories, selectedCategrie]);
 
   return (
     <React.Fragment>

@@ -29,7 +29,6 @@ import { paths } from '@/paths';
 import { logger } from '@/lib/default-logger';
 import { RouterLink } from '@/components/core/link';
 import { Option } from '@/components/core/option';
-import { TextEditor } from '@/components/core/text-editor/text-editor';
 import { toast } from '@/components/core/toaster';
 
 const schema = zod.object({
@@ -39,10 +38,11 @@ const schema = zod.object({
     (val) => Number(val), // Convert input string to number
     zod.number().min(0.01, 'Price must be greater than 0')
   ),
-  category: zod.string().max(255).optional(),
+  category: zod.string().max(255).min(1, 'Category is required'),
   ingredients: zod.string().max(255).optional(),
-  description: zod.string().max(5000).optional(),
-  tags: zod.string().max(255).optional(),
+  status: zod.string().min(1, 'Status is required'),
+  SpiceLevel: zod.string().max(255).optional(),
+  PreparationTime: zod.string().max(255).optional(),
 });
 
 const defaultValues = {
@@ -51,8 +51,9 @@ const defaultValues = {
   price: '',
   category: '',
   ingredients: '',
-  description: '',
-  tags: '',
+  status: '',
+  SpiceLevel: '',
+  PreparationTime: '',
 };
 
 const ITEM_HEIGHT = 48;
@@ -120,8 +121,19 @@ export function ProductCreateForm() {
       try {
         // Make API request
         _.ingredients = ingrediant.join(', ');
-        toast.success('Product created');
-        navigate(paths.dashboard.products.list);
+        const token = localStorage.getItem('custom-auth-token');
+        const response = await axios.post(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/dishs`, _, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        if (response.status === 201) {
+          toast.success('Dish created');
+          navigate(paths.dashboard.products.details(response.data.data.dish._id));
+        } else {
+          toast.error('Failed to update customer');
+        }
       } catch (err) {
         logger.error(err);
         toast.error('Something went wrong!');
@@ -273,7 +285,7 @@ export function ProductCreateForm() {
                         <Select {...field}>
                           <Option value="">Select a category</Option>
                           {categories.map((category) => (
-                            <Option key={category._id} value={category._id}>
+                            <Option key={category._id} value={category.name}>
                               {category.name}
                             </Option>
                           ))}
@@ -322,42 +334,101 @@ export function ProductCreateForm() {
                     )}
                   />
                 </Grid>
-                <Grid size={12}>
+                <Grid
+                  size={{
+                    md: 6,
+                    xs: 12,
+                  }}
+                >
                   <Controller
                     control={control}
-                    name="description"
+                    name="status"
                     render={({ field }) => (
-                      <FormControl error={Boolean(errors.description)} fullWidth>
-                        <InputLabel>Description</InputLabel>
-                        <Box sx={{ mt: '8px', '& .tiptap-container': { height: '400px' } }}>
-                          <TextEditor
-                            content={field.value ?? ''}
-                            onUpdate={({ editor }) => {
-                              field.onChange(editor.getText());
-                            }}
-                            placeholder="Write something"
-                          />
-                        </Box>
-                        {errors.description ? (
-                          <FormHelperText error>{errors.description.message}</FormHelperText>
-                        ) : null}
+                      <FormControl error={Boolean(errors.status)} fullWidth>
+                        <InputLabel>Status</InputLabel>
+                        <Select {...field}>
+                          <Option value="">Select a category</Option>
+
+                          <Option key="Published" value="published">
+                            Published
+                          </Option>
+                          <Option key="draft" value="draft">
+                            Draft
+                          </Option>
+                        </Select>
+                        {errors.status ? <FormHelperText error>{errors.status.message}</FormHelperText> : null}
                       </FormControl>
                     )}
                   />
                 </Grid>
-                <Grid size={12}>
+                <Grid
+                  size={{
+                    md: 6,
+                    xs: 12,
+                  }}
+                >
                   <Controller
                     control={control}
-                    name="tags"
+                    name="SpiceLevel"
                     render={({ field }) => (
-                      <FormControl error={Boolean(errors.name)} fullWidth>
-                        <InputLabel>Tags</InputLabel>
-                        <OutlinedInput {...field} placeholder="e.g Modern, Clean, etc" />
-                        {errors.name ? (
-                          <FormHelperText>{errors.name.message}</FormHelperText>
-                        ) : (
-                          <FormHelperText>Tags must be separated by comma</FormHelperText>
-                        )}
+                      <FormControl error={Boolean(errors.SpiceLevel)} fullWidth>
+                        <InputLabel>Spice Level</InputLabel>
+                        <Select {...field}>
+                          <Option value="">Select a level</Option>
+
+                          <Option key="1" value="1">
+                            1
+                          </Option>
+                          <Option key="2" value="2">
+                            2
+                          </Option>
+                          <Option key="3" value="3">
+                            3
+                          </Option>
+                        </Select>
+                        {errors.SpiceLevel ? <FormHelperText error>{errors.SpiceLevel.message}</FormHelperText> : null}
+                      </FormControl>
+                    )}
+                  />
+                </Grid>
+
+                <Grid
+                  size={{
+                    md: 6,
+                    xs: 12,
+                  }}
+                >
+                  <Controller
+                    control={control}
+                    name="PreparationTime"
+                    render={({ field }) => (
+                      <FormControl error={Boolean(errors.PreparationTime)} fullWidth>
+                        <InputLabel>Preparation Time</InputLabel>
+                        <Select {...field}>
+                          <Option value="">Select a time</Option>
+
+                          <Option key="15" value="15">
+                            15
+                          </Option>
+                          <Option key="20" value="20">
+                            20
+                          </Option>
+                          <Option key="25" value="25">
+                            25
+                          </Option>
+                          <Option key="30" value="30">
+                            30
+                          </Option>
+                          <Option key="35" value="35">
+                            40
+                          </Option>
+                          <Option key="40" value="40">
+                            45
+                          </Option>
+                        </Select>
+                        {errors.PreparationTime ? (
+                          <FormHelperText error>{errors.PreparationTime.message}</FormHelperText>
+                        ) : null}
                       </FormControl>
                     )}
                   />
