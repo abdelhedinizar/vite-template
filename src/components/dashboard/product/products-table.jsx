@@ -95,8 +95,8 @@ const columns = [
     width: '150px',
   },
   {
-    formatter: () => (
-      <IconButton component={RouterLink} href={paths.dashboard.products.preview('1')}>
+    formatter: (row) => (
+      <IconButton component={RouterLink} href={paths.dashboard.products.details(row.id)}>
         <EyeIcon />
       </IconButton>
     ),
