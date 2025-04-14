@@ -110,6 +110,7 @@ const schema = zod.object({
   category: zod.string().max(255).optional(),
   type: zod.string().max(255).optional(),
   PreparationTime: zod.number().optional(),
+  SpiceLevel: zod.string().max(255).optional(),
   currency: zod.string().min(1, 'Currency is required').max(255),
   price: zod.number().min(0, 'Price must be greater than or equal to 0'),
   images: zod.array(zod.object({ url: zod.string(), fileName: zod.string() })),

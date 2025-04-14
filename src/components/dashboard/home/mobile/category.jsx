@@ -56,9 +56,9 @@ export default function CategoryLayout({ category, handleOpenCreateBasket }) {
               </div>
               <div>
                 <Typography variant="subtitle2">
-                  <Pepper weight="fill" fill="var(--mui-palette-error-main)" size={18} />
-                  <Pepper weight="fill" fill="var(--mui-palette-error-main)" size={18} />
-                  <Pepper weight="fill" fill="var(--mui-palette-error-main)" size={18} />
+                  {Array.from({ length: dish.SpiceLevel }).map((_, i) => (
+                    <Pepper key={i} weight="fill" fill="var(--mui-palette-error-main)" size={18} />
+                  ))}
                 </Typography>
               </div>
             </Stack>
@@ -85,7 +85,7 @@ export default function CategoryLayout({ category, handleOpenCreateBasket }) {
               Order now!
             </Button>
           </Stack>
-        </Card> 
+        </Card>
       ))}
     </Box>
   );

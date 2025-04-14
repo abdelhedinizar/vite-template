@@ -55,9 +55,9 @@ export default function CategoryLayout2({ category, handleOpenCreateBasket }) {
                   </div>
                   <div>
                     <Typography variant="subtitle2">
-                      <Pepper weight="fill" fill="var(--mui-palette-error-main)" size={22} />
-                      <Pepper weight="fill" fill="var(--mui-palette-error-main)" size={22} />
-                      <Pepper weight="fill" fill="var(--mui-palette-error-main)" size={22} />
+                      {Array.from({ length: dish.SpiceLevel }).map((_, i) => (
+                        <Pepper key={i} weight="fill" fill="var(--mui-palette-error-main)" size={22} />
+                      ))}
                     </Typography>
                     <Typography color="text.secondary" variant="body2">
                       Spice Level
