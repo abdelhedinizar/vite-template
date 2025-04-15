@@ -1,10 +1,9 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid2';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
+import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
 
 import { config } from '@/config';
@@ -18,6 +17,36 @@ import { Summary } from '@/components/dashboard/analytics/summary';
 const metadata = { title: `Analytics | Dashboard | ${config.site.name}` };
 
 export function Page() {
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const token = localStorage.getItem('custom-auth-token');
+        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/orders/stats`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setStats(response.data);
+        setLoading(false);
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading data: {error.message}</div>;
+  }
   return (
     <React.Fragment>
       <Helmet>
@@ -36,15 +65,10 @@ export function Page() {
             <Box sx={{ flex: '1 1 auto' }}>
               <Typography variant="h4">Analytics</Typography>
             </Box>
-            <div>
-              <Button startIcon={<PlusIcon />} variant="contained">
-                Add metrics
-              </Button>
-            </div>
           </Stack>
           <Grid container spacing={4}>
             <Grid size={12}>
-              <Summary />
+              <Summary stats={stats} />
             </Grid>
             <Grid
               size={{
