@@ -62,11 +62,7 @@ const columns = [
   {
     formatter: (row) => (
       <div>
-        <Typography variant="subtitle2">
-          {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(
-            row.sales
-          )}
-        </Typography>
+        <Typography variant="subtitle2">{new Intl.NumberFormat('en-US').format(row.totalSold)}</Typography>
       </div>
     ),
     name: 'Sales',

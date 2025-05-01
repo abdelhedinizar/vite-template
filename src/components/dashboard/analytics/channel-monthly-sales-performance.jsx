@@ -18,11 +18,11 @@ import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxi
 import { NoSsr } from '@/components/core/no-ssr';
 
 const bars = [
-  { name: 'Daily Order Count', dataKey: 'v1', color: 'var(--mui-palette-primary-main)' },
-  { name: 'Daily Order Revenue', dataKey: 'v2', color: 'var(--mui-palette-primary-100)' },
+  { name: 'Monthly Order Count', dataKey: 'v1', color: 'var(--mui-palette-primary-main)' },
+  { name: 'Monthly Order Revenue', dataKey: 'v2', color: 'var(--mui-palette-primary-100)' },
 ];
 
-export function ChannelSessionsVsBounce({ data }) {
+export function ChannelMonthlySalesPerformance({ data }) {
   const chartHeight = 300;
 
   return (
@@ -38,7 +38,7 @@ export function ChannelSessionsVsBounce({ data }) {
             <ChartLineIcon fontSize="var(--Icon-fontSize)" />
           </Avatar>
         }
-        title="Daily Sales Performance"
+        title="Monthly Sales Performance"
       />
       <CardContent>
         <Stack divider={<Divider />} spacing={3}>

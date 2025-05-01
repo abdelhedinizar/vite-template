@@ -17,13 +17,6 @@ export const route = {
   ),
   children: [
     {
-      index: true,
-      lazy: async () => {
-        const { Page } = await import('@/pages/dashboard/overview');
-        return { Component: Page };
-      },
-    },
-    {
       path: 'home',
       lazy: async () => {
         const { Page } = await import('@/pages/dashboard/home');
@@ -167,13 +160,6 @@ export const route = {
           },
         },
       ],
-    },
-    {
-      path: 'crypto',
-      lazy: async () => {
-        const { Page } = await import('@/pages/dashboard/crypto');
-        return { Component: Page };
-      },
     },
     {
       path: 'customers',

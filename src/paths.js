@@ -52,7 +52,6 @@ export const paths = {
     },
   },
   dashboard: {
-    overview: '/dashboard',
     home: '/dashboard/home',
     basket: '/dashboard/basket',
     basketDetail: '/dashboard/basket/detail',
@@ -81,7 +80,6 @@ export const paths = {
       compose: '/dashboard/chat/compose',
       thread: (threadType, threadId) => `/dashboard/chat/${threadType}/${threadId}`,
     },
-    crypto: '/dashboard/crypto',
     customers: {
       list: '/dashboard/customers',
       create: '/dashboard/customers/create',
