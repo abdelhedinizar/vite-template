@@ -21,7 +21,7 @@ export function SignUpResendButton({ children, email }) {
     setSubmitError(undefined);
 
     const redirectToUrl = new URL(paths.auth.supabase.callback, window.location.origin);
-    redirectToUrl.searchParams.set('next', paths.dashboard.overview);
+    redirectToUrl.searchParams.set('next', paths.dashboard.home);
 
     const { error } = await supabaseClient.auth.resend({
       email,

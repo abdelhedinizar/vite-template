@@ -65,7 +65,9 @@ export function Summary({ stats }) {
           }}
         >
           <Typography color="text.secondary">Annual income</Typography>
-          <Typography variant="h3">{new Intl.NumberFormat('en-US').format(stats.data.yearly.totalRevenue)} €</Typography>
+          <Typography variant="h3">
+            {new Intl.NumberFormat('en-US').format(stats.data.yearly.totalRevenue)} €
+          </Typography>
           <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
             {stats.data.yearly.increasePercentRevenue > 0 ? (
               <TrendUpIcon color="var(--mui-palette-success-main)" fontSize="var(--icon-fontSize-md)" />
@@ -104,16 +106,33 @@ export function Summary({ stats }) {
           }}
         >
           <Typography color="text.secondary">Number of monthly orders</Typography>
-          <Typography variant="h3">
-            {new Intl.NumberFormat('en-US').format(stats.data.monthly.totalOrders)}
-          </Typography>
+          <Typography variant="h3">{new Intl.NumberFormat('en-US').format(stats.data.monthly.totalOrders)}</Typography>
           <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-            <TrendDownIcon color="var(--mui-palette-error-main)" fontSize="var(--icon-fontSize-md)" />
+            {stats.data.monthly.totalOrders > 0 ? (
+              <TrendUpIcon color="var(--mui-palette-success-main)" fontSize="var(--icon-fontSize-md)" />
+            ) : (
+              <TrendDownIcon color="var(--mui-palette-error-main)" fontSize="var(--icon-fontSize-md)" />
+            )}
             <Typography color="text.secondary" variant="body2">
-              <Typography color="error.main" component="span" variant="subtitle2">
-                {new Intl.NumberFormat('en-US', { style: 'percent', maximumFractionDigits: 2 }).format(stats.data.monthly.increasePercentOrders/ 100)}
-              </Typography>{' '}
-              decrease vs last month
+              {stats.data.monthly.increasePercentOrders > 0 ? (
+                <>
+                  <Typography color="success.main" component="span" variant="subtitle2">
+                    {new Intl.NumberFormat('en-US', { style: 'percent', maximumFractionDigits: 2 }).format(
+                      stats.data.monthly.increasePercentOrders / 100
+                    )}
+                  </Typography>{' '}
+                  increase vs last year
+                </>
+              ) : (
+                <>
+                  <Typography color="error.main" component="span" variant="subtitle2">
+                    {new Intl.NumberFormat('en-US', { style: 'percent', maximumFractionDigits: 2 }).format(
+                      Math.abs(stats.data.monthly.increasePercentOrders) / 100
+                    )}
+                  </Typography>{' '}
+                  decrease vs last last
+                </>
+              )}
             </Typography>
           </Stack>
         </Stack>
@@ -121,12 +140,31 @@ export function Summary({ stats }) {
           <Typography color="text.secondary">Number of Annual orders</Typography>
           <Typography variant="h3">{new Intl.NumberFormat('en-US').format(stats.data.yearly.totalOrders)}</Typography>
           <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-            <TrendUpIcon color="var(--mui-palette-success-main)" fontSize="var(--icon-fontSize-md)" />
+            {stats.data.yearly.totalOrders > 0 ? (
+              <TrendUpIcon color="var(--mui-palette-success-main)" fontSize="var(--icon-fontSize-md)" />
+            ) : (
+              <TrendDownIcon color="var(--mui-palette-error-main)" fontSize="var(--icon-fontSize-md)" />
+            )}
             <Typography color="text.secondary" variant="body2">
-              <Typography color="success.main" component="span" variant="subtitle2">
-                {new Intl.NumberFormat('en-US').format(stats.data.yearly.increasePercentOrders)}
-              </Typography>{' '}
-              increase vs last year
+              {stats.data.yearly.increasePercentOrders > 0 ? (
+                <>
+                  <Typography color="success.main" component="span" variant="subtitle2">
+                    {new Intl.NumberFormat('en-US', { style: 'percent', maximumFractionDigits: 2 }).format(
+                      stats.data.yearly.increasePercentOrders / 100
+                    )}
+                  </Typography>{' '}
+                  increase vs last year
+                </>
+              ) : (
+                <>
+                  <Typography color="error.main" component="span" variant="subtitle2">
+                    {new Intl.NumberFormat('en-US', { style: 'percent', maximumFractionDigits: 2 }).format(
+                      Math.abs(stats.data.yearly.increasePercentOrders) / 100
+                    )}
+                  </Typography>{' '}
+                  decrease vs last last
+                </>
+              )}
             </Typography>
           </Stack>
         </Stack>

@@ -62,7 +62,7 @@ export function UpdatePasswordForm({ oobCode }) {
         return;
       }
 
-      navigate(paths.dashboard.overview);
+      navigate(paths.dashboard.home);
     },
     [firebaseAuth, oobCode, navigate, setError]
   );

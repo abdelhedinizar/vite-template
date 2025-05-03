@@ -9,12 +9,8 @@ import { Helmet } from 'react-helmet-async';
 import { config } from '@/config';
 import { ChannelMonthlySalesPerformance } from '@/components/dashboard/analytics/channel-monthly-sales-performance';
 import { ChannelSessionsVsBounce } from '@/components/dashboard/analytics/channel-sessions-vs-bounce-rate';
-import { Devices } from '@/components/dashboard/analytics/devices';
-import { InboundOutbound } from '@/components/dashboard/analytics/inbound-outbound';
-import { Insight } from '@/components/dashboard/analytics/insight';
 import { Summary } from '@/components/dashboard/analytics/summary';
 import { CostBreakdown } from '@/components/dashboard/e-commerce/cost-breakdown';
-import { Stats } from '@/components/dashboard/e-commerce/stats';
 import { TopProducts } from '@/components/dashboard/e-commerce/top-products';
 
 const metadata = { title: `Analytics | Dashboard | ${config.site.name}` };

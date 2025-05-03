@@ -9,7 +9,6 @@ export const layoutConfig = {
         { key: 'home', title: 'Home', href: paths.dashboard.home, icon: 'house' },
         { key: 'orders', title: 'Orders', href: paths.dashboard.ordersDetail, icon: 'receipt' },
         { key: 'analytics', title: 'Analytics', href: paths.dashboard.analytics, icon: 'chart-pie' },
-        { key: 'ecommerce', title: 'E-commerce', href: paths.dashboard.eCommerce, icon: 'cube' },
       ],
     },
     {

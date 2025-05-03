@@ -188,13 +188,6 @@ export const route = {
       ],
     },
     {
-      path: 'e-commerce',
-      lazy: async () => {
-        const { Page } = await import('@/pages/dashboard/e-commerce');
-        return { Component: Page };
-      },
-    },
-    {
       path: 'file-storage',
       lazy: async () => {
         const { Page } = await import('@/pages/dashboard/file-storage');

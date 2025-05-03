@@ -85,7 +85,6 @@ export const paths = {
       create: '/dashboard/customers/create',
       details: (customerId) => `/dashboard/customers/${customerId}`,
     },
-    eCommerce: '/dashboard/e-commerce',
     fileStorage: '/dashboard/file-storage',
     i18n: '/dashboard/i18n',
     invoices: {
