@@ -11,15 +11,15 @@ import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { ChartLine as ChartLineIcon } from '@phosphor-icons/react/dist/ssr/ChartLine';
 import { DotsThree as DotsThreeIcon } from '@phosphor-icons/react/dist/ssr/DotsThree';
-import { ShareNetwork as ShareNetworkIcon } from '@phosphor-icons/react/dist/ssr/ShareNetwork';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 import { NoSsr } from '@/components/core/no-ssr';
 
 const bars = [
-  { name: 'Sessions', dataKey: 'v1', color: 'var(--mui-palette-primary-main)' },
-  { name: 'Bounce rate', dataKey: 'v2', color: 'var(--mui-palette-primary-100)' },
+  { name: 'Daily Order Count', dataKey: 'v1', color: 'var(--mui-palette-primary-main)' },
+  { name: 'Daily Order Revenue', dataKey: 'v2', color: 'var(--mui-palette-primary-100)' },
 ];
 
 export function ChannelSessionsVsBounce({ data }) {
@@ -35,10 +35,10 @@ export function ChannelSessionsVsBounce({ data }) {
         }
         avatar={
           <Avatar>
-            <ShareNetworkIcon fontSize="var(--Icon-fontSize)" />
+            <ChartLineIcon fontSize="var(--Icon-fontSize)" />
           </Avatar>
         }
-        title="Sessions vs bounce rate by channel"
+        title="Daily Sales Performance"
       />
       <CardContent>
         <Stack divider={<Divider />} spacing={3}>

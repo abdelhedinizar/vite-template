@@ -10,14 +10,7 @@ import { Camera as CameraIcon } from '@phosphor-icons/react/dist/ssr/Camera';
 import { Paperclip as PaperclipIcon } from '@phosphor-icons/react/dist/ssr/Paperclip';
 import { PaperPlaneTilt as PaperPlaneTiltIcon } from '@phosphor-icons/react/dist/ssr/PaperPlaneTilt';
 
-const user = {
-  id: 'USR-000',
-  name: 'Sofia Rivers',
-  avatar: '/assets/avatar.png',
-  email: 'sofia@devias.io',
-};
-
-export function MessageAdd({ disabled = false, onSend }) {
+export function MessageAdd({ disabled = false, onSend, user, onChange }) {
   const [content, setContent] = React.useState('');
   const fileInputRef = React.useRef(null);
 
@@ -27,6 +20,7 @@ export function MessageAdd({ disabled = false, onSend }) {
 
   const handleChange = React.useCallback((event) => {
     setContent(event.target.value);
+    onChange?.(event.target.value !== '');
   }, []);
 
   const handleSend = React.useCallback(() => {
@@ -34,7 +28,16 @@ export function MessageAdd({ disabled = false, onSend }) {
       return;
     }
 
-    onSend?.('text', content);
+    const message = {
+      id: 'MSG-002',
+      threadId: 'TRD-004',
+      type: 'text',
+      content,
+      author: { id: user._id, name: user.firstname, avatar: user.avatar },
+      createdAt: new Date(),
+    };
+    onSend?.(message);
+    onChange?.(false);
     setContent('');
   }, [content, onSend]);
 

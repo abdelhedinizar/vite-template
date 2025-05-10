@@ -52,7 +52,12 @@ export const paths = {
     },
   },
   dashboard: {
-    overview: '/dashboard',
+    home: '/dashboard/home',
+    basket: '/dashboard/basket',
+    basketDetail: '/dashboard/basket/detail',
+    basketSuccess: '/dashboard/basket/success',
+    waiter: '/dashboard/waiter',
+    ordersDetail: '/dashboard/orders',
     settings: {
       account: '/dashboard/settings/account',
       billing: '/dashboard/settings/billing',
@@ -75,13 +80,11 @@ export const paths = {
       compose: '/dashboard/chat/compose',
       thread: (threadType, threadId) => `/dashboard/chat/${threadType}/${threadId}`,
     },
-    crypto: '/dashboard/crypto',
     customers: {
       list: '/dashboard/customers',
       create: '/dashboard/customers/create',
       details: (customerId) => `/dashboard/customers/${customerId}`,
     },
-    eCommerce: '/dashboard/e-commerce',
     fileStorage: '/dashboard/file-storage',
     i18n: '/dashboard/i18n',
     invoices: {
@@ -107,6 +110,7 @@ export const paths = {
     },
     orders: {
       list: '/dashboard/orders',
+      todaylist: '/dashboard/orders/today',
       create: '/dashboard/orders/create',
       preview: (orderId) => `/dashboard/orders?previewId=${orderId}`,
       details: (orderId) => `/dashboard/orders/${orderId}`,

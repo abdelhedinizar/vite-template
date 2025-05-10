@@ -77,7 +77,7 @@ export function Hero() {
             </Typography>
           </Stack>
           <Stack direction="row" spacing={2} sx={{ justifyContent: 'center' }}>
-            <Button component={RouterLink} href={paths.dashboard.overview} variant="contained">
+            <Button component={RouterLink} href={paths.dashboard.home} variant="contained">
               Dashboard
             </Button>
             <Button

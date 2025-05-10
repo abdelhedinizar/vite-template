@@ -1,17 +1,19 @@
 'use client';
 
 import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { HourglassMedium as HourglassMediumIcon } from '@phosphor-icons/react/dist/ssr';
+import { BowlSteam as BowlSteamIcon } from '@phosphor-icons/react/dist/ssr/BowlSteam';
 import { CheckCircle as CheckCircleIcon } from '@phosphor-icons/react/dist/ssr/CheckCircle';
+import { ChefHat as ChefHatIcon } from '@phosphor-icons/react/dist/ssr/ChefHat';
 import { Clock as ClockIcon } from '@phosphor-icons/react/dist/ssr/Clock';
 import { Eye as EyeIcon } from '@phosphor-icons/react/dist/ssr/Eye';
-import { Minus as MinusIcon } from '@phosphor-icons/react/dist/ssr/Minus';
+import { Image as ImageIcon } from '@phosphor-icons/react/dist/ssr/Image';
 import { XCircle as XCircleIcon } from '@phosphor-icons/react/dist/ssr/XCircle';
 
 import { paths } from '@/paths';
@@ -24,7 +26,55 @@ import { useOrdersSelection } from './orders-selection-context';
 const columns = [
   {
     formatter: (row) => (
+      <IconButton component={RouterLink} to={paths.dashboard.orders.preview(row.id)}>
+        <EyeIcon />
+      </IconButton>
+    ),
+    name: 'Actions',
+    hideName: true,
+    width: '40px',
+    align: 'center',
+  },
+  {
+    formatter: (row) => (
       <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
+        {(() => {
+          let dishImage = row.dishes[0]?.dish?.image;
+          if (dishImage && dishImage.startsWith('../')) {
+            dishImage = dishImage.replace('..', '');
+          }
+          return row.dishes[0]?.dish?.image ? (
+            <Box
+              sx={{
+                alignItems: 'center',
+                bgcolor: 'var(--mui-palette-background-level2)',
+                backgroundImage: `url(${dishImage})`,
+                backgroundPosition: 'center',
+                backgroundSize: 'cover',
+                borderRadius: 1,
+                display: 'flex',
+                height: '80px',
+                justifyContent: 'center',
+                overflow: 'hidden',
+                width: '80px',
+              }}
+            />
+          ) : (
+            <Box
+              sx={{
+                alignItems: 'center',
+                bgcolor: 'var(--mui-palette-background-level2)',
+                borderRadius: 1,
+                display: 'flex',
+                height: '80px',
+                justifyContent: 'center',
+                width: '80px',
+              }}
+            >
+              <ImageIcon fontSize="var(--icon-fontSize-lg)" />
+            </Box>
+          );
+        })()}
         <Box
           sx={{
             bgcolor: 'var(--mui-palette-background-level1)',
@@ -34,77 +84,35 @@ const columns = [
             textAlign: 'center',
           }}
         >
-          <Typography variant="caption">{dayjs(row.createdAt).format('MMM').toUpperCase()}</Typography>
-          <Typography variant="h6">{dayjs(row.createdAt).format('D')}</Typography>
+          <Typography variant="caption">{dayjs(row?.createdAt).format('MMM').toUpperCase()}</Typography>
+          <Typography variant="h6">{dayjs(row?.createdAt).format('D')}</Typography>
         </Box>
         <div>
           <Link
             color="text.primary"
             component={RouterLink}
-            href={paths.dashboard.orders.preview('1')}
+            href={paths.dashboard.orders.preview(row.id)}
             sx={{ cursor: 'pointer' }}
             variant="subtitle2"
           >
-            {row.id}
+            <Typography color="text.secondary" variant="body2">
+              {row?.user?.name}{' '}
+            </Typography>
+            {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(row?.totalPrice)}
           </Link>
-          <Typography color="text.secondary" variant="body2">
-            {row.lineItems} products •{' '}
-            <Box component="span" sx={{ whiteSpace: 'nowrap' }}>
-              {new Intl.NumberFormat('en-US', { style: 'currency', currency: row.currency }).format(row.totalAmount)}
-            </Box>
-          </Typography>
+          {row?.dishes?.map((dish) => (
+            <Typography color="text.secondary" variant="body2" key={dish.id}>
+              {dish.quantity} {dish?.dish?.name} •{' '}
+              <Box component="span" sx={{ whiteSpace: 'nowrap' }}>
+                {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(dish?.price)}
+              </Box>
+            </Typography>
+          ))}
         </div>
       </Stack>
     ),
     name: 'Order',
-    width: '250px',
-  },
-  {
-    formatter: (row) => {
-      if (!row.paymentMethod) return null;
-
-      const mapping = {
-        mastercard: { name: 'Mastercard', logo: '/assets/payment-method-1.png' },
-        visa: { name: 'Visa', logo: '/assets/payment-method-2.png' },
-        amex: { name: 'American Express', logo: '/assets/payment-method-3.png' },
-        applepay: { name: 'Apple Pay', logo: '/assets/payment-method-4.png' },
-        googlepay: { name: 'Google Pay', logo: '/assets/payment-method-5.png' },
-      };
-      const { name, logo } = mapping[row.paymentMethod.type] ?? { name: 'Unknown', logo: null };
-
-      return (
-        <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
-          <Avatar sx={{ bgcolor: 'var(--mui-palette-background-paper)', boxShadow: 'var(--mui-shadows-8)' }}>
-            <Box component="img" src={logo} sx={{ borderRadius: '50px', height: 'auto', width: '35px' }} />
-          </Avatar>
-          <div>
-            <Typography variant="body2">{name}</Typography>
-            {row.paymentMethod.last4 ? (
-              <Typography color="text.secondary" variant="body2">
-                **** {row.paymentMethod.last4}
-              </Typography>
-            ) : null}
-          </div>
-        </Stack>
-      );
-    },
-    name: 'Payment Method',
-    width: '200px',
-  },
-  {
-    formatter: (row) => (
-      <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
-        <Avatar src={row.customer.avatar} />
-        <div>
-          <Typography variant="subtitle2">{row.customer.name}</Typography>
-          <Typography color="text.secondary" variant="body2">
-            {row.customer.email}
-          </Typography>
-        </div>
-      </Stack>
-    ),
-    name: 'Customer',
-    width: '250px',
+    width: '420px',
   },
   {
     formatter: (row) => {
@@ -114,8 +122,16 @@ const columns = [
           label: 'Completed',
           icon: <CheckCircleIcon color="var(--mui-palette-success-main)" weight="fill" />,
         },
-        canceled: { label: 'Canceled', icon: <XCircleIcon color="var(--mui-palette-error-main)" weight="fill" /> },
-        rejected: { label: 'Rejected', icon: <MinusIcon color="var(--mui-palette-error-main)" /> },
+        cancelled: { label: 'Canceled', icon: <XCircleIcon color="var(--mui-palette-error-main)" weight="fill" /> },
+        Dispatched: { label: 'Dispatched', icon: <BowlSteamIcon color="var(--mui-palette-info-main)" /> },
+        inProgress: {
+          label: 'InProgress',
+          icon: <HourglassMediumIcon color="var(--mui-palette-info-main)" weight="fill" />,
+        },
+        Processing: {
+          label: 'Processing',
+          icon: <ChefHatIcon color="var(--mui-palette-info-main)" weight="fill" />,
+        },
       };
       const { label, icon } = mapping[row.status] ?? { label: 'Unknown', icon: null };
 
@@ -124,17 +140,6 @@ const columns = [
     name: 'Status',
     width: '100px',
   },
-  {
-    formatter: () => (
-      <IconButton component={RouterLink} href={paths.dashboard.orders.preview('1')}>
-        <EyeIcon />
-      </IconButton>
-    ),
-    name: 'Actions',
-    hideName: true,
-    width: '100px',
-    align: 'right',
-  },
 ];
 
 export function OrdersTable({ rows }) {
@@ -142,21 +147,8 @@ export function OrdersTable({ rows }) {
 
   return (
     <React.Fragment>
-      <DataTable
-        columns={columns}
-        onDeselectAll={deselectAll}
-        onDeselectOne={(_, row) => {
-          deselectOne(row.id);
-        }}
-        onSelectAll={selectAll}
-        onSelectOne={(_, row) => {
-          selectOne(row.id);
-        }}
-        rows={rows}
-        selectable
-        selected={selected}
-      />
-      {!rows.length ? (
+      <DataTable columns={columns} rows={rows} />
+      {!rows?.length ? (
         <Box sx={{ p: 3 }}>
           <Typography color="text.secondary" sx={{ textAlign: 'center' }} variant="body2">
             No orders found

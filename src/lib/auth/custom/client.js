@@ -1,27 +1,23 @@
 'use client';
 
-function generateToken() {
-  const arr = new Uint8Array(12);
-  window.crypto.getRandomValues(arr);
-  return Array.from(arr, (v) => v.toString(16).padStart(2, '0')).join('');
-}
+import axios from 'axios';
 
-const user = {
-  id: 'USR-000',
-  avatar: '/assets/avatar.png',
-  firstName: 'Sofia',
-  lastName: 'Rivers',
-  email: 'sofia@devias.io',
-};
+let user;
 
 class AuthClient {
   async signUp(_) {
     // Make API request
-
-    // We do not handle the API, so we'll just generate a token and store it in localStorage.
-    const token = generateToken();
-    localStorage.setItem('custom-auth-token', token);
-
+    const {firstname, lastname, email, password, confirmPassword} = _;
+  try {
+      const response = await axios.post(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/users/signup`, {
+        firstname,lastname,email,
+        password,confirmPassword
+      });
+      const { token } = response.data.data; // Assuming the API returns a `token`
+      localStorage.setItem('custom-auth-token', token);
+    } catch (error) {
+      return { error: 'Invalid credentials' };
+    }
     return {};
   }
 
@@ -32,16 +28,16 @@ class AuthClient {
   async signInWithPassword(params) {
     const { email, password } = params;
 
-    // Make API request
-
-    // We do not handle the API, so we'll check if the credentials match with the hardcoded ones.
-    if (email !== 'sofia@devias.io' || password !== 'Secret1') {
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/users/signin`, {
+        email,
+        password,
+      });
+      const { token } = response.data; // Assuming the API returns a `token`
+      localStorage.setItem('custom-auth-token', token);
+    } catch (error) {
       return { error: 'Invalid credentials' };
     }
-
-    const token = generateToken();
-    localStorage.setItem('custom-auth-token', token);
-
     return {};
   }
 
@@ -56,10 +52,25 @@ class AuthClient {
   async getUser() {
     // Make API request
 
-    // We do not handle the API, so just check if we have a token in localStorage.
     const token = localStorage.getItem('custom-auth-token');
 
     if (!token) {
+      return { data: null };
+    }
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/users/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      user = response.data.data.user;
+      const [firstName, lastName] = user.name.split(' ');
+      user.firstName = firstName;
+      user.lastName = lastName;
+      user.avatar = user.avatar || '/assets/avatar-10.png';
+      localStorage.setItem('user', JSON.stringify(user));
+    } catch (e) {
       return { data: null };
     }
 

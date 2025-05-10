@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { Autocomplete, TextField } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -19,10 +20,92 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { Camera as CameraIcon } from '@phosphor-icons/react/dist/ssr/Camera';
 import { User as UserIcon } from '@phosphor-icons/react/dist/ssr/User';
+import axios from 'axios';
 
 import { Option } from '@/components/core/option';
 
-export function AccountDetails() {
+const countries = [
+  { code: 'US', label: 'United States' },
+  { code: 'FR', label: 'France' },
+  { code: 'DE', label: 'Germany' },
+  { code: 'ES', label: 'Spain' },
+  { code: 'IN', label: 'India' },
+  { code: 'CA', label: 'Canada' },
+  { code: 'GB', label: 'United Kingdom' },
+  // Add more countries as needed
+];
+
+export function AccountDetails({ user }) {
+  const [selectedCountry, setSelectedCountry] = React.useState(
+    countries.find((country) => country.code === user.address?.country) || null
+  );
+  const [updatedUser, setUpdatedUser] = React.useState(user);
+
+  const flag = {
+    '+1': '/assets/flag-us.svg',
+    '+33': '/assets/flag-fr.svg',
+    '+34': '/assets/flag-es.svg',
+    '+49': '/assets/flag-de.svg',
+  };
+
+  const handleInputChange = (field, value) => {
+    setUpdatedUser((prevUser) => ({
+      ...prevUser,
+      [field]: value,
+    }));
+  };
+
+  // Handle address changes
+  const handleAddressChange = (field, value) => {
+    setUpdatedUser((prevUser) => ({
+      ...prevUser,
+      address: {
+        ...prevUser.address,
+        [field]: value,
+      },
+    }));
+  };
+
+  // Handle phone number changes
+  const handlePhoneNumberChange = (field, value) => {
+    setUpdatedUser((prevUser) => ({
+      ...prevUser,
+      phoneNumber: {
+        ...prevUser.phoneNumber,
+        [field]: value,
+      },
+    }));
+  };
+
+  // Handle country change in the autocomplete
+  const handleCountryChange = (event, newValue) => {
+    setSelectedCountry(newValue);
+    handleAddressChange('country', newValue?.code || '');
+  };
+
+  const handleSaveChanges = async () => {
+    try {
+      const token = localStorage.getItem('custom-auth-token');
+
+      const payload = {
+        phoneNumber: updatedUser.phoneNumber,
+        address: updatedUser.address,
+      };
+
+      // Send the request to update the user
+      const response = await axios.patch(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/users/me`, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      console.log('User updated successfully:', response.data);
+    } catch (error) {
+      console.error('Failed to update user:', error.response?.data?.message || error.message);
+    }
+  };
+
   return (
     <Card>
       <CardHeader
@@ -71,7 +154,7 @@ export function AccountDetails() {
                     </Typography>
                   </Stack>
                 </Box>
-                <Avatar src="/assets/avatar.png" sx={{ '--Avatar-size': '100px' }} />
+                <Avatar src={updatedUser.avatar} sx={{ '--Avatar-size': '100px' }} />
               </Box>
             </Box>
             <Button color="secondary" size="small">
@@ -79,13 +162,13 @@ export function AccountDetails() {
             </Button>
           </Stack>
           <Stack spacing={2}>
-            <FormControl>
+            <FormControl disabled>
               <InputLabel>Full name</InputLabel>
-              <OutlinedInput defaultValue="Sofia Rivers" name="fullName" />
+              <OutlinedInput defaultValue={updatedUser.name} name="fullName" />
             </FormControl>
             <FormControl disabled>
               <InputLabel>Email address</InputLabel>
-              <OutlinedInput name="email" type="email" value="sofia@devias.io" />
+              <OutlinedInput name="email" type="email" value={updatedUser.email} />
               <FormHelperText>
                 Please <Link variant="inherit">contact us</Link> to change your email
               </FormHelperText>
@@ -100,38 +183,78 @@ export function AccountDetails() {
                       <Box
                         alt="Spain"
                         component="img"
-                        src="/assets/flag-es.svg"
+                        src={flag[updatedUser.phoneNumber?.dialCode]}
                         sx={{ display: 'block', height: '20px', width: 'auto' }}
                       />
                     </InputAdornment>
                   }
-                  value="+34"
+                  value={updatedUser.phoneNumber?.dialCode}
+                  onChange={(e) => handlePhoneNumberChange('dialCode', e.target.value)}
                 >
                   <Option value="+1">United States</Option>
                   <Option value="+49">Germany</Option>
                   <Option value="+34">Spain</Option>
+                  <Option value="+33">France</Option>
                 </Select>
               </FormControl>
               <FormControl sx={{ flex: '1 1 auto' }}>
                 <InputLabel>Phone number</InputLabel>
-                <OutlinedInput defaultValue="965 245 7623" name="phone" />
+                <OutlinedInput
+                  defaultValue={updatedUser.phoneNumber?.number}
+                  name="phone"
+                  onChange={(e) => handlePhoneNumberChange('number', e.target.value)}
+                />
               </FormControl>
             </Stack>
             <FormControl>
-              <InputLabel>Title</InputLabel>
-              <OutlinedInput name="title" placeholder="e.g Golang Developer" />
+              <InputLabel>Address Line 1</InputLabel>
+              <OutlinedInput
+                defaultValue={updatedUser.address?.line1}
+                name="line1"
+                onChange={(e) => handleAddressChange('line1', e.target.value)}
+              />
             </FormControl>
             <FormControl>
-              <InputLabel>Biography (optional)</InputLabel>
-              <OutlinedInput name="bio" placeholder="Describe yourself..." />
-              <FormHelperText>0/200 characters</FormHelperText>
+              <InputLabel>Address Line 2</InputLabel>
+              <OutlinedInput
+                defaultValue={updatedUser.address?.line2}
+                name="line2"
+                onChange={(e) => handleAddressChange('line2', e.target.value)}
+              />
+            </FormControl>
+            <FormControl>
+              <InputLabel>City</InputLabel>
+              <OutlinedInput
+                defaultValue={updatedUser.address?.city}
+                name="city"
+                onChange={(e) => handleAddressChange('city', e.target.value)}
+              />
+            </FormControl>
+            <FormControl>
+              <InputLabel>State</InputLabel>
+              <OutlinedInput
+                defaultValue={updatedUser.address?.state}
+                name="state"
+                onChange={(e) => handleAddressChange('state', e.target.value)}
+              />
+            </FormControl>
+            <FormControl>
+              <Autocomplete
+                options={countries}
+                getOptionLabel={(option) => option.label}
+                value={selectedCountry}
+                onChange={handleCountryChange}
+                renderInput={(params) => <TextField {...params} label="Country" variant="outlined" fullWidth />}
+              />
             </FormControl>
           </Stack>
         </Stack>
       </CardContent>
       <CardActions sx={{ justifyContent: 'flex-end' }}>
         <Button color="secondary">Cancel</Button>
-        <Button variant="contained">Save changes</Button>
+        <Button variant="contained" onClick={handleSaveChanges}>
+          Save changes
+        </Button>
       </CardActions>
     </Card>
   );

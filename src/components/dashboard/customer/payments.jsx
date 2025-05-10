@@ -33,6 +33,9 @@ const columns = [
       const mapping = {
         pending: { label: 'Pending', color: 'warning' },
         completed: { label: 'Completed', color: 'success' },
+        inProgress: { label: 'InProgress', color: 'info' },
+        Processing: { label: 'Processing', color: 'info' },
+        Dispatched: { label: 'Dispatched', color: 'error' },
         canceled: { label: 'Canceled', color: 'error' },
         refunded: { label: 'Refunded', color: 'error' },
       };

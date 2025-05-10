@@ -9,15 +9,8 @@ import Typography from '@mui/material/Typography';
 
 import { dayjs } from '@/lib/dayjs';
 
-const user = {
-  id: 'USR-000',
-  name: 'Sofia Rivers',
-  avatar: '/assets/avatar.png',
-  email: 'sofia@devias.io',
-};
-
-export function MessageBox({ message }) {
-  const position = message.author.id === user.id ? 'right' : 'left';
+export function MessageBox({ message, user }) {
+  const position = message.author.id === user._id ? 'right' : 'left';
 
   return (
     <Box sx={{ alignItems: position === 'right' ? 'flex-end' : 'flex-start', flex: '0 0 auto', display: 'flex' }}>

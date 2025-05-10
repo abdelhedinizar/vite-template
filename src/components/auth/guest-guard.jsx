@@ -25,7 +25,7 @@ export function GuestGuard({ children }) {
 
     if (user) {
       logger.debug('[GuestGuard]: User is logged in, redirecting to dashboard');
-      navigate(paths.dashboard.overview, { replace: true });
+      navigate(paths.dashboard.home, { replace: true });
       return;
     }
 

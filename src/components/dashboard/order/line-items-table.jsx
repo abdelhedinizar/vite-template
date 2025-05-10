@@ -10,11 +10,15 @@ import { DataTable } from '@/components/core/data-table';
 const columns = [
   {
     formatter: (row) => {
+      let dishImage = row?.dish?.image;
+      if (dishImage && dishImage.startsWith('../')) {
+        dishImage = dishImage.replace('..', '');
+      }
       return (
         <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
           <Box
             sx={{
-              backgroundImage: `url(${row.image})`,
+              backgroundImage: `url(${dishImage})`,
               backgroundPosition: 'center',
               backgroundSize: 'cover',
               bgcolor: 'var(--mui-palette-background-level2)',
@@ -25,7 +29,7 @@ const columns = [
             }}
           />
           <Link color="text.primary" variant="subtitle2">
-            {row.product}
+            {row?.dish?.name}
           </Link>
         </Stack>
       );
@@ -36,14 +40,14 @@ const columns = [
   { field: 'quantity', name: 'Qty', width: '100px' },
   {
     formatter: (row) => {
-      return new Intl.NumberFormat('en-US', { style: 'currency', currency: row.currency }).format(row.unitAmount);
+      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(row?.dish?.price);
     },
     name: 'Unit Price',
     width: '120px',
   },
   {
     formatter: (row) => {
-      return new Intl.NumberFormat('en-US', { style: 'currency', currency: row.currency }).format(row.totalAmount);
+      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(row?.price);
     },
     name: 'Amount',
     width: '100px',
@@ -52,5 +56,5 @@ const columns = [
 ];
 
 export function LineItemsTable({ rows }) {
-  return <DataTable columns={columns} rows={rows} />;
+  return rows ? <DataTable columns={columns} rows={rows} /> : null;
 }

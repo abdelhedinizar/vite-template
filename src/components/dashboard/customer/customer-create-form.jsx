@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { InputAdornment, MenuItem, Select } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -9,18 +10,18 @@ import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import Checkbox from '@mui/material/Checkbox';
 import Divider from '@mui/material/Divider';
 import FormControl from '@mui/material/FormControl';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid2';
 import InputLabel from '@mui/material/InputLabel';
 import OutlinedInput from '@mui/material/OutlinedInput';
-import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { Camera as CameraIcon } from '@phosphor-icons/react/dist/ssr/Camera';
+import { Eye as EyeIcon } from '@phosphor-icons/react/dist/ssr/Eye';
+import { EyeSlash as EyeSlashIcon } from '@phosphor-icons/react/dist/ssr/EyeSlash';
+import axios from 'axios';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { z as zod } from 'zod';
@@ -37,6 +38,13 @@ const countryOptions = [
   { label: 'Spain', value: 'es' },
 ];
 
+const countryDialCodes = [
+  { label: 'United States', code: '+1', flag: '/assets/flag-us.svg' },
+  { label: 'Germany', code: '+49', flag: '/assets/flag-de.svg' },
+  { label: 'Spain', code: '+34', flag: '/assets/flag-es.svg' },
+  { label: 'France', code: '+33', flag: '/assets/flag-fr.svg' },
+];
+
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -50,34 +58,41 @@ function fileToBase64(file) {
   });
 }
 
-const schema = zod.object({
-  avatar: zod.string().optional(),
-  name: zod.string().min(1, 'Name is required').max(255),
-  email: zod.string().email('Must be a valid email').min(1, 'Email is required').max(255),
-  phone: zod.string().min(1, 'Phone is required').max(15),
-  company: zod.string().max(255),
-  billingAddress: zod.object({
-    country: zod.string().min(1, 'Country is required').max(255),
-    state: zod.string().min(1, 'State is required').max(255),
-    city: zod.string().min(1, 'City is required').max(255),
-    zipCode: zod.string().min(1, 'Zip code is required').max(255),
-    line1: zod.string().min(1, 'Street line 1 is required').max(255),
-    line2: zod.string().max(255).optional(),
-  }),
-  taxId: zod.string().max(255).optional(),
-  timezone: zod.string().min(1, 'Timezone is required').max(255),
-  language: zod.string().min(1, 'Language is required').max(255),
-  currency: zod.string().min(1, 'Currency is required').max(255),
-});
+const schema = zod
+  .object({
+    avatar: zod.string().optional(),
+    firstname: zod.string().min(1, 'Name is required').max(50),
+    lastname: zod.string().min(1, 'Name is required').max(50),
+    email: zod.string().email('Must be a valid email').min(1, 'Email is required').max(255),
+    phoneNumber: zod.object({
+      number: zod.string().min(1, 'Phone is required').max(15),
+      dialCode: zod.string().min(1, 'Dial code is required').max(3),
+    }),
+    password: zod.string().min(5, 'Password is required'),
+    confirmPassword: zod.string().min(5, 'Confirm password is required').max(255),
+    address: zod.object({
+      country: zod.string().min(1, 'Country is required').max(255),
+      state: zod.string().min(1, 'State is required').max(255),
+      city: zod.string().min(1, 'City is required').max(255),
+      zipCode: zod.string().min(1, 'Zip code is required').max(255),
+      line1: zod.string().min(1, 'Street line 1 is required').max(255),
+      line2: zod.string().max(255).optional(),
+    }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'], // path of error
+  });
 
 const defaultValues = {
   avatar: '',
-  name: '',
+  lastname: '',
+  firstname: '',
   email: '',
-  phone: '',
-  company: '',
-  billingAddress: { country: 'us', state: '', city: '', zipCode: '', line1: '', line2: '' },
-  taxId: '',
+  phoneNumber: { dialCode: '+33', number: '' },
+  password: '',
+  confirmPassword: '',
+  address: { country: 'us', state: '', city: '', zipCode: '', line1: '', line2: '' },
   timezone: 'new_york',
   language: 'en',
   currency: 'USD',
@@ -86,6 +101,7 @@ const defaultValues = {
 export function CustomerCreateForm() {
   const navigate = useNavigate();
 
+  const [showPassword, setShowPassword] = React.useState();
   const {
     control,
     handleSubmit,
@@ -97,9 +113,20 @@ export function CustomerCreateForm() {
   const onSubmit = React.useCallback(
     async (_) => {
       try {
-        // Make API request
-        toast.success('Customer updated');
-        navigate(paths.dashboard.customers.details('1'));
+        _.role = 'Staff';
+        const token = localStorage.getItem('custom-auth-token');
+        const response = await axios.post(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/users`, _, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        if (response.status === 201) {
+          toast.success('Customer updated');
+          navigate(paths.dashboard.customers.details(response.data.data.user._id));
+        } else {
+          toast.error('Failed to update customer');
+        }
       } catch (err) {
         logger.error(err);
         toast.error('Something went wrong!');
@@ -180,12 +207,30 @@ export function CustomerCreateForm() {
                 >
                   <Controller
                     control={control}
-                    name="name"
+                    name="firstname"
                     render={({ field }) => (
                       <FormControl error={Boolean(errors.name)} fullWidth>
-                        <InputLabel required>Name</InputLabel>
+                        <InputLabel required>First Name</InputLabel>
                         <OutlinedInput {...field} />
-                        {errors.name ? <FormHelperText>{errors.name.message}</FormHelperText> : null}
+                        {errors.firstname ? <FormHelperText>{errors.firstname.message}</FormHelperText> : null}
+                      </FormControl>
+                    )}
+                  />
+                </Grid>
+                <Grid
+                  size={{
+                    md: 6,
+                    xs: 12,
+                  }}
+                >
+                  <Controller
+                    control={control}
+                    name="lastname"
+                    render={({ field }) => (
+                      <FormControl error={Boolean(errors.name)} fullWidth>
+                        <InputLabel required>Last Name</InputLabel>
+                        <OutlinedInput {...field} />
+                        {errors.lastname ? <FormHelperText>{errors.lastname.message}</FormHelperText> : null}
                       </FormControl>
                     )}
                   />
@@ -214,14 +259,79 @@ export function CustomerCreateForm() {
                     xs: 12,
                   }}
                 >
+                  <Stack direction="row" spacing={2}>
+                    <Controller
+                      control={control}
+                      name="phoneNumber.dialCode"
+                      render={({ field }) => (
+                        <FormControl sx={{ width: '160px' }}>
+                          <InputLabel>Dial Code</InputLabel>
+                          <Select {...field}>
+                            {countryDialCodes.map((country) => (
+                              <MenuItem key={country.code} value={country.code}>
+                                {country.label} ({country.code})
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      )}
+                    />
+                    <Controller
+                      control={control}
+                      name="phoneNumber.number"
+                      render={({ field }) => (
+                        <FormControl error={Boolean(errors.phoneNumber?.number)} fullWidth>
+                          <InputLabel>Phone Number</InputLabel>
+                          <OutlinedInput
+                            {...field}
+                            startAdornment={
+                              <InputAdornment position="start">{watch('phoneNumber.dialCode')}</InputAdornment>
+                            }
+                          />
+                          {errors.phoneNumber?.number && (
+                            <FormHelperText>{errors.phoneNumber.number.message}</FormHelperText>
+                          )}
+                        </FormControl>
+                      )}
+                    />
+                  </Stack>
+                </Grid>
+                <Grid
+                  size={{
+                    md: 6,
+                    xs: 12,
+                  }}
+                >
                   <Controller
                     control={control}
-                    name="phone"
+                    name="password"
                     render={({ field }) => (
-                      <FormControl error={Boolean(errors.phone)} fullWidth>
-                        <InputLabel required>Phone number</InputLabel>
-                        <OutlinedInput {...field} />
-                        {errors.phone ? <FormHelperText>{errors.phone.message}</FormHelperText> : null}
+                      <FormControl error={Boolean(errors.password)} fullWidth>
+                        <InputLabel>Password</InputLabel>
+                        <OutlinedInput
+                          {...field}
+                          endAdornment={
+                            showPassword ? (
+                              <EyeIcon
+                                cursor="pointer"
+                                fontSize="var(--icon-fontSize-md)"
+                                onClick={() => {
+                                  setShowPassword(false);
+                                }}
+                              />
+                            ) : (
+                              <EyeSlashIcon
+                                cursor="pointer"
+                                fontSize="var(--icon-fontSize-md)"
+                                onClick={() => {
+                                  setShowPassword(true);
+                                }}
+                              />
+                            )
+                          }
+                          type={showPassword ? 'text' : 'password'}
+                        />
+                        {errors.password ? <FormHelperText>{errors.password.message}</FormHelperText> : null}
                       </FormControl>
                     )}
                   />
@@ -234,12 +344,36 @@ export function CustomerCreateForm() {
                 >
                   <Controller
                     control={control}
-                    name="company"
+                    name="confirmPassword"
                     render={({ field }) => (
-                      <FormControl error={Boolean(errors.company)} fullWidth>
-                        <InputLabel>Company</InputLabel>
-                        <OutlinedInput {...field} />
-                        {errors.company ? <FormHelperText>{errors.company.message}</FormHelperText> : null}
+                      <FormControl error={Boolean(errors.confirmPassword)} fullWidth>
+                        <InputLabel>Confirm Password</InputLabel>
+                        <OutlinedInput
+                          {...field}
+                          endAdornment={
+                            showPassword ? (
+                              <EyeIcon
+                                cursor="pointer"
+                                fontSize="var(--icon-fontSize-md)"
+                                onClick={() => {
+                                  setShowPassword(false);
+                                }}
+                              />
+                            ) : (
+                              <EyeSlashIcon
+                                cursor="pointer"
+                                fontSize="var(--icon-fontSize-md)"
+                                onClick={() => {
+                                  setShowPassword(true);
+                                }}
+                              />
+                            )
+                          }
+                          type={showPassword ? 'text' : 'password'}
+                        />
+                        {errors.confirmPassword ? (
+                          <FormHelperText>{errors.confirmPassword.message}</FormHelperText>
+                        ) : null}
                       </FormControl>
                     )}
                   />
@@ -247,7 +381,7 @@ export function CustomerCreateForm() {
               </Grid>
             </Stack>
             <Stack spacing={3}>
-              <Typography variant="h6">Billing information</Typography>
+              <Typography variant="h6">Address information</Typography>
               <Grid container spacing={3}>
                 <Grid
                   size={{
@@ -257,7 +391,7 @@ export function CustomerCreateForm() {
                 >
                   <Controller
                     control={control}
-                    name="billingAddress.country"
+                    name="address.country"
                     render={({ field }) => (
                       <Autocomplete
                         {...field}
@@ -295,7 +429,7 @@ export function CustomerCreateForm() {
                 >
                   <Controller
                     control={control}
-                    name="billingAddress.state"
+                    name="address.state"
                     render={({ field }) => (
                       <FormControl error={Boolean(errors.billingAddress?.state)} fullWidth>
                         <InputLabel required>State</InputLabel>
@@ -315,7 +449,7 @@ export function CustomerCreateForm() {
                 >
                   <Controller
                     control={control}
-                    name="billingAddress.city"
+                    name="address.city"
                     render={({ field }) => (
                       <FormControl error={Boolean(errors.billingAddress?.city)} fullWidth>
                         <InputLabel required>City</InputLabel>
@@ -335,7 +469,7 @@ export function CustomerCreateForm() {
                 >
                   <Controller
                     control={control}
-                    name="billingAddress.zipCode"
+                    name="address.zipCode"
                     render={({ field }) => (
                       <FormControl error={Boolean(errors.billingAddress?.zipCode)} fullWidth>
                         <InputLabel required>Zip code</InputLabel>
@@ -355,7 +489,7 @@ export function CustomerCreateForm() {
                 >
                   <Controller
                     control={control}
-                    name="billingAddress.line1"
+                    name="address.line1"
                     render={({ field }) => (
                       <FormControl error={Boolean(errors.billingAddress?.line1)} fullWidth>
                         <InputLabel required>Address</InputLabel>
@@ -363,102 +497,6 @@ export function CustomerCreateForm() {
                         {errors.billingAddress?.line1 ? (
                           <FormHelperText>{errors.billingAddress?.line1?.message}</FormHelperText>
                         ) : null}
-                      </FormControl>
-                    )}
-                  />
-                </Grid>
-                <Grid
-                  size={{
-                    md: 6,
-                    xs: 12,
-                  }}
-                >
-                  <Controller
-                    control={control}
-                    name="taxId"
-                    render={({ field }) => (
-                      <FormControl error={Boolean(errors.taxId)} fullWidth>
-                        <InputLabel>Tax ID</InputLabel>
-                        <OutlinedInput {...field} placeholder="e.g EU372054390" />
-                        {errors.taxId ? <FormHelperText>{errors.taxId.message}</FormHelperText> : null}
-                      </FormControl>
-                    )}
-                  />
-                </Grid>
-              </Grid>
-            </Stack>
-            <Stack spacing={3}>
-              <Typography variant="h6">Shipping information</Typography>
-              <FormControlLabel control={<Checkbox defaultChecked />} label="Same as billing address" />
-            </Stack>
-            <Stack spacing={3}>
-              <Typography variant="h6">Additional information</Typography>
-              <Grid container spacing={3}>
-                <Grid
-                  size={{
-                    md: 6,
-                    xs: 12,
-                  }}
-                >
-                  <Controller
-                    control={control}
-                    name="timezone"
-                    render={({ field }) => (
-                      <FormControl error={Boolean(errors.timezone)} fullWidth>
-                        <InputLabel required>Timezone</InputLabel>
-                        <Select {...field}>
-                          <Option value="">Select a timezone</Option>
-                          <Option value="new_york">US - New York</Option>
-                          <Option value="california">US - California</Option>
-                          <Option value="london">UK - London</Option>
-                        </Select>
-                        {errors.timezone ? <FormHelperText>{errors.timezone.message}</FormHelperText> : null}
-                      </FormControl>
-                    )}
-                  />
-                </Grid>
-                <Grid
-                  size={{
-                    md: 6,
-                    xs: 12,
-                  }}
-                >
-                  <Controller
-                    control={control}
-                    name="language"
-                    render={({ field }) => (
-                      <FormControl error={Boolean(errors.language)} fullWidth>
-                        <InputLabel required>Language</InputLabel>
-                        <Select {...field}>
-                          <Option value="">Select a language</Option>
-                          <Option value="en">English</Option>
-                          <Option value="es">Spanish</Option>
-                          <Option value="de">German</Option>
-                        </Select>
-                        {errors.language ? <FormHelperText>{errors.language.message}</FormHelperText> : null}
-                      </FormControl>
-                    )}
-                  />
-                </Grid>
-                <Grid
-                  size={{
-                    md: 6,
-                    xs: 12,
-                  }}
-                >
-                  <Controller
-                    control={control}
-                    name="currency"
-                    render={({ field }) => (
-                      <FormControl error={Boolean(errors.currency)} fullWidth>
-                        <InputLabel>Currency</InputLabel>
-                        <Select {...field}>
-                          <Option value="">Select a currency</Option>
-                          <Option value="USD">USD</Option>
-                          <Option value="EUR">EUR</Option>
-                          <Option value="RON">RON</Option>
-                        </Select>
-                        {errors.currency ? <FormHelperText>{errors.currency.message}</FormHelperText> : null}
                       </FormControl>
                     )}
                   />

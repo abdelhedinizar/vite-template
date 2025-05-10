@@ -2,28 +2,24 @@
 
 import * as React from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Chip, MenuItem } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import Checkbox from '@mui/material/Checkbox';
 import Divider from '@mui/material/Divider';
 import FormControl from '@mui/material/FormControl';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid2';
-import IconButton from '@mui/material/IconButton';
-import InputAdornment from '@mui/material/InputAdornment';
 import InputLabel from '@mui/material/InputLabel';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
-import Tooltip from '@mui/material/Tooltip';
+import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { Image as ImageIcon } from '@phosphor-icons/react/dist/ssr/Image';
-import { Info as InfoIcon } from '@phosphor-icons/react/dist/ssr/Info';
-import { Trash as TrashIcon } from '@phosphor-icons/react/dist/ssr/Trash';
+import axios from 'axios';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { z as zod } from 'zod';
@@ -34,7 +30,6 @@ import { DataTable } from '@/components/core/data-table';
 import { FileDropzone } from '@/components/core/file-dropzone';
 import { RouterLink } from '@/components/core/link';
 import { Option } from '@/components/core/option';
-import { TextEditor } from '@/components/core/text-editor/text-editor';
 import { toast } from '@/components/core/toaster';
 
 function fileToBase64(file) {
@@ -49,9 +44,41 @@ function fileToBase64(file) {
     };
   });
 }
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
+const ingrediants = [
+  'Tomato',
+  'tuna',
+  'onions',
+  'olives',
+  'cheese',
+  'chicken',
+  'mozzarella',
+  'BBQ sauce',
+  'cilantro',
+  'ham',
+  'pineapple',
+];
+
+function getStyles(ingrediant, ingrediantNames, theme) {
+  return {
+    fontWeight: ingrediantNames?.includes(ingrediant)
+      ? theme.typography.fontWeightMedium
+      : theme.typography.fontWeightRegular,
+  };
+}
 
 // You could memoize this function to avoid re-creating the columns on every render.
-function getImageColumns({ onRemove }) {
+function getImageColumns() {
   return [
     {
       formatter: (row) => {
@@ -74,82 +101,94 @@ function getImageColumns({ onRemove }) {
       width: '100px',
     },
     { field: 'fileName', name: 'File name', width: '300px' },
-    {
-      formatter: (row) => (
-        <IconButton
-          onClick={() => {
-            onRemove?.(row.id);
-          }}
-        >
-          <TrashIcon />
-        </IconButton>
-      ),
-      name: 'Actions',
-      hideName: true,
-      width: '100px',
-      align: 'right',
-    },
   ];
 }
 
 const schema = zod.object({
   name: zod.string().min(1, 'Name is required').max(255),
-  handle: zod.string().max(255).optional(),
+  status: zod.string().max(255).optional(),
   category: zod.string().max(255).optional(),
   type: zod.string().max(255).optional(),
-  description: zod.string().max(5000).optional(),
-  tags: zod.string().max(255).optional(),
+  PreparationTime: zod.number().optional(),
+  SpiceLevel: zod.string().max(255).optional(),
   currency: zod.string().min(1, 'Currency is required').max(255),
   price: zod.number().min(0, 'Price must be greater than or equal to 0'),
-  images: zod.array(zod.object({ id: zod.string(), url: zod.string(), fileName: zod.string() })),
-  sku: zod.string().max(255).optional(),
-  barcode: zod.string().max(255).optional(),
-  quantity: zod.number().min(0, 'Quantity must be greater than or equal to 0'),
-  backorder: zod.boolean().optional(),
-  height: zod.number().min(0, 'Height must be greater than or equal to 0').optional(),
-  width: zod.number().min(0, 'Width must be greater than or equal to 0').optional(),
-  length: zod.number().min(0, 'Length must be greater than or equal to 0').optional(),
-  weight: zod.number().min(0, 'Weight must be greater than or equal to 0').optional(),
+  images: zod.array(zod.object({ url: zod.string(), fileName: zod.string() })),
+  ingredients: zod.array(zod.string()),
 });
 
 function getDefaultValues(product) {
   return {
-    name: product.name ?? '',
-    handle: product.handle ?? '',
+    id: product?.id ?? '',
+    name: product?.name ?? '',
+    status: product.status ?? '',
     category: product.category ?? '',
-    type: product.type ?? 'physical',
-    description: product.description ?? '',
-    tags: product.tags ?? '',
+    SpiceLevel: product.SpiceLevel ?? '',
+    PreparationTime: product.PreparationTime ?? '',
     currency: product.currency ?? 'USD',
     price: product.price ?? 0,
     images: product.images ?? [],
-    sku: product.sku ?? '',
-    barcode: product.barcode ?? '',
-    quantity: product.quantity ?? 0,
-    backorder: product.backorder ?? false,
-    height: product.height ?? 0,
-    width: product.width ?? 0,
-    length: product.length ?? 0,
-    weight: product.weight ?? 0,
+    ingredients: product?.ingredients ? product.ingredients.split(', ') : [],
   };
 }
 
 export function ProductEditForm({ product }) {
   const navigate = useNavigate();
+  const theme = useTheme();
+  const [categories, setCategories] = React.useState([]);
 
   const {
     control,
     handleSubmit,
     formState: { errors },
     getValues,
+    reset,
     setValue,
     watch,
   } = useForm({ defaultValues: getDefaultValues(product), resolver: zodResolver(schema) });
+
+  React.useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const token = localStorage.getItem('custom-auth-token');
+        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/categories`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setCategories(response.data.data.categories); // Assuming the API returns a `categories` array
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+
+    fetchCategories();
+    reset(getDefaultValues(product));
+  }, [product, reset]);
 
   const onSubmit = React.useCallback(
     async (_) => {
       try {
         // Make API request
+
+        const body = _;
+        body.image = _.images[0].url;
+        body.ingredients = _.ingredients.join(', ');
+        body.images = null;
+        const token = localStorage.getItem('custom-auth-token');
+        const response = await axios.patch(
+          `${import.meta.env.VITE_REACT_APP_BACK_API_URL}/dishs/${product?.id}`,
+          body,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        if (response.status !== 200) {
+          throw new Error('Network response was not ok');
+        }
         toast.success('Product updated');
         navigate(paths.dashboard.products.list);
       } catch (err) {
@@ -157,7 +196,7 @@ export function ProductEditForm({ product }) {
         toast.error('Something went wrong!');
       }
     },
-    [navigate]
+    [product, navigate]
   );
 
   const handleImageDrop = React.useCallback(
@@ -168,27 +207,16 @@ export function ProductEditForm({ product }) {
         files.map(async (file) => {
           const url = await fileToBase64(file);
 
-          return { id: `IMG-${Date.now()}`, url, fileName: file.name };
+          return { url, fileName: file.name };
         })
       );
 
-      setValue('images', [...getValues('images'), ...images]);
-    },
-    [getValues, setValue]
-  );
-
-  const handleImageRemove = React.useCallback(
-    (imageId) => {
-      setValue(
-        'images',
-        getValues('images').filter((image) => image.id !== imageId)
-      );
+      setValue('images', [...images]);
     },
     [getValues, setValue]
   );
 
   const name = watch('name');
-  const handle = watch('handle');
   const category = watch('category');
   const tags = watch('tags');
   const images = watch('images');
@@ -228,24 +256,7 @@ export function ProductEditForm({ product }) {
                         )}
                       />
                     </Grid>
-                    <Grid
-                      size={{
-                        md: 6,
-                        xs: 12,
-                      }}
-                    >
-                      <Controller
-                        control={control}
-                        name="handle"
-                        render={({ field }) => (
-                          <FormControl error={Boolean(errors.handle)} fullWidth>
-                            <InputLabel>Handle</InputLabel>
-                            <OutlinedInput {...field} />
-                            {errors.handle ? <FormHelperText>{errors.handle.message}</FormHelperText> : null}
-                          </FormControl>
-                        )}
-                      />
-                    </Grid>
+
                     <Grid
                       size={{
                         md: 6,
@@ -260,9 +271,11 @@ export function ProductEditForm({ product }) {
                             <InputLabel>Category</InputLabel>
                             <Select {...field}>
                               <Option value="">Select a category</Option>
-                              <Option value="Healthcare">Healthcare</Option>
-                              <Option value="Makeup">Makeup</Option>
-                              <Option value="Skincare">Skincare</Option>
+                              {categories.map((cat) => (
+                                <Option key={cat._id} value={cat.name}>
+                                  {cat.name}
+                                </Option>
+                              ))}
                             </Select>
                             {errors.category ? <FormHelperText error>{errors.category.message}</FormHelperText> : null}
                           </FormControl>
@@ -277,56 +290,130 @@ export function ProductEditForm({ product }) {
                     >
                       <Controller
                         control={control}
-                        name="type"
+                        name="status"
                         render={({ field }) => (
                           <FormControl error={Boolean(errors.type)} fullWidth>
-                            <InputLabel>Type</InputLabel>
+                            <InputLabel>Status</InputLabel>
                             <Select {...field}>
-                              <Option value="physical">Physical</Option>
-                              <Option value="digital">Digital</Option>
-                              <Option value="service">Service</Option>
+                              <Option key="published" value="published">
+                                Published
+                              </Option>
+                              <Option key="draft" value="draft">
+                                Draft
+                              </Option>
                             </Select>
                             {errors.type ? <FormHelperText error>{errors.type.message}</FormHelperText> : null}
                           </FormControl>
                         )}
                       />
                     </Grid>
-                    <Grid size={12}>
+                    <Grid
+                      size={{
+                        md: 6,
+                        xs: 12,
+                      }}
+                    >
                       <Controller
                         control={control}
-                        name="description"
+                        name="ingredients"
                         render={({ field }) => (
-                          <FormControl error={Boolean(errors.description)} fullWidth>
-                            <InputLabel>Description</InputLabel>
-                            <Box sx={{ mt: '8px', '& .tiptap-container': { height: '400px' } }}>
-                              <TextEditor
-                                content={field.value ?? ''}
-                                onUpdate={({ editor }) => {
-                                  field.onChange(editor.getText());
-                                }}
-                                placeholder="Write something"
-                              />
-                            </Box>
-                            {errors.description ? (
-                              <FormHelperText error>{errors.description.message}</FormHelperText>
-                            ) : null}
+                          <FormControl error={Boolean(errors.ingredients)} fullWidth>
+                            <InputLabel id="demo-multiple-chip-label">Ingrediants</InputLabel>
+                            <Select
+                              labelId="demo-multiple-chip-label"
+                              id="demo-multiple-chip"
+                              multiple
+                              {...field}
+                              onChange={(event) => {
+                                field.onChange(event.target.value);
+                              }}
+                              input={<OutlinedInput id="select-multiple-chip" label="Ingediants" />}
+                              renderValue={(selected) => (
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                  {selected?.map((value) => (
+                                    <Chip key={value} label={value} />
+                                  ))}
+                                </Box>
+                              )}
+                              MenuProps={MenuProps}
+                            >
+                              {ingrediants.map((Ingname) => (
+                                <MenuItem key={Ingname} value={Ingname} style={getStyles(Ingname, field.value, theme)}>
+                                  {Ingname}
+                                </MenuItem>
+                              ))}
+                            </Select>
                           </FormControl>
                         )}
                       />
                     </Grid>
-                    <Grid size={12}>
+                    <Grid
+                      size={{
+                        md: 6,
+                        xs: 12,
+                      }}
+                    >
                       <Controller
                         control={control}
-                        name="tags"
+                        name="SpiceLevel"
                         render={({ field }) => (
-                          <FormControl error={Boolean(errors.name)} fullWidth>
-                            <InputLabel>Tags</InputLabel>
-                            <OutlinedInput {...field} placeholder="e.g Modern, Clean, etc" />
-                            {errors.name ? (
-                              <FormHelperText>{errors.name.message}</FormHelperText>
-                            ) : (
-                              <FormHelperText>Tags must be separated by comma</FormHelperText>
-                            )}
+                          <FormControl error={Boolean(errors.type)} fullWidth>
+                            <InputLabel>Spice Level</InputLabel>
+                            <Select {...field}>
+                              <Option value="">Select a level</Option>
+
+                              <Option key="1" value="1">
+                                1
+                              </Option>
+                              <Option key="2" value="2">
+                                2
+                              </Option>
+                              <Option key="3" value="3">
+                                3
+                              </Option>
+                            </Select>
+                            {errors.type ? <FormHelperText error>{errors.type.message}</FormHelperText> : null}
+                          </FormControl>
+                        )}
+                      />
+                    </Grid>
+                    <Grid
+                      size={{
+                        md: 6,
+                        xs: 12,
+                      }}
+                    >
+                      <Controller
+                        control={control}
+                        name="PreparationTime"
+                        render={({ field }) => (
+                          <FormControl error={Boolean(errors.PreparationTime)} fullWidth>
+                            <InputLabel>Preparation Time</InputLabel>
+                            <Select {...field} onChange={(e) => field.onChange(Number(e.target.value))}>
+                              <Option value="">Select a time</Option>
+                              <Option key="15" value="15">
+                                15
+                              </Option>
+                              <Option key="20" value="20">
+                                20
+                              </Option>
+                              <Option key="25" value="25">
+                                25
+                              </Option>
+                              <Option key="30" value="30">
+                                30
+                              </Option>
+                              <Option key="35" value="35">
+                                40
+                              </Option>
+                              <Option key="40" value="40">
+                                45
+                              </Option>
+                            </Select>
+
+                            {errors.PreparationTime ? (
+                              <FormHelperText error>{errors.PreparationTime.message}</FormHelperText>
+                            ) : null}
                           </FormControl>
                         )}
                       />
@@ -336,54 +423,30 @@ export function ProductEditForm({ product }) {
                 <Stack spacing={3}>
                   <Typography variant="h6">Pricing</Typography>
                   <Stack direction="row" spacing={3}>
-                    <Controller
-                      control={control}
-                      name="currency"
-                      render={({ field }) => (
-                        <FormControl error={Boolean(errors.currency)} sx={{ width: '150px' }}>
-                          <InputLabel>Currency</InputLabel>
-                          <Select {...field}>
-                            <Option value="">Select a currency</Option>
-                            <Option value="USD">USD</Option>
-                            <Option value="EUR">EUR</Option>
-                            <Option value="RON">RON</Option>
-                          </Select>
-                          {errors.currency ? <FormHelperText>{errors.currency.message}</FormHelperText> : null}
-                        </FormControl>
-                      )}
-                    />
-                    <Controller
-                      control={control}
-                      name="price"
-                      render={({ field }) => (
-                        <FormControl error={Boolean(errors.price)}>
-                          <InputLabel>Price</InputLabel>
-                          <OutlinedInput
-                            {...field}
-                            inputProps={{ step: 0.01 }}
-                            onChange={(event) => {
-                              const value = event.target.valueAsNumber;
-
-                              if (isNaN(value)) {
-                                field.onChange('');
-                                return;
-                              }
-
-                              field.onChange(parseFloat(value.toFixed(2)));
-                            }}
-                            sx={{ width: '140px' }}
-                            type="number"
-                          />
-                          {errors.price ? <FormHelperText>{errors.price.message}</FormHelperText> : null}
-                        </FormControl>
-                      )}
-                    />
+                    <Grid
+                      size={{
+                        md: 6,
+                        xs: 12,
+                      }}
+                    >
+                      <Controller
+                        control={control}
+                        name="price"
+                        render={({ field }) => (
+                          <FormControl error={Boolean(errors.price)} fullWidth>
+                            <InputLabel>Price</InputLabel>
+                            <OutlinedInput {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
+                            {errors.price ? <FormHelperText>{errors.price.message}</FormHelperText> : null}
+                          </FormControl>
+                        )}
+                      />
+                    </Grid>
                   </Stack>
                 </Stack>
                 <Stack spacing={3}>
                   <Typography variant="h6">Images</Typography>
                   <Card sx={{ borderRadius: 1 }} variant="outlined">
-                    <DataTable columns={getImageColumns({ onRemove: handleImageRemove })} rows={images} />
+                    <DataTable columns={getImageColumns()} rows={images} />
                     {images.length === 0 ? (
                       <Box sx={{ p: 1 }}>
                         <Typography align="center" color="text.secondary" variant="body2">
@@ -397,250 +460,6 @@ export function ProductEditForm({ product }) {
                     caption="(SVG, JPG, PNG, or gif maximum 900x400)"
                     onDrop={handleImageDrop}
                   />
-                </Stack>
-                <Stack spacing={3}>
-                  <Typography variant="h6">Stock & inventory</Typography>
-                  <Grid container spacing={3}>
-                    <Grid
-                      size={{
-                        md: 6,
-                        xs: 12,
-                      }}
-                    >
-                      <Controller
-                        control={control}
-                        name="sku"
-                        render={({ field }) => (
-                          <FormControl error={Boolean(errors.sku)} fullWidth>
-                            <InputLabel>Stock keeping unit (SKU)</InputLabel>
-                            <OutlinedInput {...field} placeholder="e.g AG12345" />
-                            {errors.sku ? (
-                              <FormHelperText>{errors.sku.message}</FormHelperText>
-                            ) : (
-                              <FormHelperText>Leave blank for auto-generated</FormHelperText>
-                            )}
-                          </FormControl>
-                        )}
-                      />
-                    </Grid>
-                    <Grid
-                      size={{
-                        md: 6,
-                        xs: 12,
-                      }}
-                    >
-                      <Controller
-                        control={control}
-                        name="barcode"
-                        render={({ field }) => (
-                          <FormControl error={Boolean(errors.barcode)} fullWidth>
-                            <InputLabel>Barcode (EAN)</InputLabel>
-                            <OutlinedInput {...field} placeholder="e.g 00123456789012" />
-                            {errors.barcode ? <FormHelperText>{errors.barcode.message}</FormHelperText> : null}
-                          </FormControl>
-                        )}
-                      />
-                    </Grid>
-                    <Grid
-                      size={{
-                        md: 6,
-                        xs: 12,
-                      }}
-                    >
-                      <Controller
-                        control={control}
-                        name="quantity"
-                        render={({ field }) => (
-                          <FormControl error={Boolean(errors.quantity)} fullWidth>
-                            <InputLabel>Quantity</InputLabel>
-                            <OutlinedInput
-                              {...field}
-                              inputProps={{ step: 1 }}
-                              onChange={(event) => {
-                                const value = event.target.valueAsNumber;
-
-                                if (isNaN(value)) {
-                                  field.onChange('');
-                                  return;
-                                }
-
-                                field.onChange(parseInt(event.target.value));
-                              }}
-                              type="number"
-                            />
-                            {errors.quantity ? <FormHelperText>{errors.quantity.message}</FormHelperText> : null}
-                          </FormControl>
-                        )}
-                      />
-                    </Grid>
-                    <Grid size={12}>
-                      <Controller
-                        control={control}
-                        name="backorder"
-                        render={({ field }) => (
-                          <FormControlLabel
-                            control={<Checkbox {...field} />}
-                            label={
-                              <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-                                <Typography variant="body2">Allow backorders</Typography>
-                                <Tooltip title="Keep selling when stock is empty">
-                                  <InfoIcon
-                                    color="var(--mui-palette-text-secondary)"
-                                    fontSize="var(--icon-fontSize-md)"
-                                    weight="fill"
-                                  />
-                                </Tooltip>
-                              </Stack>
-                            }
-                          />
-                        )}
-                      />
-                    </Grid>
-                    <Grid
-                      size={{
-                        md: 6,
-                        xs: 12,
-                      }}
-                    >
-                      <Controller
-                        control={control}
-                        name="height"
-                        render={({ field }) => (
-                          <FormControl error={Boolean(errors.height)} fullWidth>
-                            <InputLabel>Height</InputLabel>
-                            <OutlinedInput
-                              {...field}
-                              endAdornment={
-                                <InputAdornment position="end">
-                                  <Typography variant="body2">cm</Typography>
-                                </InputAdornment>
-                              }
-                              onChange={(event) => {
-                                const value = event.target.valueAsNumber;
-
-                                if (isNaN(value)) {
-                                  field.onChange('');
-                                  return;
-                                }
-
-                                field.onChange(value);
-                              }}
-                              type="number"
-                            />
-                            {errors.height ? <FormHelperText>{errors.height.message}</FormHelperText> : null}
-                          </FormControl>
-                        )}
-                      />
-                    </Grid>
-                    <Grid
-                      size={{
-                        md: 6,
-                        xs: 12,
-                      }}
-                    >
-                      <Controller
-                        control={control}
-                        name="width"
-                        render={({ field }) => (
-                          <FormControl error={Boolean(errors.width)} fullWidth>
-                            <InputLabel>Width</InputLabel>
-                            <OutlinedInput
-                              {...field}
-                              endAdornment={
-                                <InputAdornment position="end">
-                                  <Typography variant="body2">cm</Typography>
-                                </InputAdornment>
-                              }
-                              onChange={(event) => {
-                                const value = event.target.valueAsNumber;
-
-                                if (isNaN(value)) {
-                                  field.onChange('');
-                                  return;
-                                }
-
-                                field.onChange(value);
-                              }}
-                              type="number"
-                            />
-                            {errors.width ? <FormHelperText>{errors.width.message}</FormHelperText> : null}
-                          </FormControl>
-                        )}
-                      />
-                    </Grid>
-                    <Grid
-                      size={{
-                        md: 6,
-                        xs: 12,
-                      }}
-                    >
-                      <Controller
-                        control={control}
-                        name="length"
-                        render={({ field }) => (
-                          <FormControl error={Boolean(errors.length)} fullWidth>
-                            <InputLabel>Length</InputLabel>
-                            <OutlinedInput
-                              {...field}
-                              endAdornment={
-                                <InputAdornment position="end">
-                                  <Typography variant="body2">cm</Typography>
-                                </InputAdornment>
-                              }
-                              onChange={(event) => {
-                                const value = event.target.valueAsNumber;
-
-                                if (isNaN(value)) {
-                                  field.onChange('');
-                                  return;
-                                }
-
-                                field.onChange(value);
-                              }}
-                              type="number"
-                            />
-                            {errors.length ? <FormHelperText>{errors.length.message}</FormHelperText> : null}
-                          </FormControl>
-                        )}
-                      />
-                    </Grid>
-                    <Grid
-                      size={{
-                        md: 6,
-                        xs: 12,
-                      }}
-                    >
-                      <Controller
-                        control={control}
-                        name="weight"
-                        render={({ field }) => (
-                          <FormControl error={Boolean(errors.weight)} fullWidth>
-                            <InputLabel>Weight</InputLabel>
-                            <OutlinedInput
-                              {...field}
-                              endAdornment={
-                                <InputAdornment position="end">
-                                  <Typography variant="body2">kg</Typography>
-                                </InputAdornment>
-                              }
-                              onChange={(event) => {
-                                const value = event.target.valueAsNumber;
-
-                                if (isNaN(value)) {
-                                  field.onChange('');
-                                  return;
-                                }
-
-                                field.onChange(value);
-                              }}
-                              type="number"
-                            />
-                            {errors.weight ? <FormHelperText>{errors.weight.message}</FormHelperText> : null}
-                          </FormControl>
-                        )}
-                      />
-                    </Grid>
-                  </Grid>
                 </Stack>
               </Stack>
             </CardContent>
@@ -707,13 +526,6 @@ export function ProductEditForm({ product }) {
               </CardContent>
             </Card>
             <Stack spacing={2}>
-              {handle ? (
-                <Typography color="primary.main" variant="subtitle2">
-                  https://domain.com/products/{handle}
-                </Typography>
-              ) : (
-                <Box sx={{ borderRadius: '20px', bgcolor: 'var(--mui-palette-background-level2)', height: '24px' }} />
-              )}
               {tags ? (
                 <Typography variant="subtitle2">Keywords: {tags.split(',').filter(Boolean).join(', ')}</Typography>
               ) : (

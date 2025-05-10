@@ -19,16 +19,19 @@ import { Option } from '@/components/core/option';
 
 import { useOrdersSelection } from './orders-selection-context';
 
-// The tabs should be generated using API data.
-const tabs = [
-  { label: 'All', value: '', count: 5 },
-  { label: 'Completed', value: 'completed', count: 2 },
-  { label: 'Pending', value: 'pending', count: 1 },
-  { label: 'Canceled', value: 'canceled', count: 1 },
-  { label: 'Rejected', value: 'rejected', count: 1 },
-];
+export function OrdersFilters({ filters = {}, sortDir = 'desc', orders }) {
+  // The tabs should be generated using API data.
+  const tabs = [
+    { label: 'All', value: '', count: orders.length },
+    { label: 'Completed', value: 'completed', count: orders.filter((or) => or.status === 'completed').length },
+    { label: 'Pending', value: 'pending', count: orders.filter((or) => or.status === 'pending').length },
+    { label: 'inProgress', value: 'inProgress', count: orders.filter((or) => or.status === 'inProgress').length },
+    { label: 'Processing', value: 'Processing', count: orders.filter((or) => or.status === 'Processing').length },
+    { label: 'Dispatched', value: 'Dispatched', count: orders.filter((or) => or.status === 'Dispatched').length },
+    { label: 'Canceled', value: 'canceled', count: orders.filter((or) => or.status === 'canceled').length },
+    { label: 'Rejected', value: 'rejected', count: orders.filter((or) => or.status === 'rejected').length },
+  ];
 
-export function OrdersFilters({ filters = {}, sortDir = 'desc' }) {
   const { customer, id, status } = filters;
 
   const navigate = useNavigate();

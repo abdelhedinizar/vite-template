@@ -17,12 +17,53 @@ export const route = {
   ),
   children: [
     {
-      index: true,
+      path: 'home',
       lazy: async () => {
-        const { Page } = await import('@/pages/dashboard/overview');
+        const { Page } = await import('@/pages/dashboard/home');
         return { Component: Page };
       },
     },
+    {
+      path: 'waiter',
+      lazy: async () => {
+        const { Page } = await import('@/pages/dashboard/chat/bot');
+        return { Component: Page };
+      },
+    },
+    {
+      path: 'orders',
+      lazy: async () => {
+        const { Page } = await import('@/pages/dashboard/orders/details');
+        return { Component: Page };
+      },
+    },
+    {
+      path: 'basket',
+      children: [
+        {
+          index: true,
+          lazy: async () => {
+            const { Page } = await import('@/pages/dashboard/basket/create');
+            return { Component: Page };
+          },
+        },
+        {
+          path: 'detail',
+          lazy: async () => {
+            const { Page } = await import('@/pages/dashboard/basket/detail');
+            return { Component: Page };
+          },
+        },
+        {
+          path: 'success',
+          lazy: async () => {
+            const { Page } = await import('@/pages/dashboard/basket/success');
+            return { Component: Page };
+          },
+        },
+      ],
+    },
+
     {
       path: 'academy',
       children: [
@@ -121,13 +162,6 @@ export const route = {
       ],
     },
     {
-      path: 'crypto',
-      lazy: async () => {
-        const { Page } = await import('@/pages/dashboard/crypto');
-        return { Component: Page };
-      },
-    },
-    {
       path: 'customers',
       children: [
         {
@@ -152,13 +186,6 @@ export const route = {
           },
         },
       ],
-    },
-    {
-      path: 'e-commerce',
-      lazy: async () => {
-        const { Page } = await import('@/pages/dashboard/e-commerce');
-        return { Component: Page };
-      },
     },
     {
       path: 'file-storage',
@@ -319,6 +346,13 @@ export const route = {
           index: true,
           lazy: async () => {
             const { Page } = await import('@/pages/dashboard/orders/list');
+            return { Component: Page };
+          },
+        },
+        {
+          path: 'today',
+          lazy: async () => {
+            const { Page } = await import('@/pages/dashboard/orders/today');
             return { Component: Page };
           },
         },

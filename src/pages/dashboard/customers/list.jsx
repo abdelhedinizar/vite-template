@@ -6,11 +6,13 @@ import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
+import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
 import { useSearchParams } from 'react-router-dom';
 
 import { config } from '@/config';
 import { dayjs } from '@/lib/dayjs';
+import { toast } from '@/components/core/toaster';
 import { CustomersFilters } from '@/components/dashboard/customer/customers-filters';
 import { CustomersPagination } from '@/components/dashboard/customer/customers-pagination';
 import { CustomersSelectionProvider } from '@/components/dashboard/customer/customers-selection-context';
@@ -18,61 +20,56 @@ import { CustomersTable } from '@/components/dashboard/customer/customers-table'
 
 const metadata = { title: `List | Customers | Dashboard | ${config.site.name}` };
 
-const customers = [
-  {
-    id: 'USR-005',
-    name: 'Fran Perez',
-    avatar: '/assets/avatar-5.png',
-    email: 'fran.perez@domain.com',
-    phone: '(815) 704-0045',
-    quota: 50,
-    status: 'active',
-    createdAt: dayjs().subtract(1, 'hour').toDate(),
-  },
-  {
-    id: 'USR-004',
-    name: 'Penjani Inyene',
-    avatar: '/assets/avatar-4.png',
-    email: 'penjani.inyene@domain.com',
-    phone: '(803) 937-8925',
-    quota: 100,
-    status: 'active',
-    createdAt: dayjs().subtract(3, 'hour').toDate(),
-  },
-  {
-    id: 'USR-003',
-    name: 'Carson Darrin',
-    avatar: '/assets/avatar-3.png',
-    email: 'carson.darrin@domain.com',
-    phone: '(715) 278-5041',
-    quota: 10,
-    status: 'blocked',
-    createdAt: dayjs().subtract(1, 'hour').subtract(1, 'day').toDate(),
-  },
-  {
-    id: 'USR-002',
-    name: 'Siegbert Gottfried',
-    avatar: '/assets/avatar-2.png',
-    email: 'siegbert.gottfried@domain.com',
-    phone: '(603) 766-0431',
-    quota: 0,
-    status: 'pending',
-    createdAt: dayjs().subtract(7, 'hour').subtract(1, 'day').toDate(),
-  },
-  {
-    id: 'USR-001',
-    name: 'Miron Vitold',
-    avatar: '/assets/avatar-1.png',
-    email: 'miron.vitold@domain.com',
-    phone: '(425) 434-5535',
-    quota: 50,
-    status: 'active',
-    createdAt: dayjs().subtract(2, 'hour').subtract(2, 'day').toDate(),
-  },
-];
-
 export function Page() {
   const { email, phone, sortDir, status } = useExtractSearchParams();
+  const [customers, setCustomers] = React.useState([]);
+  const [reload, setReload] = React.useState(false);
+
+  const handleDeleteUser = React.useCallback(async (selection) => {
+    const token = localStorage.getItem('custom-auth-token');
+    const response = await axios.delete(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/users`, {
+      data: {
+        ids: Array.from(selection.selected),
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    if (response.status === 204) {
+      toast.success('User Deleted successfully');
+    } else {
+      toast.error('Failed to delete customer');
+    }
+    setReload((prev) => !prev);
+  }, []);
+
+  const fetchCustomers = async () => {
+    const token = localStorage.getItem('custom-auth-token');
+    const customersAndStaff = await axios.get(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/users`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    setCustomers(
+      customersAndStaff.data.data.users.map((user) => {
+        return {
+          id: user._id,
+          name: user.name,
+          avatar: user.avatar,
+          email: user.email,
+          phone: `${user?.phoneNumber?.dialCode} ${user?.phoneNumber?.number}`,
+          role: user?.role,
+          status: 'active',
+          createdAt: dayjs(user.createdAt).toDate(),
+        };
+      })
+    );
+  };
+
+  React.useEffect(() => {
+    fetchCustomers();
+  }, [reload, applySort, applyFilters]);
 
   const sortedCustomers = applySort(customers, sortDir);
   const filteredCustomers = applyFilters(sortedCustomers, { email, phone, status });
@@ -93,7 +90,7 @@ export function Page() {
         <Stack spacing={4}>
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} sx={{ alignItems: 'flex-start' }}>
             <Box sx={{ flex: '1 1 auto' }}>
-              <Typography variant="h4">Customers</Typography>
+              <Typography variant="h4">Customers and Staff</Typography>
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
               <Button startIcon={<PlusIcon />} variant="contained">
@@ -103,7 +100,12 @@ export function Page() {
           </Stack>
           <CustomersSelectionProvider customers={filteredCustomers}>
             <Card>
-              <CustomersFilters filters={{ email, phone, status }} sortDir={sortDir} />
+              <CustomersFilters
+                filters={{ email, phone, status }}
+                sortDir={sortDir}
+                customers={filteredCustomers}
+                onDelete={handleDeleteUser}
+              />
               <Divider />
               <Box sx={{ overflowX: 'auto' }}>
                 <CustomersTable rows={filteredCustomers} />

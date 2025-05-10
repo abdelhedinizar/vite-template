@@ -4,7 +4,9 @@ import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { ArrowLeft as ArrowLeftIcon } from '@phosphor-icons/react/dist/ssr/ArrowLeft';
+import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
+import { useParams } from 'react-router-dom';
 
 import { config } from '@/config';
 import { paths } from '@/paths';
@@ -14,6 +16,24 @@ import { ProductEditForm } from '@/components/dashboard/product/product-edit-for
 const metadata = { title: `Details | Products | Dashboard | ${config.site.name}` };
 
 export function Page() {
+  const { productId } = useParams();
+  const [dish, setDish] = React.useState(null);
+
+  React.useEffect(() => {
+    // Fetch product details using dishId
+    const fetchDishDetails = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/dishs/${productId}`);
+        if (response.status !== 200) {
+          throw new Error('Network response was not ok');
+        }
+        setDish(response.data.data.dish);
+      } catch (error) {
+        console.error('Error fetching product details:', error);
+      }
+    };
+    fetchDishDetails();
+  }, [productId]);
   return (
     <React.Fragment>
       <Helmet>
@@ -47,25 +67,16 @@ export function Page() {
           </Stack>
           <ProductEditForm
             product={{
-              id: 'PRD-001',
-              name: 'Erbology Aloe Vera',
-              handle: 'healthcare-erbology',
-              category: 'Healthcare',
-              type: 'physical',
-              description:
-                '<h2>Erbology Aloe Vera is a natural, eco-friendly, and vegan product.</h2><p>It is made from natural ingredients. It is a great product for healthcare.</p>',
-              tags: 'Natural, Eco-Friendly, Vegan',
+              id: dish?._id,
+              name: dish?.name,
+              status: dish?.status,
+              category: dish?.category,
+              SpiceLevel: dish?.SpiceLevel,
+              PreparationTime: dish?.PreparationTime,
               currency: 'USD',
-              price: 24,
-              images: [{ id: 'IMG-001', url: '/assets/product-1.png', fileName: 'product-1.png' }],
-              sku: '401_1BBXBK',
-              barcode: '',
-              quantity: 10,
-              backorder: true,
-              height: 25,
-              width: 15,
-              length: 5,
-              weight: 0.25,
+              price: dish?.price,
+              images: [{ id: 'IMG-001', url: dish?.image , fileName: `${dish?.name}.png` }],
+              ingredients: dish?.ingredients,
             }}
           />
         </Stack>

@@ -6,10 +6,9 @@ export const layoutConfig = {
       key: 'dashboards',
       title: 'Dashboards',
       items: [
-        { key: 'overview', title: 'Overview', href: paths.dashboard.overview, icon: 'house' },
+        { key: 'home', title: 'Home', href: paths.dashboard.home, icon: 'house' },
+        { key: 'orders', title: 'Orders', href: paths.dashboard.ordersDetail, icon: 'receipt' },
         { key: 'analytics', title: 'Analytics', href: paths.dashboard.analytics, icon: 'chart-pie' },
-        { key: 'ecommerce', title: 'E-commerce', href: paths.dashboard.eCommerce, icon: 'cube' },
-        { key: 'crypto', title: 'Crypto', href: paths.dashboard.crypto, icon: 'currency-eth' },
       ],
     },
     {
@@ -48,7 +47,8 @@ export const layoutConfig = {
           title: 'Orders',
           icon: 'shopping-cart-simple',
           items: [
-            { key: 'orders', title: 'List orders', href: paths.dashboard.orders.list },
+            { key: 'orders', title: 'order history', href: paths.dashboard.orders.list },
+            { key: 'orders', title: "today's orders", href: paths.dashboard.orders.todaylist },
             { key: 'orders:create', title: 'Create order', href: paths.dashboard.orders.create },
             { key: 'orders:details', title: 'Order details', href: paths.dashboard.orders.details('1') },
           ],

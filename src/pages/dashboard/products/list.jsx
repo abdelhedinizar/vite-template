@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { CircularProgress } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -6,12 +7,12 @@ import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
+import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
 import { useSearchParams } from 'react-router-dom';
 
 import { config } from '@/config';
 import { paths } from '@/paths';
-import { dayjs } from '@/lib/dayjs';
 import { RouterLink } from '@/components/core/link';
 import { ProductModal } from '@/components/dashboard/product/product-modal';
 import { ProductsFilters } from '@/components/dashboard/product/products-filters';
@@ -20,79 +21,47 @@ import { ProductsTable } from '@/components/dashboard/product/products-table';
 
 const metadata = { title: `List | Products | Dashboard | ${config.site.name}` };
 
-const products = [
-  {
-    id: 'PRD-005',
-    name: 'Soja & Co. Eucalyptus',
-    image: '/assets/product-5.png',
-    category: 'Skincare',
-    type: 'physical',
-    quantity: 10,
-    currency: 'USD',
-    price: 65.99,
-    sku: '592_LDKDI',
-    status: 'draft',
-    createdAt: dayjs().subtract(23, 'minute').toDate(),
-  },
-  {
-    id: 'PRD-004',
-    name: 'Necessaire Body Lotion',
-    image: '/assets/product-4.png',
-    category: 'Skincare',
-    type: 'physical',
-    quantity: 5,
-    currency: 'USD',
-    price: 17.99,
-    sku: '321_UWEAJT',
-    status: 'published',
-    createdAt: dayjs().subtract(5, 'minute').subtract(1, 'hour').toDate(),
-  },
-  {
-    id: 'PRD-003',
-    name: 'Ritual of Sakura',
-    image: '/assets/product-3.png',
-    category: 'Skincare',
-    type: 'physical',
-    quantity: 8,
-    currency: 'USD',
-    price: 155,
-    sku: '211_QFEXJO',
-    status: 'draft',
-    createdAt: dayjs().subtract(43, 'minute').subtract(3, 'hour').toDate(),
-  },
-  {
-    id: 'PRD-002',
-    name: 'Lancome Rouge',
-    image: '/assets/product-2.png',
-    category: 'Makeup',
-    type: 'physical',
-    quantity: 0,
-    currency: 'USD',
-    price: 95,
-    sku: '978_UBFGJC',
-    status: 'published',
-    createdAt: dayjs().subtract(15, 'minute').subtract(4, 'hour').toDate(),
-  },
-  {
-    id: 'PRD-001',
-    name: 'Erbology Aloe Vera',
-    image: '/assets/product-1.png',
-    category: 'Healthcare',
-    type: 'physical',
-    quantity: 10,
-    currency: 'USD',
-    price: 24,
-    sku: '401_1BBXBK',
-    status: 'published',
-    createdAt: dayjs().subtract(39, 'minute').subtract(7, 'hour').toDate(),
-  },
-];
 
 export function Page() {
+  const [products, setProducts] = React.useState([]);
+  const [error, setError] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const dishResponse = await axios.get(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/dishs?sort=-createdAt`);
+        setProducts(dishResponse.data.data.dishs);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
   const { category, previewId, sortDir, sku, status } = useExtractSearchParams();
 
   const orderedProducts = applySort(products, sortDir);
   const filteredProducts = applyFilters(orderedProducts, { category, sku, status });
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <Typography color="error">Error loading orders: {error.message}</Typography>
+      </Box>
+    );
+  }
 
   return (
     <React.Fragment>
@@ -156,10 +125,10 @@ function useExtractSearchParams() {
 function applySort(row, sortDir) {
   return row.sort((a, b) => {
     if (sortDir === 'asc') {
-      return a.createdAt.getTime() - b.createdAt.getTime();
+      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
     }
 
-    return b.createdAt.getTime() - a.createdAt.getTime();
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
 }
 

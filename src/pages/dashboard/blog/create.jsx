@@ -36,7 +36,7 @@ export function Page() {
           <Stack spacing={1}>
             <Typography variant="h4">Create a new post</Typography>
             <Breadcrumbs separator={<BreadcrumbsSeparator />}>
-              <Link color="text.primary" component={RouterLink} href={paths.dashboard.overview} variant="subtitle2">
+              <Link color="text.primary" component={RouterLink} href={paths.dashboard.home} variant="subtitle2">
                 Dashboard
               </Link>
               <Link color="text.primary" component={RouterLink} href={paths.dashboard.blog.list} variant="subtitle2">

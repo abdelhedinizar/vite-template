@@ -9,7 +9,7 @@ import CardHeader from '@mui/material/CardHeader';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { Wallet as WalletIcon } from '@phosphor-icons/react/dist/ssr/Wallet';
+import { Beanie as BeanieIcon } from '@phosphor-icons/react/dist/ssr/Beanie';
 import { Cell, Pie, PieChart, Tooltip } from 'recharts';
 
 import { NoSsr } from '@/components/core/no-ssr';
@@ -23,11 +23,11 @@ export function CostBreakdown({ data }) {
       <CardHeader
         avatar={
           <Avatar>
-            <WalletIcon fontSize="var(--Icon-fontSize)" />
+            <BeanieIcon fontSize="var(--Icon-fontSize)" />
           </Avatar>
         }
-        subheader="Based on selected period"
-        title="Cost breakdown"
+        subheader="Based on total sales"
+        title="Most selling categories"
       />
       <CardContent>
         <Stack spacing={3}>

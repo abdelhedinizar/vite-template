@@ -8,14 +8,18 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
-import { Bell as BellIcon } from '@phosphor-icons/react/dist/ssr/Bell';
+import { ShoppingCart as BasketIcon } from '@phosphor-icons/react/dist/ssr';
+import { ChatsCircle as ChatsCircleIcon } from '@phosphor-icons/react/dist/ssr/ChatsCircle';
 import { List as ListIcon } from '@phosphor-icons/react/dist/ssr/List';
 import { MagnifyingGlass as MagnifyingGlassIcon } from '@phosphor-icons/react/dist/ssr/MagnifyingGlass';
 import { Users as UsersIcon } from '@phosphor-icons/react/dist/ssr/Users';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 import { useDialog } from '@/hooks/use-dialog';
 import { usePopover } from '@/hooks/use-popover';
+import { useUser } from '@/hooks/use-user';
 
 import { ContactsPopover } from '../contacts-popover';
 import { languageFlags, LanguagePopover } from '../language-popover';
@@ -26,6 +30,7 @@ import { UserPopover } from '../user-popover/user-popover';
 
 export function MainNav({ items }) {
   const [openNav, setOpenNav] = React.useState(false);
+  const { user } = useUser();
 
   return (
     <React.Fragment>
@@ -69,15 +74,15 @@ export function MainNav({ items }) {
             spacing={2}
             sx={{ alignItems: 'center', flex: '1 1 auto', justifyContent: 'flex-end' }}
           >
-            <NotificationsButton />
-            <ContactsButton />
+            <BasketButton />
+            <ChatButton />
             <Divider
               flexItem
               orientation="vertical"
               sx={{ borderColor: 'var(--MainNav-divider)', display: { xs: 'none', lg: 'block' } }}
             />
             <LanguageSwitch />
-            <UserButton />
+            <UserButton user={user} />
           </Stack>
         </Box>
       </Box>
@@ -122,19 +127,39 @@ function ContactsButton() {
   );
 }
 
-function NotificationsButton() {
+function ChatButton() {
   const popover = usePopover();
+  const navigate = useNavigate();
+
+  const openChatBot = () => {
+    navigate('/dashboard/waiter');
+  };
+  return (
+    <React.Fragment>
+      <Tooltip title="ChatBot">
+        <IconButton  onClick={() => openChatBot()} ref={popover.anchorRef}>
+          <ChatsCircleIcon />
+        </IconButton>
+      </Tooltip>
+      <ContactsPopover anchorEl={popover.anchorRef.current} onClose={popover.handleClose} open={popover.open} />
+    </React.Fragment>
+  );
+}
+
+function BasketButton() {
+  const popover = usePopover();
+  const navigate = useNavigate();
+  const { items } = useSelector((state) => state.basket);
+  const openBasketDetail = () => {
+    navigate('/dashboard/basket/detail');
+  };
 
   return (
     <React.Fragment>
-      <Tooltip title="Notifications">
-        <Badge
-          color="error"
-          sx={{ '& .MuiBadge-dot': { borderRadius: '50%', height: '10px', right: '6px', top: '6px', width: '10px' } }}
-          variant="dot"
-        >
-          <IconButton onClick={popover.handleOpen} ref={popover.anchorRef}>
-            <BellIcon />
+      <Tooltip title="Basket">
+        <Badge color="error" badgeContent={items.length} sx={{ top: '3px' }} max={9}>
+          <IconButton onClick={() => openBasketDetail()} ref={popover.anchorRef}>
+            <BasketIcon />
           </IconButton>
         </Badge>
       </Tooltip>
@@ -167,14 +192,7 @@ function LanguageSwitch() {
   );
 }
 
-const user = {
-  id: 'USR-000',
-  name: 'Sofia Rivers',
-  avatar: '/assets/avatar.png',
-  email: 'sofia@devias.io',
-};
-
-function UserButton() {
+function UserButton({ user }) {
   const popover = usePopover();
 
   return (
@@ -203,7 +221,7 @@ function UserButton() {
           <Avatar src={user.avatar} />
         </Badge>
       </Box>
-      <UserPopover anchorEl={popover.anchorRef.current} onClose={popover.handleClose} open={popover.open} />
+      <UserPopover anchorEl={popover.anchorRef.current} onClose={popover.handleClose} open={popover.open} user={user} />
     </React.Fragment>
   );
 }

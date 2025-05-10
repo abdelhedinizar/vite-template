@@ -1,16 +1,17 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
+import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
+import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
 import { useSearchParams } from 'react-router-dom';
 
 import { config } from '@/config';
-import { dayjs } from '@/lib/dayjs';
+import { useUser } from '@/hooks/use-user';
 import { OrderModal } from '@/components/dashboard/order/order-modal';
 import { OrdersFilters } from '@/components/dashboard/order/orders-filters';
 import { OrdersPagination } from '@/components/dashboard/order/orders-pagination';
@@ -19,64 +20,50 @@ import { OrdersTable } from '@/components/dashboard/order/orders-table';
 
 const metadata = { title: `List | Orders | Dashboard | ${config.site.name}` };
 
-const orders = [
-  {
-    id: 'ORD-005',
-    customer: { name: 'Penjani Inyene', avatar: '/assets/avatar-4.png', email: 'penjani.inyene@domain.com' },
-    lineItems: 1,
-    paymentMethod: { type: 'visa', last4: '4011' },
-    currency: 'USD',
-    totalAmount: 56.7,
-    status: 'pending',
-    createdAt: dayjs().subtract(3, 'hour').toDate(),
-  },
-  {
-    id: 'ORD-004',
-    customer: { name: 'Jie Yan', avatar: '/assets/avatar-8.png', email: 'jie.yan@domain.com' },
-    lineItems: 1,
-    paymentMethod: { type: 'amex', last4: '5678' },
-    currency: 'USD',
-    totalAmount: 49.12,
-    status: 'completed',
-    createdAt: dayjs().subtract(6, 'hour').toDate(),
-  },
-  {
-    id: 'ORD-003',
-    customer: { name: 'Fran Perez', avatar: '/assets/avatar-5.png', email: 'fran.perez@domain.com' },
-    lineItems: 2,
-    paymentMethod: { type: 'applepay' },
-    currency: 'USD',
-    totalAmount: 18.75,
-    status: 'canceled',
-    createdAt: dayjs().subtract(7, 'hour').toDate(),
-  },
-  {
-    id: 'ORD-002',
-    customer: { name: 'Carson Darrin', avatar: '/assets/avatar-3.png', email: 'carson.darrin@domain.com' },
-    lineItems: 1,
-    paymentMethod: { type: 'googlepay' },
-    currency: 'USD',
-    totalAmount: 49.99,
-    status: 'rejected',
-    createdAt: dayjs().subtract(1, 'hour').subtract(1, 'day').toDate(),
-  },
-  {
-    id: 'ORD-001',
-    customer: { name: 'Miron Vitold', avatar: '/assets/avatar-1.png', email: 'miron.vitold@domain.com' },
-    lineItems: 2,
-    paymentMethod: { type: 'mastercard', last4: '4242' },
-    currency: 'USD',
-    totalAmount: 94.01,
-    status: 'completed',
-    createdAt: dayjs().subtract(3, 'hour').subtract(1, 'day').toDate(),
-  },
-];
-
 export function Page() {
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { user } = useUser();
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const orderResponse = await axios.get(
+          `${import.meta.env.VITE_REACT_APP_BACK_API_URL}/orders?user=${user._id}&sort=-createdAt`
+        );
+        setOrders(orderResponse.data.data.orders);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
   const { customer, id, previewId, sortDir, status } = useExtractSearchParams();
 
   const sortedOrders = applySort(orders, sortDir);
   const filteredOrders = applyFilters(sortedOrders, { customer, id, status });
+  const selectedOrder = orders?.filter((order) => order.id === previewId)[0];
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <Typography color="error">Error loading orders: {error.message}</Typography>
+      </Box>
+    );
+  }
 
   return (
     <React.Fragment>
@@ -96,15 +83,10 @@ export function Page() {
             <Box sx={{ flex: '1 1 auto' }}>
               <Typography variant="h4">Orders</Typography>
             </Box>
-            <div>
-              <Button startIcon={<PlusIcon />} variant="contained">
-                Add
-              </Button>
-            </div>
           </Stack>
           <OrdersSelectionProvider orders={filteredOrders}>
             <Card>
-              <OrdersFilters filters={{ customer, id, status }} sortDir={sortDir} />
+              <OrdersFilters filters={{ customer, id, status }} sortDir={sortDir} orders={orders} />
               <Divider />
               <Box sx={{ overflowX: 'auto' }}>
                 <OrdersTable rows={filteredOrders} />
@@ -115,7 +97,7 @@ export function Page() {
           </OrdersSelectionProvider>
         </Stack>
       </Box>
-      <OrderModal open={Boolean(previewId)} />
+      <OrderModal open={Boolean(previewId)} order={selectedOrder} />
     </React.Fragment>
   );
 }
@@ -137,10 +119,10 @@ function useExtractSearchParams() {
 function applySort(row, sortDir) {
   return row.sort((a, b) => {
     if (sortDir === 'asc') {
-      return a.createdAt.getTime() - b.createdAt.getTime();
+      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
     }
 
-    return b.createdAt.getTime() - a.createdAt.getTime();
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
 }
 
