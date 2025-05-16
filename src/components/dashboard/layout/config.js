@@ -64,30 +64,6 @@ export const layoutConfig = {
           ],
         },
         {
-          key: 'jobs',
-          title: 'Jobs',
-          icon: 'read-cv-logo',
-          items: [
-            { key: 'jobs:browse', title: 'Browse jobs', href: paths.dashboard.jobs.browse },
-            { key: 'jobs:create', title: 'Create job', href: paths.dashboard.jobs.create },
-            {
-              key: 'jobs:company',
-              title: 'Company details',
-              href: paths.dashboard.jobs.companies.overview('1'),
-              matcher: { type: 'startsWith', href: '/dashboard/jobs/companies/1' },
-            },
-          ],
-        },
-        {
-          key: 'logistics',
-          title: 'Logistics',
-          icon: 'truck',
-          items: [
-            { key: 'logistics:metrics', title: 'Metrics', href: paths.dashboard.logistics.metrics },
-            { key: 'logistics:fleet', title: 'Fleet', href: paths.dashboard.logistics.fleet },
-          ],
-        },
-        {
           key: 'blog',
           title: 'Blog',
           icon: 'text-align-left',

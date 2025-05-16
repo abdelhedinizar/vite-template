@@ -92,18 +92,6 @@ export const paths = {
       create: '/dashboard/invoices/create',
       details: (invoiceId) => `/dashboard/invoices/${invoiceId}`,
     },
-    jobs: {
-      browse: '/dashboard/jobs',
-      create: '/dashboard/jobs/create',
-      companies: {
-        overview: (companyId) => `/dashboard/jobs/companies/${companyId}`,
-        reviews: (companyId) => `/dashboard/jobs/companies/${companyId}/reviews`,
-        activity: (companyId) => `/dashboard/jobs/companies/${companyId}/activity`,
-        team: (companyId) => `/dashboard/jobs/companies/${companyId}/team`,
-        assets: (companyId) => `/dashboard/jobs/companies/${companyId}/assets`,
-      },
-    },
-    logistics: { metrics: '/dashboard/logistics', fleet: '/dashboard/logistics/fleet' },
     mail: {
       list: (label) => `/dashboard/mail/${label}`,
       details: (label, emailId) => `/dashboard/mail/${label}/${emailId}`,
