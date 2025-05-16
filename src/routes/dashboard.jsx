@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Outlet } from 'react-router-dom';
 
 import { Layout as ChatLayout } from '@/components/dashboard/chat/layout';
-import { Layout as JobCompanyLayout } from '@/components/dashboard/jobs/company-layout';
 import { Layout as DashboardLayout } from '@/components/dashboard/layout/layout';
 import { Layout as MailLayout } from '@/components/dashboard/mail/layout';
 import { Layout as SettingsLayout } from '@/components/dashboard/settings/layout';
@@ -222,89 +221,6 @@ export const route = {
           path: ':invoiceId',
           lazy: async () => {
             const { Page } = await import('@/pages/dashboard/invoices/details');
-            return { Component: Page };
-          },
-        },
-      ],
-    },
-    {
-      path: 'jobs',
-      children: [
-        {
-          index: true,
-          lazy: async () => {
-            const { Page } = await import('@/pages/dashboard/jobs/browse');
-            return { Component: Page };
-          },
-        },
-        {
-          path: 'create',
-          lazy: async () => {
-            const { Page } = await import('@/pages/dashboard/jobs/create');
-            return { Component: Page };
-          },
-        },
-        {
-          path: 'companies/:companyId',
-          element: (
-            <JobCompanyLayout>
-              <Outlet />
-            </JobCompanyLayout>
-          ),
-          children: [
-            {
-              index: true,
-              lazy: async () => {
-                const { Page } = await import('@/pages/dashboard/jobs/company/details');
-                return { Component: Page };
-              },
-            },
-            {
-              path: 'activity',
-              lazy: async () => {
-                const { Page } = await import('@/pages/dashboard/jobs/company/activity');
-                return { Component: Page };
-              },
-            },
-            {
-              path: 'assets',
-              lazy: async () => {
-                const { Page } = await import('@/pages/dashboard/jobs/company/assets');
-                return { Component: Page };
-              },
-            },
-            {
-              path: 'reviews',
-              lazy: async () => {
-                const { Page } = await import('@/pages/dashboard/jobs/company/reviews');
-                return { Component: Page };
-              },
-            },
-            {
-              path: 'team',
-              lazy: async () => {
-                const { Page } = await import('@/pages/dashboard/jobs/company/team');
-                return { Component: Page };
-              },
-            },
-          ],
-        },
-      ],
-    },
-    {
-      path: 'logistics',
-      children: [
-        {
-          index: true,
-          lazy: async () => {
-            const { Page } = await import('@/pages/dashboard/logistics/metrics');
-            return { Component: Page };
-          },
-        },
-        {
-          path: 'fleet',
-          lazy: async () => {
-            const { Page } = await import('@/pages/dashboard/logistics/fleet');
             return { Component: Page };
           },
         },

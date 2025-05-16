@@ -17,7 +17,7 @@ import { RouterLink } from '@/components/core/link';
 import { Logo } from '@/components/core/logo';
 
 import { icons } from './nav-icons';
-import { WorkspacesSwitch } from './workspaces-switch';
+//import { WorkspacesSwitch } from './workspaces-switch';
 
 export function MobileNav({ items = [], open, onClose }) {
   const pathname = usePathname();
@@ -62,10 +62,10 @@ export function MobileNav({ items = [], open, onClose }) {
       <Stack spacing={2} sx={{ p: 2 }}>
         <div>
           <Box component={RouterLink} href={paths.home} sx={{ display: 'inline-flex' }}>
-            <Logo color="light" height={32} width={122} />
+            <Logo color="light" height={66} width={122} />
           </Box>
         </div>
-        <WorkspacesSwitch />
+        {/*<WorkspacesSwitch /> */}
       </Stack>
       <Box component="nav" sx={{ flex: '1 1 auto', p: 2 }}>
         {renderNavGroups({ items, onClose, pathname })}

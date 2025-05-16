@@ -15,7 +15,7 @@ import { RouterLink } from '@/components/core/link';
 import { Logo } from '@/components/core/logo';
 
 import { icons } from '../nav-icons';
-import { WorkspacesSwitch } from '../workspaces-switch';
+//import { WorkspacesSwitch } from '../workspaces-switch';
 import { navColorStyles } from './styles';
 
 const logoColors = {
@@ -51,10 +51,10 @@ export function SideNav({ color = 'evident', items = [] }) {
       <Stack spacing={2} sx={{ p: 2 }}>
         <div>
           <Box component={RouterLink} href={paths.home} sx={{ display: 'inline-flex' }}>
-            <Logo color={logoColor} height={32} width={122} />
+            <Logo color={logoColor} height={66} width={122} />
           </Box>
         </div>
-        <WorkspacesSwitch />
+       {/*  <WorkspacesSwitch /> */} 
       </Stack>
       <Box
         component="nav"

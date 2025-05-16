@@ -31,7 +31,6 @@ const navItems = [
         items: [
           { key: 'overview', title: 'Overview', href: paths.dashboard.overview },
           { key: 'analytics', title: 'Customers', href: paths.dashboard.customers.list },
-          { key: 'logistics', title: 'Logistics', href: paths.dashboard.logistics.metrics },
           { key: 'settings', title: 'Settings', href: paths.dashboard.settings.account },
           { key: 'file-storage', title: 'File storage', href: paths.dashboard.fileStorage },
         ],
@@ -88,7 +87,7 @@ export function MobileNav({ onClose, open = false }) {
       <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, minHeight: 0 }}>
         <Stack direction="row" spacing={3} sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
           <Box component={RouterLink} href={paths.home} sx={{ display: 'inline-flex' }}>
-            <DynamicLogo colorDark="light" colorLight="dark" height={32} width={122} />
+            <DynamicLogo colorDark="light" colorLight="dark" height={64} width={122} />
           </Box>
           <IconButton onClick={onClose}>
             <XIcon />

@@ -65,15 +65,16 @@ export function Hero() {
         <Stack spacing={4}>
           <Stack spacing={2}>
             <Typography sx={{ fontSize: '3.5rem', fontWeight: 600, lineHeight: 1.2, textAlign: 'center' }}>
-              Focus on development, leave{' '}
+              Focalisez-vous sur le goût,{' '}
               <Typography color="primary.main" component="span" variant="inherit">
-                User Experience
+                on s’occupe
               </Typography>{' '}
-              to us.
+              du reste.
             </Typography>
             <Typography color="neutral.300" sx={{ fontWeight: 400, textAlign: 'center' }} variant="h5">
-              Premium template designed to accelerate app development with a stunning design and powerful pre-built
-              Material UI components.
+              Offrez à vos clients une nouvelle façon de commander, et à vous, restaurateur, une façon plus intelligente
+              de gérer votre service. Notre plateforme vous accompagne dans la digitalisation de votre restaurant, sans
+              prise de tête.
             </Typography>
           </Stack>
           <Stack direction="row" spacing={2} sx={{ justifyContent: 'center' }}>
