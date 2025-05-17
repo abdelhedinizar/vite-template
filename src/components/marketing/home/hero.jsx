@@ -25,7 +25,7 @@ export function Hero() {
   return (
     <Box
       sx={{
-        bgcolor: 'var(--mui-palette-neutral-950)',
+        bgcolor: 'var(--mui-palette-info-700)',
         color: 'var(--mui-palette-common-white)',
         overflow: 'hidden',
         position: 'relative',
