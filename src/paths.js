@@ -66,36 +66,13 @@ export const paths = {
       security: '/dashboard/settings/security',
       team: '/dashboard/settings/team',
     },
-    academy: { browse: '/dashboard/academy', details: (courseId) => `/dashboard/academy/courses/${courseId}` },
     analytics: '/dashboard/analytics',
-    blank: '/dashboard/blank',
-    blog: {
-      list: '/dashboard/blog',
-      details: (postId) => `/dashboard/blog/${postId}`,
-      create: '/dashboard/blog/create',
-    },
-    calendar: '/dashboard/calendar',
-    chat: {
-      base: '/dashboard/chat',
-      compose: '/dashboard/chat/compose',
-      thread: (threadType, threadId) => `/dashboard/chat/${threadType}/${threadId}`,
-    },
     customers: {
       list: '/dashboard/customers',
       create: '/dashboard/customers/create',
       details: (customerId) => `/dashboard/customers/${customerId}`,
     },
-    fileStorage: '/dashboard/file-storage',
     i18n: '/dashboard/i18n',
-    invoices: {
-      list: '/dashboard/invoices',
-      create: '/dashboard/invoices/create',
-      details: (invoiceId) => `/dashboard/invoices/${invoiceId}`,
-    },
-    mail: {
-      list: (label) => `/dashboard/mail/${label}`,
-      details: (label, emailId) => `/dashboard/mail/${label}/${emailId}`,
-    },
     orders: {
       list: '/dashboard/orders',
       todaylist: '/dashboard/orders/today',
@@ -109,13 +86,7 @@ export const paths = {
       preview: (productId) => `/dashboard/products?previewId=${productId}`,
       details: (productId) => `/dashboard/products/${productId}`,
     },
-    social: {
-      profile: { timeline: '/dashboard/social/profile', connections: '/dashboard/social/profile/connections' },
-      feed: '/dashboard/social/feed',
-    },
-    tasks: '/dashboard/tasks',
   },
-  pdf: { invoice: (invoiceId) => `/pdf/invoices/${invoiceId}` },
   components: {
     index: '/components',
     buttons: '/components/buttons',
@@ -134,6 +105,4 @@ export const paths = {
   notAuthorized: '/errors/not-authorized',
   notFound: '/errors/not-found',
   internalServerError: '/errors/internal-server-error',
-  docs: 'https://material-kit-pro-react-docs.devias.io',
-  purchase: 'https://mui.com/store/items/devias-kit-pro',
 };

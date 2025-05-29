@@ -18,8 +18,8 @@ import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxi
 import { NoSsr } from '@/components/core/no-ssr';
 
 const bars = [
-  { name: 'Daily Order Count', dataKey: 'v1', color: 'var(--mui-palette-primary-main)' },
-  { name: 'Daily Order Revenue', dataKey: 'v2', color: 'var(--mui-palette-primary-100)' },
+  { name: 'Daily Order Revenue', dataKey: 'v2', color: 'var(--mui-palette-primary-main)' },
+  { name: 'Daily Order Count', dataKey: 'v1', color: 'var(--mui-palette-primary-100)' },
 ];
 
 export function ChannelSessionsVsBounce({ data }) {

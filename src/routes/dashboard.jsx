@@ -1,11 +1,8 @@
 import * as React from 'react';
 import { Outlet } from 'react-router-dom';
 
-import { Layout as ChatLayout } from '@/components/dashboard/chat/layout';
 import { Layout as DashboardLayout } from '@/components/dashboard/layout/layout';
-import { Layout as MailLayout } from '@/components/dashboard/mail/layout';
 import { Layout as SettingsLayout } from '@/components/dashboard/settings/layout';
-import { Layout as SocialProfileLayout } from '@/components/dashboard/social/profile-layout';
 
 export const route = {
   path: 'dashboard',
@@ -62,103 +59,12 @@ export const route = {
         },
       ],
     },
-
-    {
-      path: 'academy',
-      children: [
-        {
-          index: true,
-          lazy: async () => {
-            const { Page } = await import('@/pages/dashboard/academy/browse');
-            return { Component: Page };
-          },
-        },
-        {
-          path: 'courses/:courseId',
-          lazy: async () => {
-            const { Page } = await import('@/pages/dashboard/academy/courses/details');
-            return { Component: Page };
-          },
-        },
-      ],
-    },
     {
       path: 'analytics',
       lazy: async () => {
         const { Page } = await import('@/pages/dashboard/analytics');
         return { Component: Page };
       },
-    },
-    {
-      path: 'blank',
-      lazy: async () => {
-        const { Page } = await import('@/pages/dashboard/blank');
-        return { Component: Page };
-      },
-    },
-    {
-      path: 'blog',
-      children: [
-        {
-          index: true,
-          lazy: async () => {
-            const { Page } = await import('@/pages/dashboard/blog/list');
-            return { Component: Page };
-          },
-        },
-        {
-          path: 'create',
-          lazy: async () => {
-            const { Page } = await import('@/pages/dashboard/blog/create');
-            return { Component: Page };
-          },
-        },
-        {
-          path: ':postId',
-          lazy: async () => {
-            const { Page } = await import('@/pages/dashboard/blog/details');
-            return { Component: Page };
-          },
-        },
-      ],
-    },
-    {
-      path: 'calendar',
-      lazy: async () => {
-        const { Page } = await import('@/pages/dashboard/calendar');
-        return { Component: Page };
-      },
-    },
-    {
-      path: 'chat',
-      element: (
-        <ChatLayout>
-          <Outlet />
-        </ChatLayout>
-      ),
-      children: [
-        {
-          index: true,
-          lazy: async () => {
-            const { Page } = await import('@/pages/dashboard/chat/blank');
-            return { Component: Page };
-          },
-        },
-        {
-          path: 'compose',
-          lazy: async () => {
-            const { Page } = await import('@/pages/dashboard/chat/compose');
-            return { Component: Page };
-          },
-        },
-        {
-          path: ':threadType/:threadId',
-          lazy: async () => {
-            const { Page } = await import('@/pages/dashboard/chat/thread');
-            return { Component: Page };
-          },
-        },
-      ],
     },
     {
       path: 'customers',
@@ -187,73 +93,11 @@ export const route = {
       ],
     },
     {
-      path: 'file-storage',
-      lazy: async () => {
-        const { Page } = await import('@/pages/dashboard/file-storage');
-        return { Component: Page };
-      },
-    },
-    {
       path: 'i18n',
       lazy: async () => {
         const { Page } = await import('@/pages/dashboard/i18n');
         return { Component: Page };
       },
-    },
-    {
-      path: 'invoices',
-      children: [
-        {
-          index: true,
-          lazy: async () => {
-            const { Page } = await import('@/pages/dashboard/invoices/list');
-            return { Component: Page };
-          },
-        },
-        {
-          path: 'create',
-          lazy: async () => {
-            const { Page } = await import('@/pages/dashboard/invoices/create');
-            return { Component: Page };
-          },
-        },
-        {
-          path: ':invoiceId',
-          lazy: async () => {
-            const { Page } = await import('@/pages/dashboard/invoices/details');
-            return { Component: Page };
-          },
-        },
-      ],
-    },
-    {
-      path: 'mail',
-      element: (
-        <MailLayout>
-          <Outlet />
-        </MailLayout>
-      ),
-      children: [
-        {
-          path: ':labelId',
-          children: [
-            {
-              index: true,
-              lazy: async () => {
-                const { Page } = await import('@/pages/dashboard/mail/threads');
-                return { Component: Page };
-              },
-            },
-            {
-              path: ':threadId',
-              lazy: async () => {
-                const { Page } = await import('@/pages/dashboard/mail/thread');
-                return { Component: Page };
-              },
-            },
-          ],
-        },
-      ],
     },
     {
       path: 'orders',
@@ -365,49 +209,6 @@ export const route = {
           },
         },
       ],
-    },
-    {
-      path: 'social',
-      children: [
-        {
-          path: 'feed',
-          lazy: async () => {
-            const { Page } = await import('@/pages/dashboard/social/feed');
-            return { Component: Page };
-          },
-        },
-        {
-          path: 'profile',
-          element: (
-            <SocialProfileLayout>
-              <Outlet />
-            </SocialProfileLayout>
-          ),
-          children: [
-            {
-              index: true,
-              lazy: async () => {
-                const { Page } = await import('@/pages/dashboard/social/timeline');
-                return { Component: Page };
-              },
-            },
-            {
-              path: 'connections',
-              lazy: async () => {
-                const { Page } = await import('@/pages/dashboard/social/connections');
-                return { Component: Page };
-              },
-            },
-          ],
-        },
-      ],
-    },
-    {
-      path: 'tasks',
-      lazy: async () => {
-        const { Page } = await import('@/pages/dashboard/tasks');
-        return { Component: Page };
-      },
     },
   ],
 };

@@ -25,10 +25,19 @@ export function Hero() {
   return (
     <Box
       sx={{
-        bgcolor: 'var(--mui-palette-neutral-950)',
-        color: 'var(--mui-palette-common-white)',
-        overflow: 'hidden',
         position: 'relative',
+        overflow: 'hidden',
+        color: 'var(--mui-palette-common-white)',
+        backgroundImage: `
+      linear-gradient(
+        rgba(130, 0, 11, 0.61), 
+        rgba(13, 0, 130, 0.85)
+      ),
+      url('/assets/restaurant-image.jpg')
+    `,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
       }}
     >
       <Box
@@ -71,7 +80,7 @@ export function Hero() {
               </Typography>{' '}
               du reste.
             </Typography>
-            <Typography color="neutral.300" sx={{ fontWeight: 400, textAlign: 'center' }} variant="h5">
+            <Typography color="neutral.50" sx={{ fontWeight: 400, textAlign: 'center' }} variant="h5">
               Offrez à vos clients une nouvelle façon de commander, et à vous, restaurateur, une façon plus intelligente
               de gérer votre service. Notre plateforme vous accompagne dans la digitalisation de votre restaurant, sans
               prise de tête.
@@ -79,7 +88,7 @@ export function Hero() {
           </Stack>
           <Stack direction="row" spacing={2} sx={{ justifyContent: 'center' }}>
             <Button component={RouterLink} href={paths.dashboard.home} variant="contained">
-              Dashboard
+              🔍 Voir la solution
             </Button>
             <Button
               component={RouterLink}
@@ -89,7 +98,7 @@ export function Hero() {
                 '&:hover': { bgcolor: 'var(--mui-palette-action-hover)' },
               }}
             >
-              Components
+              📞 Contactez-nous
             </Button>
           </Stack>
           <Stack direction="row" spacing={1} sx={{ alignItems: 'center', justifyContent: 'center ' }}>
