@@ -41,10 +41,10 @@ export function Included() {
         <Container maxWidth="md">
           <Stack spacing={2}>
             <Typography color="inherit" sx={{ textAlign: 'center' }} variant="h3">
-              What can you expect
+              Tout ce qu’il faut pour digitaliser votre restaurant
             </Typography>
             <Typography color="neutral.300" sx={{ textAlign: 'center' }}>
-              All the resources you need to build a better experience
+              Une solution complète pour simplifier la prise de commande, améliorer le service et suivre vos performances.
             </Typography>
           </Stack>
         </Container>
@@ -58,18 +58,18 @@ export function Included() {
             >
               <Stack spacing={2}>
                 <div>
-                  <Chip color="success" icon={<LightningIcon />} label="Quality widgets" variant="soft" />
+                  <Chip color="success" icon={<LightningIcon />} label="Outils intelligents" variant="soft" />
                 </div>
                 <Typography color="inherit" variant="h3">
-                  Dashboards
+                  Dashboard intuitif
                 </Typography>
                 <Typography color="inherit">
-                  Our interactive dashboard provides an all-encompassing view of your projects, tasks, and
-                  collaborations. Monitor deadlines, track milestones, and stay updated on team activities.
+                  Visualisez vos indicateurs clés : nombre de commandes, temps de préparation, plats populaires. 
+                  Suivez la performance de votre restaurant en un coup d'œil.
                 </Typography>
                 <div>
-                  <Button color="secondary" component={RouterLink} href={paths.dashboard.overview} variant="contained">
-                    Live preview
+                  <Button color="secondary" component={RouterLink} href={paths.dashboard.analytics} variant="contained">
+                    Voir le dashboard
                   </Button>
                 </div>
               </Stack>
@@ -96,7 +96,7 @@ export function Included() {
                   }}
                 />
                 <Box
-                  alt="Widgets"
+                  alt="Dashboard"
                   component="img"
                   src="/assets/home-widgets.png"
                   sx={{ height: 'auto', position: 'relative', width: '100%', zIndex: 1 }}

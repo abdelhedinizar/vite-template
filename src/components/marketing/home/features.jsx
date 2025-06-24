@@ -17,18 +17,19 @@ export function Features() {
         <Stack maxWidth="700px" sx={{ mx: 'auto', px: 3 }}>
           <Stack spacing={2}>
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-              <Chip color="primary" icon={<StackIcon />} label="Choose your stack" variant="soft" />
+              <Chip color="primary" icon={<StackIcon />} label="Technologie & IA" variant="soft" />
             </Box>
             <Typography sx={{ textAlign: 'center' }} variant="h3">
-              And so much more
+              Bien plus qu'une simple solution
             </Typography>
             <Typography color="text.secondary" sx={{ textAlign: 'center' }}>
-              All the features you need to build a better experience, explore the possibilities, and unlock the full
-              potential of what we have to offer.
+              Nous utilisons les meilleures technologies et l'intelligence artificielle pour vous offrir les meilleures
+              performances. Explorez tout ce que notre plateforme peut vous apporter pour digitaliser votre restaurant
+              de manière efficace.
             </Typography>
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-              <Button endIcon={<CaretRightIcon />} href={paths.purchase} target="_blank" variant="contained">
-                Purchase now
+              <Button endIcon={<CaretRightIcon />} href={paths.pricing} target="_blank" variant="contained">
+                Essayez maintenant
               </Button>
             </Box>
           </Stack>
