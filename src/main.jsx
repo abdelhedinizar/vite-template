@@ -18,6 +18,7 @@ const router = createBrowserRouter([
       <Root>
         <ScrollRestoration />
         <Outlet />
+        
       </Root>
     ),
     children: [...routes],
