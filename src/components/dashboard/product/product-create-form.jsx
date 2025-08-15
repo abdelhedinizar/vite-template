@@ -27,6 +27,7 @@ import { z as zod } from 'zod';
 
 import { paths } from '@/paths';
 import { logger } from '@/lib/default-logger';
+import { useUser } from '@/hooks/use-user';
 import { RouterLink } from '@/components/core/link';
 import { Option } from '@/components/core/option';
 import { toast } from '@/components/core/toaster';
@@ -105,6 +106,7 @@ function fileToBase64(file) {
 export function ProductCreateForm() {
   const theme = useTheme();
   const navigate = useNavigate();
+  const { user } = useUser();
   const [categories, setCategories] = React.useState([]);
   const [ingrediant, setIngrediant] = React.useState([]);
 
@@ -121,6 +123,9 @@ export function ProductCreateForm() {
       try {
         // Make API request
         _.ingredients = ingrediant.join(', ');
+        // Add restaurant information from the connected user
+        _.restaurant = user?.restaurant?._id || null;
+        
         const token = localStorage.getItem('custom-auth-token');
         const response = await axios.post(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/dishs`, _, {
           headers: {
@@ -139,7 +144,7 @@ export function ProductCreateForm() {
         toast.error('Something went wrong!');
       }
     },
-    [navigate, ingrediant]
+    [navigate, ingrediant, user]
   );
 
   const handleAvatarChange = React.useCallback(
