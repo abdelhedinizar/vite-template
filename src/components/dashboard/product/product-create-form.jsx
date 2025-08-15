@@ -125,7 +125,6 @@ export function ProductCreateForm() {
         _.ingredients = ingrediant.join(', ');
         // Add restaurant information from the connected user
         _.restaurant = user?.restaurant?._id || null;
-        
         const token = localStorage.getItem('custom-auth-token');
         const response = await axios.post(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/dishs`, _, {
           headers: {
