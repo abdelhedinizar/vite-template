@@ -20,7 +20,7 @@ export function useFetchMessages() {
           id: 'MSG-001',
           threadId: 'TRD-004',
           type: 'text',
-          content: response.data.data.choices[0].message.content,
+          content: response.data.data.choices[0].message.content.reply,
           author: { id: 'USR-003', name: 'TasteBuddy', avatar: '/assets/waiter.png' },
           role: 'assistant',
           createdAt: new Date(),
