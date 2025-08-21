@@ -125,13 +125,13 @@ function applySort(row, sortDir) {
 function applyFilters(row, { customer, id, status }) {
   return row.filter((item) => {
     if (customer) {
-      if (!item.customer?.name?.toLowerCase().includes(customer.toLowerCase())) {
+      if (!item.user?.name?.toLowerCase().includes(customer.toLowerCase())) {
         return false;
       }
     }
 
     if (id) {
-      if (!item.id?.toLowerCase().includes(id.toLowerCase())) {
+      if (!item.sequenceNumber?.toString().includes(id)) {
         return false;
       }
     }

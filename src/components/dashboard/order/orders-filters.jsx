@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import { paths } from '@/paths';
 import { FilterButton, FilterPopover, useFilterContext } from '@/components/core/filter-button';
 import { Option } from '@/components/core/option';
+import { useLocation } from 'react-router-dom';
 
 import { useOrdersSelection } from './orders-selection-context';
 
@@ -35,6 +36,7 @@ export function OrdersFilters({ filters = {}, sortDir = 'desc', orders }) {
   const { customer, id, status } = filters;
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   const selection = useOrdersSelection();
 
@@ -58,9 +60,11 @@ export function OrdersFilters({ filters = {}, sortDir = 'desc', orders }) {
         searchParams.set('customer', newFilters.customer);
       }
 
-      navigate(`${paths.dashboard.orders.list}?${searchParams.toString()}`);
+      // Use current pathname instead of hardcoded path
+      const currentPath = location.pathname;
+      navigate(`${currentPath}?${searchParams.toString()}`);
     },
-    [navigate]
+    [navigate, location.pathname]
   );
 
   const handleClearFilters = React.useCallback(() => {
@@ -117,7 +121,7 @@ export function OrdersFilters({ filters = {}, sortDir = 'desc', orders }) {
         <Stack direction="row" spacing={2} sx={{ alignItems: 'center', flex: '1 1 auto', flexWrap: 'wrap' }}>
           <FilterButton
             displayValue={id}
-            label="Order ID"
+            label="Sequence Number"
             onFilterApply={(value) => {
               handleIdChange(value);
             }}
@@ -204,7 +208,7 @@ function IdFilterPopover() {
   }, [initialValue]);
 
   return (
-    <FilterPopover anchorEl={anchorEl} onClose={onClose} open={open} title="Filter by ID">
+    <FilterPopover anchorEl={anchorEl} onClose={onClose} open={open} title="Filter by Sequence Number">
       <FormControl>
         <OutlinedInput
           onChange={(event) => {
