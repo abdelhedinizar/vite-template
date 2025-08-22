@@ -77,7 +77,12 @@ export function useFetchMessages() {
 
   useEffect(() => {
     if (!hasFetchedMessages.current) {
-      fetchMessages([]);
+      fetchMessages([
+        {
+          role: 'user',
+          content: 'Hello',
+        },
+      ]);
       hasFetchedMessages.current = true;
     }
   }, []);
