@@ -31,15 +31,15 @@ const oAuthProviders = [
 ];
 
 const schema = zod.object({
-  firstname: zod.string().min(1, { message: 'First name is required' }),
-  lastname: zod.string().min(1, { message: 'Last name is required' }),
-  email: zod.string().min(1, { message: 'Email is required' }).email(),
-  password: zod.string().min(5, { message: 'Password should be at least 6 characters' }),
-  confirmPassword: zod.string().min(5, { message: 'Password should be at least 6 characters' }),
-  terms: zod.boolean().refine((value) => value, 'You must accept the terms and conditions'),
+  firstname: zod.string().min(1, { message: 'Le prénom est requis' }),
+  lastname: zod.string().min(1, { message: 'Le nom est requis' }),
+  email: zod.string().min(1, { message: "L'email est requis" }).email(),
+  password: zod.string().min(5, { message: 'Le mot de passe doit contenir au moins 6 caractères' }),
+  confirmPassword: zod.string().min(5, { message: 'Le mot de passe doit contenir au moins 6 caractères' }),
+  terms: zod.boolean().refine((value) => value, 'Vous devez accepter les conditions générales'),
 });
 
-const defaultValues = { firstname: '', lastname: '', email: '', password: '',confirmPassword:'', terms: false };
+const defaultValues = { firstname: '', lastname: '', email: '', password: '', confirmPassword: '', terms: false };
 
 export function SignUpForm() {
   const { checkSession } = useUser();
@@ -66,7 +66,7 @@ export function SignUpForm() {
 
     setIsPending(false);
 
-    // Redirect to OAuth provider
+    // Redirection vers le fournisseur OAuth
   }, []);
 
   const onSubmit = React.useCallback(
@@ -81,7 +81,7 @@ export function SignUpForm() {
         return;
       }
 
-      // Refresh the auth state
+      // Rafraîchir l'état d'authentification
       await checkSession?.();
     },
     [checkSession, setError]
@@ -95,11 +95,11 @@ export function SignUpForm() {
         </Box>
       </div>
       <Stack spacing={1}>
-        <Typography variant="h5">Sign up</Typography>
+        <Typography variant="h5">Créer un compte</Typography>
         <Typography color="text.secondary" variant="body2">
-          Already have an account?{' '}
+          Vous avez déjà un compte ?{' '}
           <Link component={RouterLink} href={paths.auth.custom.signIn} variant="subtitle2">
-            Sign in
+            Se connecter
           </Link>
         </Typography>
       </Stack>
@@ -118,21 +118,21 @@ export function SignUpForm() {
               }}
               variant="outlined"
             >
-              Continue with {provider.name}
+              Continuer avec {provider.name}
             </Button>
           ))}
         </Stack>
-        <Divider>or</Divider>
+        <Divider>ou</Divider>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Stack spacing={2}>
             <Controller
               control={control}
               name="firstname"
               render={({ field }) => (
-                <FormControl error={Boolean(errors.firstName)}>
-                  <InputLabel>First name</InputLabel>
+                <FormControl error={Boolean(errors.firstname)}>
+                  <InputLabel>Prénom</InputLabel>
                   <OutlinedInput {...field} />
-                  {errors.firstName ? <FormHelperText>{errors.firstName.message}</FormHelperText> : null}
+                  {errors.firstname ? <FormHelperText>{errors.firstname.message}</FormHelperText> : null}
                 </FormControl>
               )}
             />
@@ -140,10 +140,10 @@ export function SignUpForm() {
               control={control}
               name="lastname"
               render={({ field }) => (
-                <FormControl error={Boolean(errors.lastName)}>
-                  <InputLabel>Last name</InputLabel>
+                <FormControl error={Boolean(errors.lastname)}>
+                  <InputLabel>Nom</InputLabel>
                   <OutlinedInput {...field} />
-                  {errors.lastName ? <FormHelperText>{errors.lastName.message}</FormHelperText> : null}
+                  {errors.lastname ? <FormHelperText>{errors.lastname.message}</FormHelperText> : null}
                 </FormControl>
               )}
             />
@@ -152,7 +152,7 @@ export function SignUpForm() {
               name="email"
               render={({ field }) => (
                 <FormControl error={Boolean(errors.email)}>
-                  <InputLabel>Email address</InputLabel>
+                  <InputLabel>Adresse email</InputLabel>
                   <OutlinedInput {...field} type="email" />
                   {errors.email ? <FormHelperText>{errors.email.message}</FormHelperText> : null}
                 </FormControl>
@@ -163,7 +163,7 @@ export function SignUpForm() {
               name="password"
               render={({ field }) => (
                 <FormControl error={Boolean(errors.password)}>
-                  <InputLabel>Password</InputLabel>
+                  <InputLabel>Mot de passe</InputLabel>
                   <OutlinedInput {...field} type="password" />
                   {errors.password ? <FormHelperText>{errors.password.message}</FormHelperText> : null}
                 </FormControl>
@@ -174,9 +174,9 @@ export function SignUpForm() {
               name="confirmPassword"
               render={({ field }) => (
                 <FormControl error={Boolean(errors.confirmPassword)}>
-                  <InputLabel>Confirm Password</InputLabel>
+                  <InputLabel>Confirmer le mot de passe</InputLabel>
                   <OutlinedInput {...field} type="password" />
-                  {errors.password ? <FormHelperText>{errors.password.message}</FormHelperText> : null}
+                  {errors.confirmPassword ? <FormHelperText>{errors.confirmPassword.message}</FormHelperText> : null}
                 </FormControl>
               )}
             />
@@ -189,7 +189,7 @@ export function SignUpForm() {
                     control={<Checkbox {...field} />}
                     label={
                       <React.Fragment>
-                        I have read the <Link>terms and conditions</Link>
+                        J'ai lu et j'accepte les <Link>conditions générales</Link>
                       </React.Fragment>
                     }
                   />
@@ -199,7 +199,7 @@ export function SignUpForm() {
             />
             {errors.root ? <Alert color="error">{errors.root.message}</Alert> : null}
             <Button disabled={isPending} type="submit" variant="contained">
-              Create account
+              Créer un compte
             </Button>
           </Stack>
         </form>

@@ -13,7 +13,7 @@ export function Logo({ color = 'dark', emblem, height = HEIGHT, width = WIDTH })
   let url;
 
   if (emblem) {
-    url = color === 'light' ? '/assets/logo-emblem.svg' : '/assets/logo-emblem--dark.svg';
+    url = color === 'light' ? '/assets/servy_logo.png' : '/assets/logo-emblem--dark.svg';
   } else {
     url = color === 'light' ? '/assets/servy_logo.png' : '/assets/servy_dark.png';
   }

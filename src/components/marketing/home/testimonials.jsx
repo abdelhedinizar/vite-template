@@ -12,35 +12,31 @@ import { CaretRight as CaretRightIcon } from '@phosphor-icons/react/dist/ssr/Car
 import { Users as UsersIcon } from '@phosphor-icons/react/dist/ssr/Users';
 import useEmblaCarousel from 'embla-carousel-react';
 
+
 const reviews = [
   {
-    id: 'REV-5',
-    author: 'Laurent B.',
+    id: 'REV-1',
+    author: 'Ahmed Z.',
     comment:
-      'I keep buying new versions of the template because it is so good and the team at Devias keeps updating it following design trends and updates to NextJS and other libraries [...]',
-  },
-  {
-    id: 'REV-4',
-    author: 'Ali Hassan E.',
-    comment:
-      'I am very happy with the Devias template that I purchased. The team at Devias was very responsive and helpful before and after I bought the template. They were always quick to respond to my questions and they provided excellent customer support.',
-  },
-  {
-    id: 'REV-3',
-    author: 'Yossi T.',
-    comment:
-      'All in all amazing product, clean, bug-free, one of the FASTEST customer support products I have encountered in my life. Very high quality template, all written in a super clean and orgenized way. Highly recommended!',
+      'Depuis que nous utilisons cette solution, la gestion des commandes est beaucoup plus fluide. Le chatbot aide vraiment nos clients à faire leur choix !',
   },
   {
     id: 'REV-2',
-    author: 'Yossi T.',
+    author: 'Julie M.',
     comment:
-      'All in all amazing product, clean, bug-free, one of the FASTEST customer support products I have encountered in my life. Very high quality template, all written in a super clean and orgenized way. Highly recommended!',
+      'La plateforme est super intuitive et notre staff adore la façon dont il peut gérer les commandes en temps réel.',
   },
   {
-    id: 'REV-1',
-    author: 'Chris V.',
-    comment: 'Best template out there. I purchase this every year. It saves a ton of time.',
+    id: 'REV-3',
+    author: 'Karim L.',
+    comment:
+      'Nous avons gagné un temps précieux en cuisine grâce à la digitalisation. Les KPI sont clairs et très utiles pour piloter notre activité.',
+  },
+  {
+    id: 'REV-4',
+    author: 'Sophie D.',
+    comment:
+      'L’intelligence artificielle du serveur virtuel améliore vraiment l’expérience client. Beaucoup de retours positifs de nos habitués.',
   },
 ];
 
@@ -59,12 +55,9 @@ export function Testimonails() {
     emblaApi?.scrollNext();
   }, [emblaApi]);
 
-  const scrollTo = React.useCallback(
-    (index) => {
-      emblaApi?.scrollTo(index);
-    },
-    [emblaApi]
-  );
+  const scrollTo = React.useCallback((index) => {
+    emblaApi?.scrollTo(index);
+  }, [emblaApi]);
 
   const onInit = React.useCallback((api) => {
     setScrollSnaps(api.scrollSnapList());
@@ -98,10 +91,10 @@ export function Testimonails() {
         <Stack spacing={8}>
           <Stack spacing={2}>
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-              <Chip color="primary" icon={<UsersIcon />} label="Features" variant="soft" />
+              <Chip color="primary" icon={<UsersIcon />} label="Témoignages" variant="soft" />
             </Box>
             <Typography sx={{ textAlign: 'center' }} variant="h3">
-              What are people saying
+              Ce que disent nos restaurateurs
             </Typography>
           </Stack>
           <Stack spacing={3} sx={{ '--slide-spacing': '1rem', '--slide-size': '100%', '--slide-height': ' 300px' }}>
@@ -128,7 +121,7 @@ export function Testimonails() {
                     <Typography color="text.secondary" sx={{ textAlign: 'center' }}>
                       {review.comment}
                     </Typography>
-                    <Typography sx={{ textAlign: 'center' }}>{review.author}</Typography>
+                    <Typography sx={{ textAlign: 'center', fontWeight: 500 }}>{review.author}</Typography>
                   </Stack>
                 ))}
               </Box>
@@ -140,7 +133,6 @@ export function Testimonails() {
               <Stack direction="row" spacing={1} sx={{ flex: '1 1 auto', justifyContent: 'center' }}>
                 {scrollSnaps.map((_, index) => (
                   <Box
-                    // eslint-disable-next-line react/no-array-index-key -- index is unique
                     key={index}
                     onClick={() => {
                       scrollTo(index);

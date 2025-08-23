@@ -85,15 +85,15 @@ export function StartBuilding() {
           >
             <Stack spacing={2}>
               <Typography color="inherit" variant="h3">
-                Start building today.
+                Digitalisez votre restaurant dès aujourd'hui.
               </Typography>
               <Typography color="neutral.300">
-                Focus on building your app, not on integrating APIs. The kit provides the essential code you need to
-                launch quickly.
+                Offrez une expérience moderne à vos clients, réduisez les erreurs de commande, et suivez vos
+                performances en temps réel grâce à notre solution complète et facile à déployer.
               </Typography>
             </Stack>
             <div>
-              <Button endIcon={<CaretRightIcon />} href={paths.purchase} target="_blank" variant="contained">
+              <Button endIcon={<CaretRightIcon />} href={paths.dashboard.home} target="_blank" variant="contained">
                 Purchase now
               </Button>
             </div>

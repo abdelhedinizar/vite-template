@@ -45,28 +45,16 @@ export function MainNav() {
             <Box component={RouterLink} href={paths.home} sx={{ display: 'inline-flex' }}>
               <Logo color="light" height={32} width={122} />
             </Box>
-            <Box component="nav" sx={{ display: { xs: 'none', md: 'block' } }}>
-              <Stack component="ul" direction="row" spacing={1} sx={{ listStyle: 'none', m: 0, p: 0 }}>
-                <NavItem href={paths.components.index} pathname={pathname} title="Components" />
-                <NavItem href={paths.docs} pathname={pathname} title="Documentation" />
-              </Stack>
-            </Box>
           </Stack>
           <Stack
             direction="row"
             spacing={2}
             sx={{ alignItems: 'center', flex: '1 1 auto', justifyContent: 'flex-end' }}
           >
-            <Box component="nav" sx={{ display: { xs: 'none', md: 'block' } }}>
-              <Stack component="ul" direction="row" spacing={1} sx={{ listStyle: 'none', m: 0, p: 0 }}>
-                <NavItem pathname={pathname} title="Pages">
-                  <PagesPopover />
-                </NavItem>
-              </Stack>
-            </Box>
+           
             <Button
               component="a"
-              href={paths.purchase}
+              href={paths.pricing} pathname={pathname}
               sx={{ display: { xs: 'none', md: 'flex' } }}
               target="_blank"
               variant="contained"
