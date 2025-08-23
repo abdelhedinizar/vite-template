@@ -6,9 +6,34 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { Check as CheckIcon } from '@phosphor-icons/react/dist/ssr/Check';
 
-export function Plan({ action, currency, description, id, features, name, price }) {
+export function Plan({ action, currency, description, id, features, name, price, priceNote, isOneTime, popular }) {
   return (
-    <Card sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <Card sx={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      height: '100%',
+      border: popular ? '2px solid var(--mui-palette-primary-main)' : undefined,
+      position: 'relative'
+    }}>
+      {popular && (
+        <Box
+          sx={{
+            position: 'absolute',
+            top: -10,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            bgcolor: 'var(--mui-palette-primary-main)',
+            color: 'white',
+            px: 2,
+            py: 0.5,
+            borderRadius: 1,
+            fontSize: '0.875rem',
+            fontWeight: 600,
+          }}
+        >
+          Populaire
+        </Box>
+      )}
       <Stack spacing={2} sx={{ p: 3 }}>
         <div>
           <Box sx={{ height: '52px', width: '52px' }}>
@@ -17,16 +42,21 @@ export function Plan({ action, currency, description, id, features, name, price 
         </div>
         <Box sx={{ alignItems: 'flex-end', display: 'flex', gap: 1 }}>
           <Typography variant="h4">
-            {new Intl.NumberFormat('en-US', {
+            {new Intl.NumberFormat('fr-FR', {
               style: 'currency',
               currency,
               maximumFractionDigits: price === 0 ? 0 : 2,
             }).format(price)}
           </Typography>
           <Typography color="text.secondary" variant="subtitle2">
-            /month
+            {isOneTime ? 'unique' : '/mois'}
           </Typography>
         </Box>
+        {priceNote && (
+          <Typography color="text.secondary" variant="caption">
+            {priceNote}
+          </Typography>
+        )}
         <Typography variant="h6">{name}</Typography>
         <Typography color="text.secondary" variant="body2">
           {description}
@@ -52,7 +82,7 @@ export function Plan({ action, currency, description, id, features, name, price 
 
 function PlanIcon({ name }) {
   switch (name) {
-    case 'startup':
+    case 'starter':
       return (
         <svg fill="none" height="33" viewBox="0 0 24 33" width="24" xmlns="http://www.w3.org/2000/svg">
           <path
@@ -61,7 +91,7 @@ function PlanIcon({ name }) {
           />
         </svg>
       );
-    case 'standard':
+    case 'pro':
       return (
         <svg fill="none" height="33" viewBox="0 0 33 33" width="33" xmlns="http://www.w3.org/2000/svg">
           <path

@@ -15,7 +15,7 @@ export function Logo({ color = 'dark', emblem, height = HEIGHT, width = WIDTH })
   if (emblem) {
     url = color === 'light' ? '/assets/servy_logo.png' : '/assets/logo-emblem--dark.svg';
   } else {
-    url = color === 'light' ? '/assets/servy_logo.png' : '/assets/servy_logo_dark.png';
+    url = color === 'light' ? '/assets/servy_logo.png' : '/assets/servy_dark.png';
   }
 
   return <Box alt="logo" component="img" height={height} src={url} width={width} />;

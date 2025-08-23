@@ -9,6 +9,7 @@ import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 
 import { Plan } from './plan';
+import { AddonPlan } from './addon-plan';
 
 export function PlansTable() {
   return (
@@ -17,83 +18,128 @@ export function PlansTable() {
         <Stack spacing={3}>
           <Stack spacing={2} sx={{ alignItems: 'center' }}>
             <Typography sx={{ textAlign: 'center' }} variant="h3">
-              Start today. Boost up your services!
+              Révolutionnez votre restaurant avec Servy
             </Typography>
             <Typography color="text.secondary" sx={{ textAlign: 'center' }} variant="body1">
-              Join 10,000+ developers &amp; designers using Devias to power modern web projects.
+              Simplifiez les commandes, augmentez vos ventes et offrez une expérience client exceptionnelle.
             </Typography>
-            <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
-              <Switch defaultChecked />
-              <Typography variant="body1">Billed annually</Typography>
-              <Chip color="success" label="25% OFF" size="small" />
-            </Stack>
           </Stack>
           <div>
             <Grid container spacing={3}>
               <Grid
                 size={{
-                  md: 4,
+                  md: 6,
                   xs: 12,
                 }}
               >
                 <Plan
-                  action={<Button variant="outlined">Select</Button>}
-                  currency="USD"
-                  description="To familiarize yourself with our tools."
-                  features={['Create contracts', 'Chat support', 'Email alerts']}
-                  id="startup"
-                  name="Startup"
-                  price={0}
-                />
-              </Grid>
-              <Grid
-                size={{
-                  md: 4,
-                  xs: 12,
-                }}
-              >
-                <Plan
-                  action={<Button variant="contained">Start free trial</Button>}
-                  currency="USD"
-                  description="Best for small teams with up to 10 members."
-                  features={['All previous', 'Highlights reporting', 'Data history', 'Unlimited users']}
-                  id="standard"
-                  name="Standard"
-                  popular
-                  price={14.99}
-                />
-              </Grid>
-              <Grid
-                size={{
-                  md: 4,
-                  xs: 12,
-                }}
-              >
-                <Plan
-                  action={
-                    <Button color="secondary" variant="contained">
-                      Contact us
-                    </Button>
-                  }
-                  currency="USD"
-                  description="For larger teams managing multiple projects."
+                  action={<Button variant="outlined">Commencer</Button>}
+                  currency="EUR"
+                  description="Menu numérique accessible par QR code, parfait pour débuter."
                   features={[
-                    'All previous',
-                    'Unlimited contacts',
-                    'Analytics platform',
-                    'Public API access',
-                    'Send and sign unlimited contracts',
+                    'Menu numérique accessible par QR code',
+                    'Branding avec logo et couleurs du restaurant',
+                    'Mobile-friendly, fonctionne sur tous les téléphones',
+                    'Articles illimités',
+                    'Codes QR inclus (fichiers design)',
+                    'Éditable par vous'
                   ]}
-                  id="business"
-                  name="Business"
-                  price={29.99}
+                  id="starter"
+                  name="Starter - Menu QR"
+                  price={999}
+                  priceNote="Prix unique + €49/an (hébergement)"
+                  isOneTime={true}
+                />
+              </Grid>
+              <Grid
+                size={{
+                  md: 6,
+                  xs: 12,
+                }}
+              >
+                <Plan
+                  action={<Button variant="contained">Essai gratuit</Button>}
+                  currency="EUR"
+                  description="Système de commandes complet avec interface staff et analytics avancés."
+                  features={[
+                    'Tout du plan Starter',
+                    'Commandes depuis table QR',
+                    'Interface staff (statut: préparation/prêt/servi)',
+                    'Interface admin (gestion complète)',
+                    'KPIs avancés et analytics',
+                    'Paiements Stripe',
+                    'Historique des commandes'
+                  ]}
+                  id="pro"
+                  name="Pro - Système Complet"
+                  popular
+                  price={189}
+                  priceNote="par mois/emplacement + €399 setup"
                 />
               </Grid>
             </Grid>
           </div>
+          
+          {/* Add-ons Section */}
+          <Stack spacing={3} sx={{ mt: 6 }}>
+            <Typography variant="h4" sx={{ textAlign: 'center' }}>
+              Modules Complémentaires
+            </Typography>
+            <Grid container spacing={3}>
+              <Grid size={{ md: 4, xs: 12 }}>
+                <AddonPlan
+                  currency="EUR"
+                  description="Assistant IA pour Q&A menu et ajout au panier"
+                  features={[
+                    'Réponses automatiques sur le menu',
+                    'Ajout intelligent au panier',
+                    'Support multilingue',
+                    'Intégration transparente'
+                  ]}
+                  id="ai-lite"
+                  name="IA Chatbot Lite"
+                  price={39}
+                  priceNote="par mois (usage faible)"
+                />
+              </Grid>
+              <Grid size={{ md: 4, xs: 12 }}>
+                <AddonPlan
+                  currency="EUR"
+                  description="Version avancée pour restaurants très fréquentés"
+                  features={[
+                    'Tout du plan Lite',
+                    'Capacité élevée',
+                    'Réponses plus rapides',
+                    'Analytics IA avancés'
+                  ]}
+                  id="ai-standard"
+                  name="IA Chatbot Standard"
+                  price={69}
+                  priceNote="par mois (usage intensif)"
+                />
+              </Grid>
+              <Grid size={{ md: 4, xs: 12 }}>
+                <AddonPlan
+                  currency="EUR"
+                  description="Module livraison avec suivi en temps réel"
+                  features={[
+                    'Click & collect',
+                    'Suivi de livraison',
+                    'Notifications clients',
+                    'Gestion des livreurs'
+                  ]}
+                  id="delivery"
+                  name="Module Livraison"
+                  price={39}
+                  priceNote="par mois + 0.5% du volume"
+                />
+              </Grid>
+            </Grid>
+          </Stack>
+
           <div>
             <Typography color="text.secondary" component="p" sx={{ textAlign: 'center' }} variant="caption">
-              30% of our income goes into Whale Charity
+              Frais Stripe France: ~1.6% + €0.25 (cartes EU) / 3.1% + €0.25 (cartes non-EU)
             </Typography>
           </div>
         </Stack>
