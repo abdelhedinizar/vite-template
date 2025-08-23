@@ -195,6 +195,11 @@ function LanguageSwitch() {
 function UserButton({ user }) {
   const popover = usePopover();
 
+  // If user is null or undefined, don't render the component
+  if (!user) {
+    return null;
+  }
+
   return (
     <React.Fragment>
       <Box
@@ -218,7 +223,7 @@ function UserButton({ user }) {
           }}
           variant="dot"
         >
-          <Avatar src={user.avatar} />
+          <Avatar src={user?.avatar} />
         </Badge>
       </Box>
       <UserPopover anchorEl={popover.anchorRef.current} onClose={popover.handleClose} open={popover.open} user={user} />
