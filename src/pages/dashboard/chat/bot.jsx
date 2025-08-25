@@ -13,9 +13,44 @@ export function Page() {
   const { messages, loading, error, handleAddMessage } = useFetchMessages();
   const { user } = useUser();
   const [isUserTyping, setIsUserTyping] = React.useState(false);
+  const messagesEndRef = React.useRef(null);
+  
   const handleChange = (userTyping) => {
     setIsUserTyping(userTyping);
   };
+
+  // Scroll to bottom when new messages arrive or keyboard appears
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  React.useEffect(() => {
+    scrollToBottom();
+  }, [messages, loading, isUserTyping]);
+
+  // Handle mobile keyboard appearing
+  React.useEffect(() => {
+    const handleResize = () => {
+      // Small delay to ensure the keyboard is fully shown
+      setTimeout(() => {
+        scrollToBottom();
+      }, 100);
+    };
+
+    window.addEventListener('resize', handleResize);
+    
+    // Also listen for viewport changes on mobile
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleResize);
+    }
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', handleResize);
+      }
+    };
+  }, []);
 
   const thread = {
     id: 'TRD-004',
@@ -28,9 +63,29 @@ export function Page() {
   };
 
   return (
-    <Box sx={{ display: 'flex', flex: '1 1 auto', flexDirection: 'column', minHeight: 0 }}>
+    <Box 
+      sx={{ 
+        display: 'flex', 
+        flex: '1 1 auto', 
+        flexDirection: 'column', 
+        minHeight: 0,
+        height: '100vh',
+        maxHeight: '100vh',
+        overflow: 'hidden'
+      }}
+    >
       <ThreadToolbar thread={thread} />
-      <Stack spacing={2} sx={{ flex: '1 1 auto', overflowY: 'auto', p: 3 }}>
+      <Stack 
+        spacing={2} 
+        sx={{ 
+          flex: '1 1 auto', 
+          overflowY: 'auto', 
+          p: 3,
+          paddingBottom: 1,
+          // Ensure proper scrolling on mobile
+          WebkitOverflowScrolling: 'touch'
+        }}
+      >
         {messages.map((message) => (
           <MessageBox key={message.id} message={message} user={user} />
         ))}
@@ -43,8 +98,24 @@ export function Page() {
         {isUserTyping ? (
           <TypingIndicator author={{ id: user._id, name: user.name, avatar: user.avatar }} position="right" />
         ) : null}
+        {/* Invisible element to scroll to */}
+        <div ref={messagesEndRef} />
       </Stack>
-      <MessageAdd onSend={handleAddMessage} user={user} onChange={handleChange} />
+      <Box
+        sx={{
+          flexShrink: 0,
+          // Ensure the input stays at the bottom
+          position: 'sticky',
+          bottom: 0,
+          backgroundColor: 'background.paper',
+          borderTop: '1px solid',
+          borderColor: 'divider',
+          // Add safe area for mobile devices
+          paddingBottom: 'env(safe-area-inset-bottom, 0px)'
+        }}
+      >
+        <MessageAdd onSend={handleAddMessage} user={user} onChange={handleChange} />
+      </Box>
     </Box>
   );
 }
