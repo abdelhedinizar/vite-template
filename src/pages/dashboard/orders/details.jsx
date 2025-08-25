@@ -11,6 +11,8 @@ import Grid from '@mui/material/Grid2';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import Switch from '@mui/material/Switch';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import { HourglassMedium as HourglassMediumIcon } from '@phosphor-icons/react/dist/ssr';
 import { ArrowLeft as ArrowLeftIcon } from '@phosphor-icons/react/dist/ssr/ArrowLeft';
 import { CheckCircle as CheckCircleIcon } from '@phosphor-icons/react/dist/ssr/CheckCircle';
@@ -20,6 +22,7 @@ import { Minus as MinusIcon } from '@phosphor-icons/react/dist/ssr/Minus';
 import { ShoppingCartSimple as ShoppingCartSimpleIcon } from '@phosphor-icons/react/dist/ssr/ShoppingCartSimple';
 import { Timer as TimerIcon } from '@phosphor-icons/react/dist/ssr/Timer';
 import { XCircle as XCircleIcon } from '@phosphor-icons/react/dist/ssr/XCircle';
+import { Money as MoneyIcon } from '@phosphor-icons/react/dist/ssr/Money';
 import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
 import { useParams } from 'react-router-dom';
@@ -56,20 +59,57 @@ export function Page() {
   const [error, setError] = useState(null);
   const { label, icon } = mapping[order?.status] ?? { label: 'Unknown', icon: null };
 
+  const handlePaymentStatusChange = async (newStatus) => {
+    try {
+      console.log('Updating payment status:', { orderId, newStatus, currentOrder: order });
+
+      const token = localStorage.getItem('custom-auth-token');
+      const response = await axios.patch(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/orders/${orderId}`, {
+        paymentStatus: newStatus ? 'paid' : 'unpaid'
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      console.log('API Response:', response.data);
+
+      // Update the order state
+      setOrder(prev => ({
+        ...prev,
+        paymentStatus: newStatus ? 'paid' : 'unpaid'
+      }));
+
+      console.log('Order updated successfully');
+    } catch (error) {
+      console.error('Error updating payment status:', error);
+      console.error('Error details:', error.response?.data);
+    }
+  };
+
   React.useEffect(() => {
     const fetchOrderDetail = async () => {
       try {
-        const orderResponse = await axios.get(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/orders/${orderId}`);
+        const token = localStorage.getItem('custom-auth-token');
+        const orderResponse = await axios.get(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/orders/${orderId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        console.log('Fetched order data:', orderResponse.data.data.order);
         setOrder(orderResponse.data.data.order);
       } catch (err) {
+        console.error('Error fetching order:', err);
         setError(err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchOrderDetail();
-  }, []);
+    if (orderId) {
+      fetchOrderDetail();
+    }
+  }, [orderId]);
 
   return (
     <React.Fragment>
@@ -123,6 +163,92 @@ export function Page() {
                   />
                   <CardContent>
                     <OrderManageForm order={order} />
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader
+                    avatar={
+                      <Avatar sx={{
+                        bgcolor: order?.paymentStatus === 'paid' ? 'var(--mui-palette-success-main)' : 'var(--mui-palette-warning-main)',
+                        color: 'white'
+                      }}>
+                        <MoneyIcon fontSize="var(--Icon-fontSize)" />
+                      </Avatar>
+                    }
+                    title="Statut de Paiement"
+                  />
+                  <CardContent>
+                    <Stack spacing={3}>
+                      <Stack direction="row" spacing={2} sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Box>
+                          <Typography variant="h6" gutterBottom>
+                            Total de la commande
+                          </Typography>
+                          <Typography variant="h4" color="primary">
+                            {new Intl.NumberFormat('fr-FR', {
+                              style: 'currency',
+                              currency: 'EUR'
+                            }).format(order?.totalPrice || 0)}
+                          </Typography>
+                        </Box>
+                        <Chip
+                          icon={(order?.paymentStatus === 'paid') ? <CheckCircleIcon /> : <ClockIcon />}
+                          label={(order?.paymentStatus === 'paid') ? 'Payé' : 'Non payé'}
+                          color={(order?.paymentStatus === 'paid') ? 'success' : 'warning'}
+                          variant="filled"
+                          sx={{ fontSize: '0.875rem', fontWeight: 600 }}
+                        />
+                      </Stack>
+
+                      <Divider />
+
+                      <Stack direction="row" spacing={2} sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Box>
+                          <Typography variant="subtitle1" gutterBottom>
+                            Méthode de paiement
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {order?.paymentMethod === 'card' ? 'Carte bancaire' : 'Espèces'}
+                          </Typography>
+                        </Box>
+
+                        <FormControlLabel
+                          control={
+                            <Switch
+                              checked={order?.paymentStatus === 'paid'}
+                              onChange={(e) => handlePaymentStatusChange(e.target.checked)}
+                              color="success"
+                              size="medium"
+                            />
+                          }
+                          label="Marquer comme payé"
+                          labelPlacement="start"
+                          sx={{
+                            '& .MuiFormControlLabel-label': {
+                              fontSize: '0.875rem',
+                              fontWeight: 500,
+                              color: 'text.primary'
+                            },
+                          }}
+                        />
+                      </Stack>
+
+                      {order?.paymentStatus === 'paid' && (
+                        <Box
+                          sx={{
+                            p: 2,
+                            bgcolor: 'var(--mui-palette-success-50)',
+                            borderRadius: 1,
+                            border: '1px solid var(--mui-palette-success-200)'
+                          }}
+                        >
+                          <Typography variant="body2" color="success.dark">
+                            ✓ Paiement confirmé - Commande prête à être préparée
+                          </Typography>
+                        </Box>
+                      )}
+                    </Stack>
                   </CardContent>
                 </Card>
                 <Card>
@@ -214,7 +340,7 @@ export function Page() {
                         },
                         {
                           key: 'Payment method',
-                          value: (
+                          value: order?.paymentMethod === 'card' ? (
                             <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
                               <Avatar
                                 sx={{
@@ -232,6 +358,22 @@ export function Page() {
                                 <Typography variant="body2">Mastercard</Typography>
                                 <Typography color="text.secondary" variant="body2">
                                   **** {order?.cardLast4}
+                                </Typography>
+                              </div>
+                            </Stack>
+                          ) : (
+                            <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
+                              <Avatar
+                                sx={{
+                                  color: 'white',
+                                }}
+                              >
+                                <MoneyIcon fontSize="var(--Icon-fontSize)" />
+                              </Avatar>
+                              <div>
+                                <Typography variant="body2">Espèces</Typography>
+                                <Typography color="text.secondary" variant="body2">
+                                  Paiement en liquide
                                 </Typography>
                               </div>
                             </Stack>

@@ -171,11 +171,10 @@ export function Page() {
       <Box
         sx={{
           position: 'fixed',
+          maxWidth: 'var(--Content-maxWidth)',
           bottom: 0,
-          left: 0,
-          right: 0,
-          boxShadow: 'rgba(0, 0, 0, 0.1) 0px 10px 50px !important',
-          zIndex: 1000,
+          boxShadow: 'rgba(0, 0, 0, 0.1) 0px 10px 50px; !important;',
+          width: 'var(--Content-width)',
         }}
       >
         <Card
