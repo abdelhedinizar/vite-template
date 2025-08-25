@@ -1,22 +1,50 @@
 import * as React from 'react';
-import { Box, Button, Card, CardContent, Link, Stack, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, Link, Stack, Typography, ButtonGroup } from '@mui/material';
 import { ArrowLeftIcon } from '@mui/x-date-pickers';
+import { CreditCard, Money } from '@phosphor-icons/react';
 import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { config } from '@/config';
 import { paths } from '@/paths';
 import { useUser } from '@/hooks/use-user';
 import { RouterLink } from '@/components/core/link';
+import { addToBasket } from '@/stores/slices/BasketSlice';
 
 const metadata = { title: `Create | Customers | Dashboard | ${config.site.name}` };
 
 export function Page() {
   const { items } = useSelector((state) => state.basket);
+  const dispatch = useDispatch();
   const totalPrice = items.reduce((acc, item) => acc + item.price, 0);
   const { user } = useUser();
-  const onOrder = async () => {
+
+  // Restore basket from backup if empty and backup exists
+  React.useEffect(() => {
+    if (items.length === 0) {
+      const basketBackup = localStorage.getItem('basketBackup');
+      if (basketBackup) {
+        try {
+          const backupItems = JSON.parse(basketBackup);
+          backupItems.forEach(item => {
+            dispatch(addToBasket(item));
+          });
+          // Clear backup after restoring
+          localStorage.removeItem('basketBackup');
+        } catch (error) {
+          console.error('Error restoring basket backup:', error);
+        }
+      }
+    }
+  }, [items.length, dispatch]);
+
+  const onOrder = async (paymentMethod = 'card') => {
+    // Save basket to localStorage as backup before going to Stripe (only for card payments)
+    if (paymentMethod === 'card') {
+      localStorage.setItem('basketBackup', JSON.stringify(items));
+    }
+
     const body = {
       user: user?._id,
       dishes: items.map((item) => {
@@ -28,19 +56,26 @@ export function Page() {
           size: item.size,
         };
       }),
-      paymentMethod: 'card',
+      paymentMethod,
       totalPrice,
     };
+
     const orderResponse = await axios.post(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/orders`, body, {
       headers: {
-        'Content-Type': 'application/json', // Set the content type
-        // Add any other headers if needed (e.g., authorization token)
+        'Content-Type': 'application/json',
       },
     });
-    const createSessionResponse = await axios.get(
-      `${import.meta.env.VITE_REACT_APP_BACK_API_URL}/bookings/checkout-seesion/${orderResponse.data.data.order.id}`
-    );
-    window.location.href = createSessionResponse.data.session.url;
+
+    if (paymentMethod === 'card') {
+      // Redirect to Stripe for card payment
+      const createSessionResponse = await axios.get(
+        `${import.meta.env.VITE_REACT_APP_BACK_API_URL}/bookings/checkout-seesion/${orderResponse.data.data.order.id}`
+      );
+      window.location.href = createSessionResponse.data.session.url;
+    } else {
+      // For cash payment, redirect to success page directly
+      window.location.href = `/dashboard/basket/success?order_id=${orderResponse.data.data.order.id}&payment_method=cash`;
+    }
   };
   return (
     <React.Fragment>
@@ -136,10 +171,11 @@ export function Page() {
       <Box
         sx={{
           position: 'fixed',
-          maxWidth: 'var(--Content-maxWidth)',
           bottom: 0,
-          boxShadow: 'rgba(0, 0, 0, 0.1) 0px 10px 50px; !important;',
-          width: 'var(--Content-width)',
+          left: 0,
+          right: 0,
+          boxShadow: 'rgba(0, 0, 0, 0.1) 0px 10px 50px !important',
+          zIndex: 1000,
         }}
       >
         <Card
@@ -157,30 +193,59 @@ export function Page() {
           >
             <Stack
               direction="row"
-              spacing={1}
+              spacing={3}
               sx={{
                 alignItems: 'center',
                 flexWrap: 'wrap',
                 justifyContent: 'space-between',
+                pr: 7,
               }}
             >
               <Typography variant="h6">Total : {totalPrice} $</Typography>
-              <Button
+              <ButtonGroup
+                variant="contained"
                 sx={{
-                  backgroundColor: 'var(--mui-palette-primary-700)',
-                  color: 'white',
-                  mx: 'auto',
-                  boxShadow: '0px 4px 6px var(--mui-palette-primary-300)', // Subtle shadow
-                  '&:hover': {
-                    backgroundColor: 'var(--mui-palette-primary-800)', // Slightly darker shade on hover
+                  boxShadow: '0px 4px 6px var(--mui-palette-primary-300)',
+                  borderRadius: 2,
+                  overflow: 'hidden',
+                  '& .MuiButton-root': {
+                    border: 'none',
+                    py: 1.5,
+                    px: 2,
+                    minWidth: 'auto',
+                    whiteSpace: 'nowrap',
                   },
                 }}
-                onClick={() => {
-                  onOrder();
-                }}
               >
-                Order now !
-              </Button>
+                <Button
+                  startIcon={<CreditCard size={20} />}
+                  sx={{
+                    backgroundColor: 'var(--mui-palette-primary-700)',
+                    color: 'white',
+                    minWidth: '140px',
+                    '&:hover': {
+                      backgroundColor: 'var(--mui-palette-primary-800)',
+                    },
+                  }}
+                  onClick={() => onOrder('card')}
+                >
+                  Payer par carte
+                </Button>
+                <Button
+                  startIcon={<Money size={20} />}
+                  sx={{
+                    backgroundColor: 'var(--mui-palette-secondary-700)',
+                    color: 'white',
+                    minWidth: '120px',
+                    '&:hover': {
+                      backgroundColor: 'var(--mui-palette-secondary-800)',
+                    },
+                  }}
+                  onClick={() => onOrder('cash')}
+                >
+                  Payer en espèces
+                </Button>
+              </ButtonGroup>
             </Stack>
           </CardContent>
         </Card>
