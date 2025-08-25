@@ -31,8 +31,8 @@ const oAuthProviders = [
 ];
 
 const schema = zod.object({
-  email: zod.string().min(1, { message: 'Email is required' }).email(),
-  password: zod.string().min(1, { message: 'Password is required' }),
+  email: zod.string().min(1, { message: "L'email est requis" }).email(),
+  password: zod.string().min(1, { message: 'Le mot de passe est requis' }),
 });
 
 const defaultValues = { email: '', password: '' };
@@ -64,7 +64,7 @@ export function SignInForm() {
 
     setIsPending(false);
 
-    // Redirect to OAuth provider
+    // Redirection vers le fournisseur OAuth
   }, []);
 
   const onSubmit = React.useCallback(
@@ -79,7 +79,7 @@ export function SignInForm() {
         return;
       }
 
-      // Refresh the auth state
+      // Rafraîchir l'état d'authentification
       await checkSession?.();
     },
     [checkSession, setError]
@@ -93,11 +93,11 @@ export function SignInForm() {
         </Box>
       </div>
       <Stack spacing={1}>
-        <Typography variant="h5">Sign in</Typography>
+        <Typography variant="h5">Connexion</Typography>
         <Typography color="text.secondary" variant="body2">
-          Don&apos;t have an account?{' '}
+          Vous n'avez pas de compte ?{' '}
           <Link component={RouterLink} href={paths.auth.custom.signUp} variant="subtitle2">
-            Sign up
+            S'inscrire
           </Link>
         </Typography>
       </Stack>
@@ -116,11 +116,11 @@ export function SignInForm() {
               }}
               variant="outlined"
             >
-              Continue with {provider.name}
+              Continuer avec {provider.name}
             </Button>
           ))}
         </Stack>
-        <Divider>or</Divider>
+        <Divider>ou</Divider>
         <Stack spacing={2}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Stack spacing={2}>
@@ -129,7 +129,7 @@ export function SignInForm() {
                 name="email"
                 render={({ field }) => (
                   <FormControl error={Boolean(errors.email)}>
-                    <InputLabel>Email address</InputLabel>
+                    <InputLabel>Adresse email</InputLabel>
                     <OutlinedInput {...field} type="email" />
                     {errors.email ? <FormHelperText>{errors.email.message}</FormHelperText> : null}
                   </FormControl>
@@ -140,7 +140,7 @@ export function SignInForm() {
                 name="password"
                 render={({ field }) => (
                   <FormControl error={Boolean(errors.password)}>
-                    <InputLabel>Password</InputLabel>
+                    <InputLabel>Mot de passe</InputLabel>
                     <OutlinedInput
                       {...field}
                       endAdornment={
@@ -170,25 +170,25 @@ export function SignInForm() {
               />
               {errors.root ? <Alert color="error">{errors.root.message}</Alert> : null}
               <Button disabled={isPending} type="submit" variant="contained">
-                Sign in
+                Se connecter
               </Button>
             </Stack>
           </form>
           <div>
             <Link component={RouterLink} href={paths.auth.custom.resetPassword} variant="subtitle2">
-              Forgot password?
+              Mot de passe oublié ?
             </Link>
           </div>
         </Stack>
       </Stack>
       <Alert color="warning">
-        Use{' '}
+        Utilisez{' '}
         <Typography component="span" sx={{ fontWeight: 700 }} variant="inherit">
-          sofia@devias.io
+          nizar.abdelhedi93@gmail.com
         </Typography>{' '}
-        with password{' '}
+        avec le mot de passe{' '}
         <Typography component="span" sx={{ fontWeight: 700 }} variant="inherit">
-          Secret1
+          nizar
         </Typography>
       </Alert>
     </Stack>

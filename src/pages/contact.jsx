@@ -10,7 +10,6 @@ import { config } from '@/config';
 import { paths } from '@/paths';
 import { RouterLink } from '@/components/core/link';
 import { ContactForm } from '@/components/marketing/contact/contact-form';
-import { Customers } from '@/components/marketing/contact/customers';
 
 const metadata = { title: `Contact | ${config.site.name}` };
 
@@ -50,19 +49,16 @@ export function Page() {
                   variant="subtitle2"
                 >
                   <ArrowLeftIcon fontSize="var(--icon-fontSize-md)" />
-                  Home
+                  Accueil
                 </Link>
               </div>
               <Stack spacing={6}>
-                <Typography variant="h3">Talk to our account expert</Typography>
+                <Typography variant="h3">Contactez notre équipe</Typography>
                 <Typography variant="body1">
-                  Have questions about integrating our APIs? Fill out the form and a senior web expert will be in touch
-                  shortly.
+                  Vous souhaitez moderniser la gestion de votre restaurant ? Nous proposons des solutions digitales
+                  innovantes pour améliorer l’expérience client et simplifier la gestion de votre activité. Remplissez
+                  simplement le formulaire ci-dessous et nous vous recontacterons dans les plus brefs délais.
                 </Typography>
-                <Typography color="primary" variant="h6">
-                  Join 10,000+ forward-thinking companies:
-                </Typography>
-                <Customers />
               </Stack>
             </Stack>
           </Box>
@@ -70,7 +66,7 @@ export function Page() {
         <Box sx={{ px: { xs: '24px', md: '60px' }, py: { xs: '60px', md: '120px' } }}>
           <Box maxWidth="sm">
             <Stack spacing={3}>
-              <Typography variant="h6">Fill the form below</Typography>
+              <Typography variant="h6">Remplissez le formulaire ci-dessous</Typography>
               <ContactForm />
             </Stack>
           </Box>

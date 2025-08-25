@@ -92,7 +92,7 @@ export function Hero() {
             </Button>
             <Button
               component={RouterLink}
-              href={paths.components.index}
+              href={paths.contact}
               sx={{
                 color: 'var(--mui-palette-common-white)',
                 '&:hover': { bgcolor: 'var(--mui-palette-action-hover)' },
