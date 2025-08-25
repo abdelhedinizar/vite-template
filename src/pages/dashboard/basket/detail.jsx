@@ -20,7 +20,7 @@ export function Page() {
   const totalPrice = items.reduce((acc, item) => acc + item.price, 0);
   const { user } = useUser();
 
-    // Restore basket from backup if empty and backup exists
+  // Restore basket from backup if empty and backup exists
   React.useEffect(() => {
     if (items.length === 0) {
       const basketBackup = localStorage.getItem('basketBackup');
@@ -44,7 +44,7 @@ export function Page() {
     if (paymentMethod === 'card') {
       localStorage.setItem('basketBackup', JSON.stringify(items));
     }
-    
+
     const body = {
       user: user?._id,
       dishes: items.map((item) => {
@@ -171,10 +171,11 @@ export function Page() {
       <Box
         sx={{
           position: 'fixed',
-          maxWidth: 'var(--Content-maxWidth)',
           bottom: 0,
-          boxShadow: 'rgba(0, 0, 0, 0.1) 0px 10px 50px; !important;',
-          width: 'var(--Content-width)',
+          left: 0,
+          right: 0,
+          boxShadow: 'rgba(0, 0, 0, 0.1) 0px 10px 50px !important',
+          zIndex: 1000,
         }}
       >
         <Card
@@ -192,31 +193,27 @@ export function Page() {
           >
             <Stack
               direction="row"
-              spacing={1}
+              spacing={3}
               sx={{
                 alignItems: 'center',
                 flexWrap: 'wrap',
                 justifyContent: 'space-between',
+                pr: 7,
               }}
             >
               <Typography variant="h6">Total : {totalPrice} $</Typography>
               <ButtonGroup
                 variant="contained"
-                orientation="vertical"
                 sx={{
                   boxShadow: '0px 4px 6px var(--mui-palette-primary-300)',
-                  width: '100%',
+                  borderRadius: 2,
+                  overflow: 'hidden',
                   '& .MuiButton-root': {
-                    justifyContent: 'flex-start',
+                    border: 'none',
                     py: 1.5,
-                    px: 3,
-                  },
-                  '@media (min-width: 600px)': {
-                    orientation: 'horizontal',
-                    flexDirection: 'row',
-                    '& .MuiButton-root': {
-                      justifyContent: 'center',
-                    },
+                    px: 2,
+                    minWidth: 'auto',
+                    whiteSpace: 'nowrap',
                   },
                 }}
               >
@@ -225,7 +222,7 @@ export function Page() {
                   sx={{
                     backgroundColor: 'var(--mui-palette-primary-700)',
                     color: 'white',
-                    flex: 1,
+                    minWidth: '140px',
                     '&:hover': {
                       backgroundColor: 'var(--mui-palette-primary-800)',
                     },
@@ -239,7 +236,7 @@ export function Page() {
                   sx={{
                     backgroundColor: 'var(--mui-palette-secondary-700)',
                     color: 'white',
-                    flex: 1,
+                    minWidth: '120px',
                     '&:hover': {
                       backgroundColor: 'var(--mui-palette-secondary-800)',
                     },
