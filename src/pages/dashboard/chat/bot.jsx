@@ -14,12 +14,14 @@ export function Page() {
   const { user } = useUser();
   const [isUserTyping, setIsUserTyping] = React.useState(false);
   const messagesEndRef = React.useRef(null);
-  
+  const inputContainerRef = React.useRef(null);
+  const [inputHeight, setInputHeight] = React.useState(0);
+  const [keyboardOffset, setKeyboardOffset] = React.useState(0);
+
   const handleChange = (userTyping) => {
     setIsUserTyping(userTyping);
   };
 
-  // Scroll to bottom when new messages arrive or keyboard appears
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -28,28 +30,39 @@ export function Page() {
     scrollToBottom();
   }, [messages, loading, isUserTyping]);
 
-  // Handle mobile keyboard appearing
   React.useEffect(() => {
-    const handleResize = () => {
-      // Small delay to ensure the keyboard is fully shown
-      setTimeout(() => {
-        scrollToBottom();
-      }, 100);
+    const updateKeyboardOffset = () => {
+      const vv = window.visualViewport;
+      if (vv) {
+        const offset = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+        setKeyboardOffset(offset);
+      }
+      setTimeout(scrollToBottom, 50);
     };
 
-    window.addEventListener('resize', handleResize);
-    
-    // Also listen for viewport changes on mobile
+    window.addEventListener('resize', updateKeyboardOffset);
     if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', handleResize);
+      window.visualViewport.addEventListener('resize', updateKeyboardOffset);
+      window.visualViewport.addEventListener('scroll', updateKeyboardOffset);
     }
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', updateKeyboardOffset);
       if (window.visualViewport) {
-        window.visualViewport.removeEventListener('resize', handleResize);
+        window.visualViewport.removeEventListener('resize', updateKeyboardOffset);
+        window.visualViewport.removeEventListener('scroll', updateKeyboardOffset);
       }
     };
+  }, []);
+
+  React.useLayoutEffect(() => {
+    if (!inputContainerRef.current) return;
+    const ro = new ResizeObserver((entries) => {
+      const h = entries[0]?.contentRect?.height ?? 0;
+      setInputHeight(h);
+    });
+    ro.observe(inputContainerRef.current);
+    return () => ro.disconnect();
   }, []);
 
   const thread = {
@@ -81,9 +94,9 @@ export function Page() {
           flex: '1 1 auto', 
           overflowY: 'auto', 
           p: 3,
-          paddingBottom: 1,
-          // Ensure proper scrolling on mobile
-          WebkitOverflowScrolling: 'touch'
+          pb: `${inputHeight + 12}px`,
+          WebkitOverflowScrolling: 'touch',
+          overscrollBehaviorY: 'contain'
         }}
       >
         {messages.map((message) => (
@@ -98,20 +111,21 @@ export function Page() {
         {isUserTyping ? (
           <TypingIndicator author={{ id: user._id, name: user.name, avatar: user.avatar }} position="right" />
         ) : null}
-        {/* Invisible element to scroll to */}
         <div ref={messagesEndRef} />
       </Stack>
       <Box
+        ref={inputContainerRef}
         sx={{
-          flexShrink: 0,
-          // Ensure the input stays at the bottom
-          position: 'sticky',
+          position: 'fixed',
+          left: 0,
+          right: 0,
           bottom: 0,
+          transform: keyboardOffset > 0 ? `translateY(-${keyboardOffset}px)` : 'none',
           backgroundColor: 'background.paper',
           borderTop: '1px solid',
           borderColor: 'divider',
-          // Add safe area for mobile devices
-          paddingBottom: 'env(safe-area-inset-bottom, 0px)'
+          paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+          zIndex: 1200
         }}
       >
         <MessageAdd onSend={handleAddMessage} user={user} onChange={handleChange} />
