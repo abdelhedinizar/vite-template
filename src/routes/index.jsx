@@ -25,6 +25,21 @@ export const routes = [
           return { Component: Page };
         },
       },
+      // Capture table deep links e.g. /t?tableId=5 or /table?name=Terrasse
+      {
+        path: 't',
+        lazy: async () => {
+          const { Page } = await import('@/pages/table-link');
+          return { Component: Page };
+        },
+      },
+      {
+        path: 'table',
+        lazy: async () => {
+          const { Page } = await import('@/pages/table-link');
+          return { Component: Page };
+        },
+      },
       componentsRoute,
     ],
   },
