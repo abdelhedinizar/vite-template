@@ -16,6 +16,7 @@ const metadata = { title: `Create | Customers | Dashboard | ${config.site.name}`
 
 export function Page() {
   const { items } = useSelector((state) => state.basket);
+  const table = useSelector((state) => state.table);
   const dispatch = useDispatch();
   const totalPrice = items.reduce((acc, item) => acc + item.price, 0);
   const { user } = useUser();
@@ -47,6 +48,8 @@ export function Page() {
 
     const body = {
       user: user?._id,
+      table: table?.id || table?.name || null,
+      tableName: table?.name || null,
       dishes: items.map((item) => {
         return {
           dish: item.dish._id,
