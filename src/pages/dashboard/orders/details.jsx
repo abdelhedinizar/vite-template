@@ -334,6 +334,15 @@ export function Page() {
                           key: 'Date',
                           value: dayjs(order?.createdAt).subtract(3, 'hour').format('MMMM D, YYYY hh:mm A'),
                         },
+                        // Added Table info
+                        {
+                          key: 'Table',
+                          value: (
+                            <Typography variant="subtitle2">
+                              {order?.tableName || order?.table || '—'}
+                            </Typography>
+                          ),
+                        },
                         {
                           key: 'Status',
                           value: <Chip icon={icon} label={label} size="small" variant="outlined" />,
