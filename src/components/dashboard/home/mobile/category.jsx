@@ -7,9 +7,19 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { Basket, Pepper } from '@phosphor-icons/react/dist/ssr';
 import { Heart as HeartIcon } from '@phosphor-icons/react/dist/ssr/Heart';
+import { ChatCircle as ChatCircleIcon } from '@phosphor-icons/react/dist/ssr/ChatCircle';
 import { Timer as TimerIcon } from '@phosphor-icons/react/dist/ssr/Timer';
+import { useDispatch } from 'react-redux';
+import { toggleDishLike } from '@/stores/slices/DishSlice';
 
 export default function CategoryLayout({ category, handleOpenCreateBasket }) {
+  const dispatch = useDispatch();
+
+  const handleToggleLike = (dish) => {
+    const dishId = dish._id || dish.id;
+    dispatch(toggleDishLike({ dishId, like: !dish.isLikedByMe }));
+  };
+
   return (
     <Box
       sx={{
@@ -67,14 +77,30 @@ export default function CategoryLayout({ category, handleOpenCreateBasket }) {
           <Stack direction="row" spacing={2} sx={{ alignItems: 'center', p: 2 }}>
             <Stack direction="row" spacing={2} sx={{ flex: '1 1 auto' }}>
               <Stack direction="row" sx={{ alignItems: 'center' }}>
-                <Tooltip title="Unlike">
+                <Typography color="text.secondary" variant="subtitle2">
+                  {dish.likesCount}
+                </Typography>
+                {dish.isLikedByMe ? (
+                  <Tooltip title="Unlike">
+                    <IconButton onClick={() => handleToggleLike(dish)}>
+                      <HeartIcon fill="var(--mui-palette-error-main)" weight="fill" />
+                    </IconButton>
+                  </Tooltip>
+                ) : (
+                  <Tooltip title="Like">
+                    <IconButton onClick={() => handleToggleLike(dish)}>
+                      <HeartIcon fill="var(--mui-palette-error-main)" weight="light" />
+                    </IconButton>
+                  </Tooltip>
+                )}
+                <Typography color="text.secondary" variant="subtitle2">
+                  {dish.likesCount}
+                </Typography>
+                <Tooltip title="Comment">
                   <IconButton>
-                    <HeartIcon fill="var(--mui-palette-error-main)" weight="fill" />
+                    <ChatCircleIcon fill="var(--mui-palette-error-main)" weight="light" />
                   </IconButton>
                 </Tooltip>
-                <Typography color="text.secondary" variant="subtitle2">
-                  18
-                </Typography>
               </Stack>
             </Stack>
             <Button
