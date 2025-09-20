@@ -12,14 +12,19 @@ import { ChatCircle as ChatCircleIcon } from '@phosphor-icons/react/dist/ssr/Cha
 import { Timer as TimerIcon } from '@phosphor-icons/react/dist/ssr/Timer';
 import { useDispatch } from 'react-redux';
 import { toggleDishLike } from '@/stores/slices/DishSlice';
+import { DishCommentModal } from './dish-comment-modal';
 
 export default function CategoryLayout2({ category, handleOpenCreateBasket }) {
   const dispatch = useDispatch();
+  const [commentDish, setCommentDish] = React.useState(null);
 
   const handleToggleLike = (dish) => {
     const dishId = dish._id || dish.id;
     dispatch(toggleDishLike({ dishId, like: !dish.isLikedByMe }));
   };
+
+  const openComment = (dish) => setCommentDish(dish);
+  const closeComment = () => setCommentDish(null);
 
   return (
     <Box sx={{ bgcolor: 'var(--mui-palette-background-level1)', p: 3 }}>
@@ -99,7 +104,7 @@ export default function CategoryLayout2({ category, handleOpenCreateBasket }) {
                       {dish.likesCount}
                     </Typography>
                     <Tooltip title="Comment">
-                      <IconButton>
+                      <IconButton onClick={() => openComment(dish)}>
                         <ChatCircleIcon fill="var(--mui-palette-error-main)" weight="light" />
                       </IconButton>
                     </Tooltip>
@@ -117,6 +122,7 @@ export default function CategoryLayout2({ category, handleOpenCreateBasket }) {
           </Grid>
         ))}
       </Grid>
+      <DishCommentModal open={!!commentDish} dish={commentDish} onClose={closeComment} />
     </Box>
   );
 }
