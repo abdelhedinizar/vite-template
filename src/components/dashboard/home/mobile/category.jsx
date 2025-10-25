@@ -11,14 +11,19 @@ import { ChatCircle as ChatCircleIcon } from '@phosphor-icons/react/dist/ssr/Cha
 import { Timer as TimerIcon } from '@phosphor-icons/react/dist/ssr/Timer';
 import { useDispatch } from 'react-redux';
 import { toggleDishLike } from '@/stores/slices/DishSlice';
+import { DishCommentModal } from '../desktop/dish-comment-modal';
 
-export default function CategoryLayout({ category, handleOpenCreateBasket }) {
+export default function CategoryLayout({ category, handleOpenCreateBasket, reviewsByDish }) {
   const dispatch = useDispatch();
+  const [commentDish, setCommentDish] = React.useState(null);
 
   const handleToggleLike = (dish) => {
     const dishId = dish._id || dish.id;
     dispatch(toggleDishLike({ dishId, like: !dish.isLikedByMe }));
   };
+
+  const openComment = (dish) => setCommentDish(dish);
+  const closeComment = () => setCommentDish(null);
 
   return (
     <Box
@@ -74,7 +79,7 @@ export default function CategoryLayout({ category, handleOpenCreateBasket }) {
             </Stack>
           </Stack>
           <Divider />
-          <Stack direction="row" spacing={2} sx={{ alignItems: 'center', p: 2 }}>
+          <Stack direction="row" spacing={1} sx={{ alignItems: 'center', p: 1 }}>
             <Stack direction="row" spacing={2} sx={{ flex: '1 1 auto' }}>
               <Stack direction="row" sx={{ alignItems: 'center' }}>
                 <Typography color="text.secondary" variant="subtitle2">
@@ -94,10 +99,10 @@ export default function CategoryLayout({ category, handleOpenCreateBasket }) {
                   </Tooltip>
                 )}
                 <Typography color="text.secondary" variant="subtitle2">
-                  {dish.likesCount}
+                  {reviewsByDish[dish.id]?.reviews.length || 0}
                 </Typography>
                 <Tooltip title="Comment">
-                  <IconButton>
+                  <IconButton onClick={() => openComment(dish)}>
                     <ChatCircleIcon fill="var(--mui-palette-error-main)" weight="light" />
                   </IconButton>
                 </Tooltip>
@@ -105,14 +110,16 @@ export default function CategoryLayout({ category, handleOpenCreateBasket }) {
             </Stack>
             <Button
               startIcon={<Basket weight="fill" />}
+              sx={{ fontSize: '0.775rem', fontWeight: 600 }}
               variant="contained"
               onClick={() => handleOpenCreateBasket(dish)}
             >
-              Order now!
+              commandez
             </Button>
           </Stack>
         </Card>
       ))}
+      <DishCommentModal open={!!commentDish} dish={commentDish} onClose={closeComment} />
     </Box>
   );
 }

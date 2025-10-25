@@ -14,7 +14,7 @@ import { useDispatch } from 'react-redux';
 import { toggleDishLike } from '@/stores/slices/DishSlice';
 import { DishCommentModal } from './dish-comment-modal';
 
-export default function CategoryLayout2({ category, handleOpenCreateBasket }) {
+export default function CategoryLayout2({ category, handleOpenCreateBasket, reviewsByDish }) {
   const dispatch = useDispatch();
   const [commentDish, setCommentDish] = React.useState(null);
 
@@ -101,7 +101,7 @@ export default function CategoryLayout2({ category, handleOpenCreateBasket }) {
                       </Tooltip>
                     )}
                     <Typography color="text.secondary" variant="subtitle2">
-                      {dish.likesCount}
+                      {reviewsByDish[dish.id]?.reviews.length || 0}
                     </Typography>
                     <Tooltip title="Comment">
                       <IconButton onClick={() => openComment(dish)}>
@@ -115,7 +115,7 @@ export default function CategoryLayout2({ category, handleOpenCreateBasket }) {
                   variant="contained"
                   onClick={() => handleOpenCreateBasket(dish)}
                 >
-                  Order now !
+                  Commandez
                 </Button>
               </Stack>
             </Card>

@@ -6,6 +6,7 @@ import { combineReducers } from '@reduxjs/toolkit';
 import basketReducer from './slices/BasketSlice';
 import dishReducer from './slices/DishSlice';
 import tableReducer from './slices/TableSlice';
+import reviewsReducer from './slices/ReviewsSlice';
 
 // Configuration for basket persistence
 const basketPersistConfig = {
@@ -25,6 +26,7 @@ const rootReducer = combineReducers({
   categories: dishReducer,
   basket: persistReducer(basketPersistConfig, basketReducer),
   table: persistReducer(tablePersistConfig, tableReducer),
+  reviews: reviewsReducer,
 });
 
 const store = configureStore({
