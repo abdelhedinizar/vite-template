@@ -13,6 +13,8 @@ import { Option } from '@/components/core/option';
 import CategoryLayout2 from '@/components/dashboard/home/desktop/category';
 import CategoryLayout from '@/components/dashboard/home/mobile/category';
 import { Previewer } from '@/components/widgets/previewer';
+import { fetchGroupedReviews } from '@/stores/slices/ReviewsSlice';
+
 
 const metadata = { title: `home | Dashboard | ${config.site.name}` };
 
@@ -20,6 +22,7 @@ export function Page() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { categories, status } = useSelector((state) => state.categories);
+  const { byDish } = useSelector((state) => state.reviews);
   const [selectedCategries, setSelectedCategries] = useState(categories);
   const [selectedCategrie, setSelectedCategrie] = useState('All');
 
@@ -42,9 +45,15 @@ export function Page() {
 
   useEffect(() => {
     if (status === 'idle') {
-      dispatch(fetchDishes()).then(() => {
-        dispatch(fetchDishImages());
-      });
+      (async () => {
+        try {
+          await dispatch(fetchDishes()).unwrap();
+          await dispatch(fetchDishImages()).unwrap();
+          await dispatch(fetchGroupedReviews()).unwrap();
+        } catch (e) {
+          console.error('Data load error:', e);
+        }
+      })();
     }
   }, [status, dispatch]);
 
@@ -105,12 +114,17 @@ export function Page() {
                     key={category.id}
                     category={category}
                     handleOpenCreateBasket={handleOpenCreateBasket}
+                    reviewsByDish={byDish}
                   />
                 </Box>
               </>
             ) : (
               <Previewer key={category.id} title={category.name}>
-                <CategoryLayout2 category={category} handleOpenCreateBasket={handleOpenCreateBasket} />
+                <CategoryLayout2
+                  category={category}
+                  handleOpenCreateBasket={handleOpenCreateBasket}
+                  reviewsByDish={byDish}
+                />
               </Previewer>
             )
           )}

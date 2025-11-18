@@ -67,7 +67,7 @@ export function MainNav({ items }) {
             >
               <ListIcon />
             </IconButton>
-            <SearchButton />
+            { /* <SearchButton />  */}
           </Stack>
           <Stack
             direction="row"
@@ -75,7 +75,8 @@ export function MainNav({ items }) {
             sx={{ alignItems: 'center', flex: '1 1 auto', justifyContent: 'flex-end' }}
           >
             <BasketButton />
-            <ChatButton />
+
+            { user?.role === 'admin' && <ChatButton /> }
             <Divider
               flexItem
               orientation="vertical"
@@ -137,7 +138,7 @@ function ChatButton() {
   return (
     <React.Fragment>
       <Tooltip title="ChatBot">
-        <IconButton  onClick={() => openChatBot()} ref={popover.anchorRef}>
+        <IconButton onClick={() => openChatBot()} ref={popover.anchorRef}>
           <ChatsCircleIcon />
         </IconButton>
       </Tooltip>
@@ -171,7 +172,7 @@ function BasketButton() {
 function LanguageSwitch() {
   const { i18n } = useTranslation();
   const popover = usePopover();
-  const language = i18n.language || 'en';
+  const language = 'fr'; //i18n.language || 'fr';
   const flag = languageFlags[language];
 
   return (

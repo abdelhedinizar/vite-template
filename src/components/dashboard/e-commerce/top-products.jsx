@@ -3,12 +3,10 @@
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
 import { BagSimple as BagSimpleIcon } from '@phosphor-icons/react/dist/ssr/BagSimple';
 import { Image as ImageIcon } from '@phosphor-icons/react/dist/ssr/Image';
 
@@ -91,11 +89,12 @@ export function TopProducts({ products }) {
   return (
     <Card>
       <CardHeader
-        action={
-          <Button color="secondary" endIcon={<ArrowRightIcon />} size="small">
-            See all
-          </Button>
-        }
+        /* action={
+           <Button color="secondary" endIcon={<ArrowRightIcon />} size="small">
+             See all
+           </Button>
+         }
+           */
         avatar={
           <Avatar>
             <BagSimpleIcon fontSize="var(--Icon-fontSize)" />

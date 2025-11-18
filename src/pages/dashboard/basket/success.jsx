@@ -21,30 +21,31 @@ export function Page() {
   const paymentMethod = new URLSearchParams(location.search).get('payment_method');
 
   const backToMenu = () => {
-    // Clear both Redux basket and localStorage backup
+    // Clear both Redux basket and sessionStorage backup
     dispatch(clear());
-    localStorage.removeItem('basketBackup');
+    sessionStorage.removeItem('basketBackup');
     navigate('/dashboard/home');
   };
 
   useEffect(() => {
     const fetchOrder = async () => {
       let response;
-      
+
       if (sessionId) {
         // Card payment - fetch by session ID
         response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/orders?sessionId=${sessionId}`);
-        
+
         if (!response.data.data.orders || response.data.data.orders.length === 0) {
           setStatus('invalid');
           return;
         }
-        
+
         if (response.data.data.orders[0].paymentStatus === 'paid') {
           setStatus('paid');
           setOrder(response.data.data.orders[0]);
           // Clear basket backup since payment was successful
-          localStorage.removeItem('basketBackup');
+          sessionStorage.removeItem('basketBackup');
+          dispatch(clear());
         } else {
           setStatus('unpaid');
         }
@@ -52,12 +53,13 @@ export function Page() {
         // Cash payment - fetch by order ID
         try {
           response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/orders/${orderId}`);
-          
+
           if (response.data.data.order) {
             setStatus('paid');
             setOrder(response.data.data.order);
             // Clear basket since order was placed successfully
-            localStorage.removeItem('basketBackup');
+            sessionStorage.removeItem('basketBackup');
+            dispatch(clear());
           } else {
             setStatus('invalid');
           }
@@ -69,7 +71,7 @@ export function Page() {
         setStatus('invalid');
       }
     };
-    
+
     fetchOrder();
   }, [sessionId, orderId, paymentMethod]);
   return (
@@ -125,10 +127,10 @@ export function Page() {
         )}
         {status === 'invalid' && (
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
-          <Stack spacing={3} sx={{ alignItems: 'center' }}>
-          <Typography variant="h1">Commande invalide</Typography>   
-            <X size={128} color="var(--mui-palette-error-800)" weight="fill"/>
-            <Typography variant="h4">OOPS !</Typography>
+            <Stack spacing={3} sx={{ alignItems: 'center' }}>
+              <Typography variant="h1">Commande invalide</Typography>
+              <X size={128} color="var(--mui-palette-error-800)" weight="fill" />
+              <Typography variant="h4">OOPS !</Typography>
               <Typography variant="body1">Quelque chose s'est mal passé.</Typography>
               <Button
                 sx={{

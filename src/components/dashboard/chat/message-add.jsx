@@ -33,7 +33,7 @@ export function MessageAdd({ disabled = false, onSend, user, onChange }) {
       threadId: 'TRD-004',
       type: 'text',
       content,
-      author: { id: user._id, name: user.firstname, avatar: user.avatar },
+      author: { id: user._id, name: user.firstname, avatar: user.photo },
       createdAt: new Date(),
     };
     onSend?.(message);
@@ -52,7 +52,7 @@ export function MessageAdd({ disabled = false, onSend, user, onChange }) {
 
   return (
     <Stack direction="row" spacing={2} sx={{ alignItems: 'center', flex: '0 0 auto', px: 3, py: 1 }}>
-      <Avatar src={user.avatar} sx={{ display: { xs: 'none', sm: 'inline' } }} />
+      <Avatar src={user.photo} sx={{ display: { xs: 'none', sm: 'inline' } }} />
       <OutlinedInput
         disabled={disabled}
         onChange={handleChange}

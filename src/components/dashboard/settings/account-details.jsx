@@ -37,9 +37,11 @@ const countries = [
 
 export function AccountDetails({ user }) {
   const [selectedCountry, setSelectedCountry] = React.useState(
-    countries.find((country) => country.code === user.address?.country) || null
+    countries.find((country) => country.code === user?.address?.country) || null
   );
   const [updatedUser, setUpdatedUser] = React.useState(user);
+  const avatarInputRef = React.useRef(null);
+  const [avatarPreview, setAvatarPreview] = React.useState(null);
 
   const flag = {
     '+1': '/assets/flag-us.svg',
@@ -83,6 +85,40 @@ export function AccountDetails({ user }) {
     handleAddressChange('country', newValue?.code || '');
   };
 
+  const handleAvatarChange = () => {
+    const file = event.target.files?.[0];
+
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        console.error('Please select an image file');
+        return;
+      }
+
+      // Validate file size (e.g., max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        console.error('File size must be less than 5MB');
+        return;
+      }
+
+      try {
+        // Convert to base64
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64String = reader.result;
+          setAvatarPreview(base64String);
+        };
+        reader.readAsDataURL(file);
+      } catch (error) {
+        console.error('Error reading file:', error);
+      }
+    }
+  };
+
+  const handleRemoveAvatar = () => {
+    setAvatarPreview(null);
+  };
+
   const handleSaveChanges = async () => {
     try {
       const token = localStorage.getItem('custom-auth-token');
@@ -90,6 +126,7 @@ export function AccountDetails({ user }) {
       const payload = {
         phoneNumber: updatedUser.phoneNumber,
         address: updatedUser.address,
+        photo : avatarPreview ? avatarPreview : null,
       };
 
       // Send the request to update the user
@@ -147,18 +184,19 @@ export function AccountDetails({ user }) {
                     '&:hover': { opacity: 1 },
                   }}
                 >
-                  <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+                  <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }} onClick={() => avatarInputRef.current.click()}>
+                    <input hidden ref={avatarInputRef} onChange={handleAvatarChange} type="file" />
                     <CameraIcon fontSize="var(--icon-fontSize-md)" />
                     <Typography color="inherit" variant="subtitle2">
-                      Select
+                      Choisir
                     </Typography>
                   </Stack>
                 </Box>
-                <Avatar src={updatedUser.avatar} sx={{ '--Avatar-size': '100px' }} />
+                <Avatar src={avatarPreview || updatedUser.photo} sx={{ '--Avatar-size': '100px' }} />
               </Box>
             </Box>
-            <Button color="secondary" size="small">
-              Remove
+            <Button color="secondary" size="small" onClick={handleRemoveAvatar}>
+              Retirer
             </Button>
           </Stack>
           <Stack spacing={2}>

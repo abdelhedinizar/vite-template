@@ -6,9 +6,9 @@ export const layoutConfig = {
       key: 'dashboards',
       title: 'Dashboards',
       items: [
-        { key: 'home', title: 'Home', href: paths.dashboard.home, icon: 'house' },
-        { key: 'orders', title: 'Orders', href: paths.dashboard.ordersDetail, icon: 'receipt' },
-        { key: 'analytics', title: 'Analytics', href: paths.dashboard.analytics, icon: 'chart-pie' },
+        { key: 'home', title: 'Home', href: paths.dashboard.home, icon: 'house', roles: ['admin', 'Staff', 'User'] },
+        { key: 'orders', title: 'Orders', href: paths.dashboard.ordersDetail, icon: 'receipt', roles: ['admin', 'Staff', 'User'] },
+        { key: 'analytics', title: 'Analytics', href: paths.dashboard.analytics, icon: 'chart-pie', roles: ['admin'] },
       ],
     },
     {
@@ -21,6 +21,7 @@ export const layoutConfig = {
           href: paths.dashboard.settings.account,
           icon: 'gear',
           matcher: { type: 'startsWith', href: '/dashboard/settings' },
+          roles: ['admin', 'Staff', 'User']
         },
         {
           key: 'customers',
@@ -31,6 +32,7 @@ export const layoutConfig = {
             { key: 'customers:create', title: 'Create customer', href: paths.dashboard.customers.create },
             { key: 'customers:details', title: 'Customer details', href: paths.dashboard.customers.details('1') },
           ],
+          roles: ['admin']
         },
         {
           key: 'products',
@@ -41,6 +43,7 @@ export const layoutConfig = {
             { key: 'products:create', title: 'Create product', href: paths.dashboard.products.create },
             { key: 'products:details', title: 'Product details', href: paths.dashboard.products.details('1') },
           ],
+          roles: ['admin']
         },
         {
           key: 'orders',
@@ -52,6 +55,7 @@ export const layoutConfig = {
             { key: 'orders:create', title: 'Create order', href: paths.dashboard.orders.create },
             { key: 'orders:details', title: 'Order details', href: paths.dashboard.orders.details('1') },
           ],
+          roles: ['admin', 'Staff']
         },
       ],
     }/*,
@@ -139,3 +143,12 @@ export const layoutConfig = {
     */
   ],
 };
+
+export function getNavItemsForRole(role) {
+  return layoutConfig.navItems.map(section => {
+    return {
+      ...section,
+      items: section.items.filter(item => item.roles?.includes(role))
+    };
+  }).filter(section => section.items.length > 0);
+}

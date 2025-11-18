@@ -24,7 +24,7 @@ export function Page() {
   // Restore basket from backup if empty and backup exists
   React.useEffect(() => {
     if (items.length === 0) {
-      const basketBackup = localStorage.getItem('basketBackup');
+      const basketBackup = sessionStorage.getItem('basketBackup');
       if (basketBackup) {
         try {
           const backupItems = JSON.parse(basketBackup);
@@ -32,7 +32,7 @@ export function Page() {
             dispatch(addToBasket(item));
           });
           // Clear backup after restoring
-          localStorage.removeItem('basketBackup');
+          sessionStorage.removeItem('basketBackup');
         } catch (error) {
           console.error('Error restoring basket backup:', error);
         }
@@ -41,9 +41,9 @@ export function Page() {
   }, [items.length, dispatch]);
 
   const onOrder = async (paymentMethod = 'card') => {
-    // Save basket to localStorage as backup before going to Stripe (only for card payments)
+    // Save basket to sessionStorage as backup before going to Stripe (only for card payments)
     if (paymentMethod === 'card') {
-      localStorage.setItem('basketBackup', JSON.stringify(items));
+      sessionStorage.setItem('basketBackup', JSON.stringify(items));
     }
 
     const body = {
@@ -203,7 +203,6 @@ export function Page() {
                 pr: 7,
               }}
             >
-              <Typography variant="h6">Total : {totalPrice} $</Typography>
               <ButtonGroup
                 variant="contained"
                 sx={{
@@ -248,6 +247,7 @@ export function Page() {
                   Payer en espèces
                 </Button>
               </ButtonGroup>
+              <Typography variant="h6">Total : {totalPrice} $</Typography>
             </Stack>
           </CardContent>
         </Card>

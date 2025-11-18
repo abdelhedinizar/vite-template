@@ -90,11 +90,11 @@ export function SideNav() {
           ))}
         </Stack>
         <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
-          <Avatar src={user.avatar}>AV</Avatar>
+          <Avatar src={user?.photo}>AV</Avatar>
           <div>
-            <Typography variant="subtitle1">{user.name}</Typography>
+            <Typography variant="subtitle1">{user?.name}</Typography>
             <Typography color="text.secondary" variant="caption">
-              {user.email}
+              {user?.email}
             </Typography>
           </div>
         </Stack>

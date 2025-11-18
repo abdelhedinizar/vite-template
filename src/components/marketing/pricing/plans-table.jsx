@@ -46,9 +46,8 @@ export function PlansTable() {
                   ]}
                   id="starter"
                   name="Starter - Menu QR"
-                  price={999}
-                  priceNote="Prix unique + €49/an (hébergement)"
-                  isOneTime={true}
+                  price={60}
+                  priceNote="par mois/emplacement + €49/an (hébergement)"
                 />
               </Grid>
               <Grid
@@ -73,7 +72,7 @@ export function PlansTable() {
                   id="pro"
                   name="Pro - Système Complet"
                   popular
-                  price={189}
+                  price={89}
                   priceNote="par mois/emplacement + €399 setup"
                 />
               </Grid>
@@ -98,7 +97,7 @@ export function PlansTable() {
                   ]}
                   id="ai-lite"
                   name="IA Chatbot Lite"
-                  price={39}
+                  price={29}
                   priceNote="par mois (usage faible)"
                 />
               </Grid>
@@ -114,7 +113,7 @@ export function PlansTable() {
                   ]}
                   id="ai-standard"
                   name="IA Chatbot Standard"
-                  price={69}
+                  price={39}
                   priceNote="par mois (usage intensif)"
                 />
               </Grid>

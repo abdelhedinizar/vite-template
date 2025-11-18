@@ -89,7 +89,7 @@ export function Page() {
             </Grid>
             <Grid
               size={{
-                lg: 4,
+                lg: 5,
                 xs: 12,
               }}
             >
@@ -97,7 +97,7 @@ export function Page() {
             </Grid>
             <Grid
               size={{
-                lg: 8,
+                lg: 7,
                 xs: 12,
               }}
             >
