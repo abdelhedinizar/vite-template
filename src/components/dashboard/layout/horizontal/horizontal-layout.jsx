@@ -6,11 +6,16 @@ import GlobalStyles from '@mui/material/GlobalStyles';
 
 import { useSettings } from '@/hooks/use-settings';
 
-import { layoutConfig } from '../config';
+import { layoutConfig, getNavItemsForRole } from '../config';
 import { MainNav } from './main-nav';
+import { useUser } from '@/hooks/use-user';
 
 export function HorizontalLayout({ children }) {
   const { settings } = useSettings();
+  const { user } = useUser();
+
+  // Filter nav items based on user role
+  const navItems = getNavItemsForRole(user.role);
 
   return (
     <React.Fragment>
@@ -26,7 +31,7 @@ export function HorizontalLayout({ children }) {
           minHeight: '100%',
         }}
       >
-        <MainNav color={settings.navColor} items={layoutConfig.navItems} />
+        <MainNav color={settings.navColor} items={navItems} />
         <Box
           component="main"
           sx={{

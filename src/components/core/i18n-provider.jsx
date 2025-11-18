@@ -8,17 +8,20 @@ import { logger } from '@/lib/default-logger';
 import { de } from '@/locales/de';
 import { en } from '@/locales/en';
 import { es } from '@/locales/es';
+import { fr } from '@/locales/fr';
 
 use(initReactI18next)
   .init({
     debug: false,
-    ns: Object.keys(en),
+    ns: Object.keys(fr),
+    lng: 'fr',
     defaultNS: 'common',
     fallbackNS: 'common',
-    fallbackLng: 'en',
+    fallbackLng: 'fr',
     resources: {
-      de,
+      fr,
       en,
+      de,
       es,
     },
   })
@@ -26,7 +29,7 @@ use(initReactI18next)
     logger.error('Failed to initialize i18n', err);
   });
 
-export function I18nProvider({ children, lng = 'en' }) {
+export function I18nProvider({ children, lng = 'fr' }) {
   const { i18n } = useTranslation();
 
   React.useEffect(() => {

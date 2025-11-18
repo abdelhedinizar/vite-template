@@ -115,7 +115,7 @@ export default function CategoryLayout2({ category, handleOpenCreateBasket, revi
                   variant="contained"
                   onClick={() => handleOpenCreateBasket(dish)}
                 >
-                  Commandez
+                  Prendre
                 </Button>
               </Stack>
             </Card>

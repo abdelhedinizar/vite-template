@@ -40,7 +40,7 @@ export function CommentAdd({ dishId, onCreated }) {
     const tempId = `temp-${Date.now()}`;
     const optimisticReview = {
       dish: normalizedDishId,
-      user: { name: user?.name, photo: user?.avatar },
+      user: { name: user?.name, photo: user?.photo },
       comment: text.trim(),
       commentsCount: 0,
       createdAt: new Date().toISOString(),
@@ -123,7 +123,7 @@ export function CommentAdd({ dishId, onCreated }) {
   return (
     <Stack direction="column" spacing={2} sx={{ flex: 1 }}>
       <Stack direction="row" spacing={2}>
-        <Avatar src={user?.avatar} />
+        <Avatar src={user?.photo} />
         <Stack spacing={3} sx={{ flex: '1 1 auto' }}>
           <OutlinedInput
             multiline

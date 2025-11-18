@@ -28,11 +28,12 @@ export function ChannelMonthlySalesPerformance({ data }) {
   return (
     <Card>
       <CardHeader
-        action={
+      /*  action={
           <IconButton>
             <DotsThreeIcon weight="bold" />
           </IconButton>
         }
+          */
         avatar={
           <Avatar>
             <ChartLineIcon fontSize="var(--Icon-fontSize)" />

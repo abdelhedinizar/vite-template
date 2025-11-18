@@ -15,8 +15,6 @@ import { Star as StarIcon } from '@phosphor-icons/react/dist/ssr/Star';
 
 import { dayjs } from '@/lib/dayjs';
 
-import { CommentAdd } from './comment-add';
-import { CommentBox } from './comment-box';
 
 export function PostCard({ post }) {
   const comments = post.comments ?? [];
@@ -85,11 +83,6 @@ export function PostCard({ post }) {
             {post.likes}
           </Typography>
         </Stack>
-        <div>
-          <IconButton>
-            <ShareNetworkIcon />
-          </IconButton>
-        </div>
       </Stack>
       { /*
       <Stack divider={<Divider />} spacing={3}>

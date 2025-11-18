@@ -28,11 +28,12 @@ export function ChannelSessionsVsBounce({ data }) {
   return (
     <Card>
       <CardHeader
-        action={
-          <IconButton>
-            <DotsThreeIcon weight="bold" />
-          </IconButton>
-        }
+        /* action={
+           <IconButton>
+             <DotsThreeIcon weight="bold" />
+           </IconButton>
+         }
+           */
         avatar={
           <Avatar>
             <ChartLineIcon fontSize="var(--Icon-fontSize)" />

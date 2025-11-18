@@ -68,7 +68,8 @@ class AuthClient {
       const [firstName, lastName] = user.name.split(' ');
       user.firstName = firstName;
       user.lastName = lastName;
-      user.avatar = user.avatar || '/assets/avatar-10.png';
+      user.avatar = user.photo === 'Default.jpg' ? '/assets/avatar-10.png' : user.photo;
+      user.photo = user.photo === 'Default.jpg' ? '/assets/avatar-10.png' : user.photo;
       localStorage.setItem('user', JSON.stringify(user));
     } catch (e) {
       return { data: null };

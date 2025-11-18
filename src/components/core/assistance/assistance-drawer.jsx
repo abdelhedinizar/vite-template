@@ -118,7 +118,7 @@ export function AssistanceDrawer({ onClose, open }) {
           
           {isUserTyping && (
             <TypingIndicator 
-              author={{ id: user._id, name: user.name, avatar: user.avatar }} 
+              author={{ id: user._id, name: user.name, avatar: user.photo }} 
               position="right" 
             />
           )}
