@@ -20,6 +20,8 @@ import { Minus as MinusIcon } from '@phosphor-icons/react/dist/ssr/Minus';
 import { PencilSimple as PencilSimpleIcon } from '@phosphor-icons/react/dist/ssr/PencilSimple';
 import { X as XIcon } from '@phosphor-icons/react/dist/ssr/X';
 import { XCircle as XCircleIcon } from '@phosphor-icons/react/dist/ssr/XCircle';
+import { ChefHat as ChefHatIcon } from '@phosphor-icons/react/dist/ssr/ChefHat';
+import { BowlSteam as BowlSteamIcon } from '@phosphor-icons/react/dist/ssr/BowlSteam';
 import { useNavigate } from 'react-router-dom';
 
 import { paths } from '@/paths';
@@ -42,6 +44,11 @@ const mapping = {
     label: 'InProgress',
     icon: <HourglassMediumIcon color="var(--mui-palette-info-main)" weight="fill" />,
   },
+  Processing: {
+    label: 'Processing',
+    icon: <ChefHatIcon color="var(--mui-palette-info-main)" weight="fill" />,
+  },
+  Dispatched: { label: 'Dispatched', icon: <BowlSteamIcon color="var(--mui-palette-info-main)" /> }
 };
 
 export function OrderModal({ open, order }) {
