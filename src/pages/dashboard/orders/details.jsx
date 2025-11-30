@@ -50,6 +50,10 @@ const mapping = {
     label: 'InProgress',
     icon: <HourglassMediumIcon color="var(--mui-palette-info-main)" weight="fill" />,
   },
+  processing: {
+    label: 'Processing',
+    icon: <ChefHatIcon color="var(--mui-palette-info-main)" weight="fill" />,
+  },
 };
 
 export function Page() {
