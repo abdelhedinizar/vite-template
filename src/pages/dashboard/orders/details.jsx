@@ -23,6 +23,7 @@ import { ShoppingCartSimple as ShoppingCartSimpleIcon } from '@phosphor-icons/re
 import { Timer as TimerIcon } from '@phosphor-icons/react/dist/ssr/Timer';
 import { XCircle as XCircleIcon } from '@phosphor-icons/react/dist/ssr/XCircle';
 import { Money as MoneyIcon } from '@phosphor-icons/react/dist/ssr/Money';
+import { ChefHat as ChefHatIcon } from '@phosphor-icons/react/dist/ssr/ChefHat';
 import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
 import { useParams } from 'react-router-dom';
