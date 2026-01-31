@@ -84,14 +84,15 @@ export function OrderModal({ open, order }) {
           <Stack spacing={3}>
             <Stack direction="row" spacing={3} sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
               <Typography variant="h6">Details</Typography>
-              <Button
+              {   /* <Button
                 color="secondary"
                 component={RouterLink}
                 href={paths.dashboard.orders.details('1')}
                 startIcon={<PencilSimpleIcon />}
               >
                 Edit
-              </Button>
+              </Button> */             
+              }
             </Stack>
             <Card sx={{ borderRadius: 1 }} variant="outlined">
               <PropertyList divider={<Divider />} sx={{ '--PropertyItem-padding': '12px 24px' }}>

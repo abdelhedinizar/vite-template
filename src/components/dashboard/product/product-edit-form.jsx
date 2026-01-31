@@ -109,8 +109,14 @@ const schema = zod.object({
   status: zod.string().max(255).optional(),
   category: zod.string().max(255).optional(),
   type: zod.string().max(255).optional(),
-  PreparationTime: zod.number().optional(),
-  SpiceLevel: zod.string().max(255).optional(),
+  PreparationTime: zod.preprocess(
+    (val) => (val === '' || val === null ? undefined : Number(val)),
+    zod.number().optional()
+  ),
+  SpiceLevel: zod.preprocess(
+    (val) => (val === '' || val === null ? undefined : Number(val)),
+    zod.number().optional()
+  ),
   currency: zod.string().min(1, 'Currency is required').max(255),
   price: zod.number().min(0, 'Price must be greater than or equal to 0'),
   images: zod.array(zod.object({ url: zod.string(), fileName: zod.string() })),
@@ -155,7 +161,7 @@ export function ProductEditForm({ product }) {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        });
+        });onSubmit
         setCategories(response.data.data.categories); // Assuming the API returns a `categories` array
       } catch (error) {
         console.error('Error fetching categories:', error);
@@ -199,6 +205,11 @@ export function ProductEditForm({ product }) {
     [product, navigate]
   );
 
+  // Add this to see validation errors
+  const onError = React.useCallback((errors) => {
+    console.log('Form validation errors:', errors);
+  }, []);
+
   const handleImageDrop = React.useCallback(
     async (files) => {
       // Upload images to the server
@@ -224,7 +235,7 @@ export function ProductEditForm({ product }) {
   const price = watch('price');
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit, onError)}>
       <Grid container spacing={4}>
         <Grid
           size={{
@@ -355,24 +366,23 @@ export function ProductEditForm({ product }) {
                     >
                       <Controller
                         control={control}
-                        name="SpiceLevel"
+                        name="PreparationTime"
                         render={({ field }) => (
-                          <FormControl error={Boolean(errors.type)} fullWidth>
-                            <InputLabel>Spice Level</InputLabel>
-                            <Select {...field}>
-                              <Option value="">Select a level</Option>
-
-                              <Option key="1" value="1">
-                                1
-                              </Option>
-                              <Option key="2" value="2">
-                                2
-                              </Option>
-                              <Option key="3" value="3">
-                                3
-                              </Option>
+                          <FormControl error={Boolean(errors.PreparationTime)} fullWidth>
+                            <InputLabel>Preparation Time</InputLabel>
+                            <Select {...field} value={field.value || ''}>
+                              <Option value="">Select a time</Option>
+                              <Option value={15}>15</Option>
+                              <Option value={20}>20</Option>
+                              <Option value={25}>25</Option>
+                              <Option value={30}>30</Option>
+                              <Option value={35}>35</Option>
+                              <Option value={40}>40</Option>
                             </Select>
-                            {errors.type ? <FormHelperText error>{errors.type.message}</FormHelperText> : null}
+
+                            {errors.PreparationTime ? (
+                              <FormHelperText error>{errors.PreparationTime.message}</FormHelperText>
+                            ) : null}
                           </FormControl>
                         )}
                       />
@@ -385,35 +395,17 @@ export function ProductEditForm({ product }) {
                     >
                       <Controller
                         control={control}
-                        name="PreparationTime"
+                        name="SpiceLevel"
                         render={({ field }) => (
-                          <FormControl error={Boolean(errors.PreparationTime)} fullWidth>
-                            <InputLabel>Preparation Time</InputLabel>
-                            <Select {...field} onChange={(e) => field.onChange(Number(e.target.value))}>
-                              <Option value="">Select a time</Option>
-                              <Option key="15" value="15">
-                                15
-                              </Option>
-                              <Option key="20" value="20">
-                                20
-                              </Option>
-                              <Option key="25" value="25">
-                                25
-                              </Option>
-                              <Option key="30" value="30">
-                                30
-                              </Option>
-                              <Option key="35" value="35">
-                                40
-                              </Option>
-                              <Option key="40" value="40">
-                                45
-                              </Option>
+                          <FormControl error={Boolean(errors.SpiceLevel)} fullWidth>
+                            <InputLabel>Spice Level</InputLabel>
+                            <Select {...field} value={field.value || ''}>
+                              <Option value="">Select a level</Option>
+                              <Option value={1}>1</Option>
+                              <Option value={2}>2</Option>
+                              <Option value={3}>3</Option>
                             </Select>
-
-                            {errors.PreparationTime ? (
-                              <FormHelperText error>{errors.PreparationTime.message}</FormHelperText>
-                            ) : null}
+                            {errors.SpiceLevel ? <FormHelperText error>{errors.SpiceLevel.message}</FormHelperText> : null}
                           </FormControl>
                         )}
                       />
