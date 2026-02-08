@@ -64,7 +64,7 @@ export function Footer() {
             <Stack spacing={1}>
               <DynamicLogo colorDark="light" colorLight="dark" height={32} width={122} />
               <Typography color="text.secondary" variant="caption">
-                © 2024 Devias IO
+                © 2026 Nizar Abdelhedi
               </Typography>
             </Stack>
           </Grid>

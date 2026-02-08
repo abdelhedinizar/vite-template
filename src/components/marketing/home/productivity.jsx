@@ -122,7 +122,7 @@ export function Productivity() {
               >
                 <Stack spacing={2} sx={{ p: 4, flex: 1 }}>
                   <div>
-                    <Chip color="primary" icon={<RobotIcon />} label="Save time" variant="soft" />
+                    <Chip color="primary" icon={<RobotIcon />} label="Assistance AI" variant="soft" />
                   </div>
                   <Typography variant="h5">Un assistant qui connaît vos plats par cœur</Typography>
                   <Typography color="text.secondary" variant="body2">

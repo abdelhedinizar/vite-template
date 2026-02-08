@@ -36,7 +36,7 @@ export function DetailList7() {
                     <Typography noWrap variant="subtitle2">
                       Product Designer at{' '}
                       <Link color="text.primary" variant="subtitle2">
-                        Devias IO
+                        Nizar Abdelhedi
                       </Link>
                     </Typography>
                   }

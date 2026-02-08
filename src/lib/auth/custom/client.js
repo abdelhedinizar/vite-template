@@ -7,11 +7,11 @@ let user;
 class AuthClient {
   async signUp(_) {
     // Make API request
-    const {firstname, lastname, email, password, confirmPassword} = _;
-  try {
+    const { firstname, lastname, email, password, confirmPassword } = _;
+    try {
       const response = await axios.post(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/users/signup`, {
-        firstname,lastname,email,
-        password,confirmPassword
+        firstname, lastname, email,
+        password, confirmPassword
       });
       const { token } = response.data.data; // Assuming the API returns a `token`
       localStorage.setItem('custom-auth-token', token);
@@ -39,6 +39,25 @@ class AuthClient {
       return { error: 'Invalid credentials' };
     }
     return {};
+  }
+
+  async continueAsGuest() {
+    try {
+      // Récupérer l'utilisateur invité depuis le backend
+      const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/users/guest_user`);
+
+      const guestUser = response.data.data.user;
+
+      // Stocker l'utilisateur invité dans localStorage
+      localStorage.setItem('guest-mode', 'true');
+      localStorage.setItem('guest-user', JSON.stringify(guestUser));
+      localStorage.setItem('custom-auth-token', response.data.data.token);
+
+      return { data: guestUser };
+    } catch (error) {
+      console.error('Error fetching guest user:', error);
+      return { error: 'Failed to load guest user' };
+    }
   }
 
   async resetPassword(_) {
@@ -80,6 +99,8 @@ class AuthClient {
 
   async signOut() {
     localStorage.removeItem('custom-auth-token');
+    localStorage.removeItem('guest-mode');
+    localStorage.removeItem('guest-user');
 
     return {};
   }

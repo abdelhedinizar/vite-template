@@ -17,6 +17,7 @@ import { Eye as EyeIcon } from '@phosphor-icons/react/dist/ssr/Eye';
 import { EyeSlash as EyeSlashIcon } from '@phosphor-icons/react/dist/ssr/EyeSlash';
 import { Controller, useForm } from 'react-hook-form';
 import { z as zod } from 'zod';
+import { useNavigate } from 'react-router-dom';
 
 import { paths } from '@/paths';
 import { authClient } from '@/lib/auth/custom/client';
@@ -39,6 +40,7 @@ const defaultValues = { email: '', password: '' };
 
 export function SignInForm() {
   const { checkSession } = useUser();
+  const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = React.useState();
 
@@ -67,6 +69,22 @@ export function SignInForm() {
     // Redirection vers le fournisseur OAuth
   }, []);
 
+
+  const onContinueAsGuest = React.useCallback(async () => {
+    setIsPending(true);
+
+    const { error } = await authClient.continueAsGuest();
+
+    if (error) {
+      setIsPending(false);
+      toast.error(error);
+      return;
+    }
+
+    await checkSession?.();
+  }, [checkSession]);
+
+
   const onSubmit = React.useCallback(
     async (values) => {
       setIsPending(true);
@@ -81,8 +99,15 @@ export function SignInForm() {
 
       // Rafraîchir l'état d'authentification
       await checkSession?.();
+      const redirectTo = sessionStorage.getItem('post-login-redirect');
+      if (redirectTo && redirectTo.startsWith('/')) {
+        sessionStorage.removeItem('post-login-redirect');
+        navigate(redirectTo);
+        return;
+      }
+      navigate(paths.dashboard.home);
     },
-    [checkSession, setError]
+    [checkSession, navigate, setError]
   );
 
   return (
@@ -179,6 +204,15 @@ export function SignInForm() {
               Mot de passe oublié ?
             </Link>
           </div>
+          <Divider>ou</Divider>
+          <Button
+            color="secondary"
+            variant="outlined"
+            disabled={isPending}
+            onClick={onContinueAsGuest}
+          >
+            Continuer en tant qu'invité
+          </Button>
         </Stack>
       </Stack>
       <Alert color="warning">

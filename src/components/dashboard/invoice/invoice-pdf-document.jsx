@@ -74,7 +74,7 @@ export function InvoicePDFDocument(_) {
         </View>
         <View style={styles.flexRow}>
           <View style={styles.w50}>
-            <Text style={[styles.fontMedium, styles.gutterBottom]}>Devias IO</Text>
+            <Text style={[styles.fontMedium, styles.gutterBottom]}>Nizar Abdelhedi</Text>
             <Text>2674 Alfred Drive</Text>
             <Text>Brooklyn, New York, United States</Text>
             <Text>11206</Text>
