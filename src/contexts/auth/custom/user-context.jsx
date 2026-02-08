@@ -16,6 +16,18 @@ export function UserProvider({ children }) {
 
   const checkSession = React.useCallback(async () => {
     try {
+      // Vérifier si l'utilisateur est en mode invité
+      const isGuestMode = localStorage.getItem('guest-mode') === 'true';
+      
+      if (isGuestMode) {
+        const guestUserData = localStorage.getItem('guest-user');
+        if (guestUserData) {
+          const guestUser = JSON.parse(guestUserData);
+          setState((prev) => ({ ...prev, user: guestUser, error: null, isLoading: false }));
+          return;
+        }
+      }
+
       const { data, error } = await authClient.getUser();
 
       if (error) {

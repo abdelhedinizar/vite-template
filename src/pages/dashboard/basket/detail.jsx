@@ -1,13 +1,28 @@
 import * as React from 'react';
-import { Box, Button, Card, CardContent, Link, Stack, Typography, ButtonGroup } from '@mui/material';
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Link,
+  Stack,
+  Typography,
+  ButtonGroup,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from '@mui/material';
 import { ArrowLeftIcon } from '@mui/x-date-pickers';
 import { CreditCard, Money } from '@phosphor-icons/react';
 import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
+import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { config } from '@/config';
 import { paths } from '@/paths';
+import { AuthStrategy } from '@/lib/auth/strategy';
 import { useUser } from '@/hooks/use-user';
 import { RouterLink } from '@/components/core/link';
 import { addToBasket } from '@/stores/slices/BasketSlice';
@@ -19,7 +34,11 @@ export function Page() {
   const table = useSelector((state) => state.table);
   const dispatch = useDispatch();
   const totalPrice = items.reduce((acc, item) => acc + item.price, 0);
-  const { user } = useUser();
+  const { user, checkSession } = useUser();
+  const navigate = useNavigate();
+  const [guestDialogOpen, setGuestDialogOpen] = React.useState(false);
+  const [pendingPaymentMethod, setPendingPaymentMethod] = React.useState(null);
+  const [isGuestMode, setIsGuestMode] = React.useState(false);
 
   // Restore basket from backup if empty and backup exists
   React.useEffect(() => {
@@ -39,6 +58,28 @@ export function Page() {
       }
     }
   }, [items.length, dispatch]);
+
+  React.useEffect(() => {
+    const guestMode = localStorage.getItem('guest-mode') === 'true';
+    setIsGuestMode(guestMode);
+  }, [user]);
+
+  const getSignInPath = () => {
+    switch (config.auth.strategy) {
+      case AuthStrategy.CUSTOM:
+        return paths.auth.custom.signIn;
+      case AuthStrategy.AUTH0:
+        return paths.auth.auth0.signIn;
+      case AuthStrategy.COGNITO:
+        return paths.auth.cognito.signIn;
+      case AuthStrategy.FIREBASE:
+        return paths.auth.firebase.signIn;
+      case AuthStrategy.SUPABASE:
+        return paths.auth.supabase.signIn;
+      default:
+        return paths.auth.custom.signIn;
+    }
+  };
 
   const onOrder = async (paymentMethod = 'card') => {
     // Save basket to sessionStorage as backup before going to Stripe (only for card payments)
@@ -79,6 +120,36 @@ export function Page() {
       // For cash payment, redirect to success page directly
       window.location.href = `/dashboard/basket/success?order_id=${orderResponse.data.data.order.id}&payment_method=cash`;
     }
+  };
+
+  const handlePayClick = (paymentMethod) => {
+    if (isGuestMode) {
+      setPendingPaymentMethod(paymentMethod);
+      setGuestDialogOpen(true);
+      return;
+    }
+
+    onOrder(paymentMethod);
+  };
+
+  const handleGuestContinue = () => {
+    setGuestDialogOpen(false);
+    if (pendingPaymentMethod) {
+      onOrder(pendingPaymentMethod);
+      setPendingPaymentMethod(null);
+    }
+  };
+
+  const handleGuestLogin = async () => {
+    setGuestDialogOpen(false);
+    localStorage.removeItem('guest-mode');
+    localStorage.removeItem('guest-user');
+    localStorage.removeItem('custom-auth-token');
+    sessionStorage.setItem('post-login-redirect', `${window.location.pathname}${window.location.search}`);
+    if (checkSession) {
+      await checkSession();
+    }
+    navigate(getSignInPath());
   };
   return (
     <React.Fragment>
@@ -228,7 +299,7 @@ export function Page() {
                       backgroundColor: 'var(--mui-palette-primary-800)',
                     },
                   }}
-                  onClick={() => onOrder('card')}
+                  onClick={() => handlePayClick('card')}
                 >
                   Payer par carte
                 </Button>
@@ -242,7 +313,7 @@ export function Page() {
                       backgroundColor: 'var(--mui-palette-secondary-800)',
                     },
                   }}
-                  onClick={() => onOrder('cash')}
+                  onClick={() => handlePayClick('cash')}
                 >
                   Payer en espèces
                 </Button>
@@ -252,6 +323,22 @@ export function Page() {
           </CardContent>
         </Card>
       </Box>
+      <Dialog open={guestDialogOpen} onClose={() => setGuestDialogOpen(false)}>
+        <DialogTitle>Continuer en tant qu&apos;invité ?</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2">
+            Vous êtes en mode invité. Voulez-vous continuer en tant qu&apos;invité ou vous connecter ?
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={handleGuestLogin} variant="outlined">
+            Se connecter
+          </Button>
+          <Button onClick={handleGuestContinue} variant="contained">
+            Rester invité
+          </Button>
+        </DialogActions>
+      </Dialog>
     </React.Fragment>
   );
 }

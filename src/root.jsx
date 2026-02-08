@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
+import { useLocation } from 'react-router-dom';
 
 import '@/styles/global.css';
 
@@ -21,6 +22,8 @@ const metadata = { title: config.site.name };
 
 export function Root({ children }) {
   const settings = React.useRef(applyDefaultSettings(getPersistedSettings()));
+  const location = useLocation();
+  const showAssistanceButton = location.pathname.startsWith('/dashboard');
 
   return (
     <HelmetProvider>
@@ -36,7 +39,7 @@ export function Root({ children }) {
               <I18nProvider lng={settings.current.language}>
                 <ThemeProvider>
                   {children}
-                  <AssistanceButton />
+                  {showAssistanceButton ? <AssistanceButton /> : null}
                   <Toaster position="bottom-right" />
                 </ThemeProvider>
               </I18nProvider>
