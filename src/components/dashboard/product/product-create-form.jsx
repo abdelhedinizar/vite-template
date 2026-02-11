@@ -24,7 +24,7 @@ import axios from 'axios';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { z as zod } from 'zod';
-
+import { Pepper } from '@phosphor-icons/react/dist/ssr';
 import { paths } from '@/paths';
 import { logger } from '@/lib/default-logger';
 import { useUser } from '@/hooks/use-user';
@@ -376,18 +376,21 @@ export function ProductCreateForm() {
                     name="SpiceLevel"
                     render={({ field }) => (
                       <FormControl error={Boolean(errors.SpiceLevel)} fullWidth>
-                        <InputLabel>Spice Level</InputLabel>
+                        <InputLabel>Piquant</InputLabel>
                         <Select {...field}>
                           <Option value="">Select a level</Option>
 
                           <Option key="1" value="1">
-                            1
+                            <Pepper key={1} weight="fill" fill="var(--mui-palette-error-main)" size={22} />
                           </Option>
                           <Option key="2" value="2">
-                            2
+                            <Pepper key={2} weight="fill" fill="var(--mui-palette-error-main)" size={22} />
+                            <Pepper key={2} weight="fill" fill="var(--mui-palette-error-main)" size={22} />
                           </Option>
                           <Option key="3" value="3">
-                            3
+                            <Pepper key={3} weight="fill" fill="var(--mui-palette-error-main)" size={22} />
+                            <Pepper key={3} weight="fill" fill="var(--mui-palette-error-main)" size={22} />
+                            <Pepper key={3} weight="fill" fill="var(--mui-palette-error-main)" size={22} />
                           </Option>
                         </Select>
                         {errors.SpiceLevel ? <FormHelperText error>{errors.SpiceLevel.message}</FormHelperText> : null}

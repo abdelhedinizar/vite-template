@@ -23,7 +23,7 @@ import axios from 'axios';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { z as zod } from 'zod';
-
+import { Pepper } from '@phosphor-icons/react/dist/ssr';
 import { paths } from '@/paths';
 import { logger } from '@/lib/default-logger';
 import { DataTable } from '@/components/core/data-table';
@@ -161,7 +161,7 @@ export function ProductEditForm({ product }) {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        });onSubmit
+        }); onSubmit
         setCategories(response.data.data.categories); // Assuming the API returns a `categories` array
       } catch (error) {
         console.error('Error fetching categories:', error);
@@ -398,12 +398,12 @@ export function ProductEditForm({ product }) {
                         name="SpiceLevel"
                         render={({ field }) => (
                           <FormControl error={Boolean(errors.SpiceLevel)} fullWidth>
-                            <InputLabel>Spice Level</InputLabel>
+                            <InputLabel>Piquant</InputLabel>
                             <Select {...field} value={field.value || ''}>
                               <Option value="">Select a level</Option>
-                              <Option value={1}>1</Option>
-                              <Option value={2}>2</Option>
-                              <Option value={3}>3</Option>
+                              <Option value={1}><Pepper key={1} weight="fill" fill="var(--mui-palette-error-main)" size={22} /></Option>
+                              <Option value={2}><Pepper key={2} weight="fill" fill="var(--mui-palette-error-main)" size={22} /><Pepper key={2} weight="fill" fill="var(--mui-palette-error-main)" size={22} /></Option>
+                              <Option value={3}><Pepper key={2} weight="fill" fill="var(--mui-palette-error-main)" size={22} /><Pepper key={2} weight="fill" fill="var(--mui-palette-error-main)" size={22} /><Pepper key={3} weight="fill" fill="var(--mui-palette-error-main)" size={22} /></Option>
                             </Select>
                             {errors.SpiceLevel ? <FormHelperText error>{errors.SpiceLevel.message}</FormHelperText> : null}
                           </FormControl>

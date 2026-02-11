@@ -53,30 +53,30 @@ export default function CategoryLayout2({ category, handleOpenCreateBasket, revi
                 </Typography>
                 <Stack direction="row" spacing={3} sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
                   <div>
-                    <Typography variant="subtitle2">
-                      {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(dish.price)}
-                    </Typography>
                     <Typography color="text.secondary" variant="body2">
                       Price
                     </Typography>
+                    <Typography variant="subtitle2">
+                      {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(dish.price)}
+                    </Typography>
                   </div>
                   <div>
+                    <Typography color="text.secondary" variant="body2">
+                      Pret en
+                    </Typography>
                     <Typography variant="subtitle2">
                       {dish.PreparationTime} <TimerIcon size={16} />
                     </Typography>
-                    <Typography color="text.secondary" variant="body2">
-                      Preparation Time
-                    </Typography>
                   </div>
                   <div>
+                    <Typography color="text.secondary" variant="body2">
+                      Piquant
+                    </Typography>
                     <Typography variant="subtitle2">
                       {Array.from({ length: dish.SpiceLevel }).map((_, i) => (
                         <Pepper key={i} weight="fill" fill="var(--mui-palette-error-main)" size={22} />
                       ))}
-                    </Typography>
-                    <Typography color="text.secondary" variant="body2">
-                      Spice Level
-                    </Typography>
+                    </Typography>         
                   </div>
                 </Stack>
               </Stack>
