@@ -12,9 +12,10 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  IconButton,
 } from '@mui/material';
 import { ArrowLeftIcon } from '@mui/x-date-pickers';
-import { CreditCard, Money } from '@phosphor-icons/react';
+import { CreditCard, Money, Trash } from '@phosphor-icons/react';
 import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
@@ -25,7 +26,7 @@ import { paths } from '@/paths';
 import { AuthStrategy } from '@/lib/auth/strategy';
 import { useUser } from '@/hooks/use-user';
 import { RouterLink } from '@/components/core/link';
-import { addToBasket } from '@/stores/slices/BasketSlice';
+import { addToBasket, removeAtIndex } from '@/stores/slices/BasketSlice';
 
 const metadata = { title: `Create | Customers | Dashboard | ${config.site.name}` };
 
@@ -182,7 +183,7 @@ export function Page() {
             </div>
           </Stack>
           <Stack spacing={3}>
-            {items.map((item) => {
+            {items.map((item, index) => {
               let dishImage = item.dish.image;
               if (dishImage.startsWith('../')) {
                 dishImage = dishImage.replace('..', '');
@@ -208,8 +209,20 @@ export function Page() {
                           objectFit: 'cover',
                         }}
                       />
-                      <Stack spacing={0.5}>
-                        <Typography variant="h6">{item.dish.name}</Typography>
+                      <Stack spacing={0.5} sx={{ flex: 1 }}>
+                        <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
+                          <Typography variant="h6">{item.dish.name}</Typography>
+                          <IconButton
+                            aria-label="Supprimer le plat"
+                            onClick={() => {
+                              dispatch(removeAtIndex(index));
+                            }}
+                            size="small"
+                            sx={{ color: 'var(--mui-palette-error-main)' }}
+                          >
+                            <Trash size={18} />
+                          </IconButton>
+                        </Stack>
                         <Typography variant="body2">{item.dish.ingredients}</Typography>
                         <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between', px: 2 }}>
                           <Typography variant="h6">{item.price} $</Typography>

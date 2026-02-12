@@ -1,6 +1,8 @@
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -8,11 +10,40 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { useColorScheme } from '@mui/material/styles';
 import { Gear as GearIcon } from '@phosphor-icons/react/dist/ssr/Gear';
 import { Moon as MoonIcon } from '@phosphor-icons/react/dist/ssr/Moon';
 import { Sun as SunIcon } from '@phosphor-icons/react/dist/ssr/Sun';
 
+import { applyDefaultSettings } from '@/lib/settings/apply-default-settings';
+import { setSettings as setPersistedSettings } from '@/lib/settings/set-settings';
+import { useSettings } from '@/hooks/use-settings';
+import { SettingsDrawer } from '@/components/core/settings/settings-drawer';
+
 export function ThemeSwitch() {
+  const { settings, setSettings } = useSettings();
+  const { mode, setMode } = useColorScheme();
+  const [openDrawer, setOpenDrawer] = React.useState(false);
+
+  const handleUpdate = async (values) => {
+    const { mode: newMode, ...other } = values;
+
+    if (newMode) {
+      setMode(newMode);
+    }
+
+    const updatedSettings = { ...settings, ...other };
+
+    setPersistedSettings(updatedSettings);
+    setSettings(updatedSettings);
+  };
+
+  const handleReset = async () => {
+    setMode(null);
+    setPersistedSettings({});
+    setSettings(applyDefaultSettings({}));
+  };
+
   return (
     <Card>
       <CardHeader
@@ -26,7 +57,10 @@ export function ThemeSwitch() {
       <CardContent>
         <Card variant="outlined">
           <RadioGroup
-            defaultValue="light"
+            value={mode ?? 'system'}
+            onChange={(event) => {
+              setMode(event.target.value);
+            }}
             sx={{
               gap: 0,
               '& .MuiFormControlLabel-root': {
@@ -64,6 +98,25 @@ export function ThemeSwitch() {
           </RadioGroup>
         </Card>
       </CardContent>
+      <CardActions sx={{ px: 2, pb: 2, pt: 0 }}>
+        <Button
+          onClick={() => {
+            setOpenDrawer(true);
+          }}
+          variant="outlined"
+        >
+          Plus d&apos;options
+        </Button>
+      </CardActions>
+      <SettingsDrawer
+        onClose={() => {
+          setOpenDrawer(false);
+        }}
+        onReset={handleReset}
+        onUpdate={handleUpdate}
+        open={openDrawer}
+        values={{ ...settings, mode }}
+      />
     </Card>
   );
 }

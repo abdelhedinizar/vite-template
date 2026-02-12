@@ -33,7 +33,7 @@ export function AssistanceButton() {
             position: 'fixed',
             right: 0,
             width: '40px',
-            zIndex: 'var(--mui-zIndex-speedDial)',
+            zIndex: 'var(--mui-zIndex-modal)',
             '&:hover': { 
               bgcolor: 'var(--mui-palette-primary-dark)',
               transform: 'scale(1.1)',
