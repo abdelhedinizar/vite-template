@@ -20,7 +20,7 @@ export function Auth0SignOut() {
 
   return (
     <MenuItem onClick={handleSignOut} sx={{ justifyContent: 'center' }}>
-      Sign out
+      Se déconnecter
     </MenuItem>
   );
 }

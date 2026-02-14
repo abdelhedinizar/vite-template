@@ -9,8 +9,11 @@ const basketSlice = createSlice({
     addToBasket: (state, action) => {
       state.items.push(action.payload);
     },
-    remove: (state, action) => {
-      state.items = state.items.filter((item) => item.id !== action.payload.id);
+    removeAtIndex: (state, action) => {
+      const index = action.payload;
+      if (index >= 0 && index < state.items.length) {
+        state.items.splice(index, 1);
+      }
     },
     clear: (state) => {
       state.items = [];
@@ -18,5 +21,5 @@ const basketSlice = createSlice({
   },
 });
 
-export const { addToBasket, remove, clear } = basketSlice.actions;
+export const { addToBasket, removeAtIndex, clear } = basketSlice.actions;
 export default basketSlice.reducer;

@@ -12,9 +12,10 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  IconButton,
 } from '@mui/material';
 import { ArrowLeftIcon } from '@mui/x-date-pickers';
-import { CreditCard, Money } from '@phosphor-icons/react';
+import { CreditCard, Money, Trash } from '@phosphor-icons/react';
 import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
@@ -25,7 +26,7 @@ import { paths } from '@/paths';
 import { AuthStrategy } from '@/lib/auth/strategy';
 import { useUser } from '@/hooks/use-user';
 import { RouterLink } from '@/components/core/link';
-import { addToBasket } from '@/stores/slices/BasketSlice';
+import { addToBasket, removeAtIndex } from '@/stores/slices/BasketSlice';
 
 const metadata = { title: `Create | Customers | Dashboard | ${config.site.name}` };
 
@@ -164,7 +165,7 @@ export function Page() {
           width: 'var(--Content-width)',
         }}
       >
-        <Stack spacing={4} sx={{ paddingBottom: '100px' }}>
+        <Stack spacing={4} sx={{ paddingBottom: { xs: '220px', sm: '180px' } }}>
           <Stack spacing={3}>
             <div>
               <Link
@@ -182,7 +183,7 @@ export function Page() {
             </div>
           </Stack>
           <Stack spacing={3}>
-            {items.map((item) => {
+            {items.map((item, index) => {
               let dishImage = item.dish.image;
               if (dishImage.startsWith('../')) {
                 dishImage = dishImage.replace('..', '');
@@ -192,50 +193,78 @@ export function Page() {
                 <Card
                   key={item.dish.id}
                   sx={{
-                    borderRadius: 2,
+                    borderRadius: 3,
+                    border: '1px solid var(--mui-palette-divider)',
                     boxShadow: 'rgba(0, 0, 0, 0.2) 0px 20px 30px !important;',
+                    overflow: 'hidden',
+                    height: { xs: 'auto', sm: 160 },
                   }}
                 >
-                  <CardContent sx={{ p: 0, pb: '0 !important' }}>
-                    <Stack direction="row" spacing={2} alignItems="center">
-                      <Box
-                        component="img"
-                        src={dishImage}
-                        sx={{
-                          width: 130,
-                          height: 130,
-                          borderRadius: 2,
-                          objectFit: 'cover',
-                        }}
-                      />
-                      <Stack spacing={0.5}>
+                  <Stack
+                    direction={{ xs: 'column', sm: 'row' }}
+                    spacing={0}
+                    alignItems={{ xs: 'stretch', sm: 'stretch' }}
+                    sx={{ height: '100%' }}
+                  >
+                    <Box
+                      component="img"
+                      src={dishImage}
+                      sx={{
+                        width: { xs: '100%', sm: 200 },
+                        height: { xs: 160, sm: '100%' },
+                        objectFit: 'cover',
+                      }}
+                    />
+                    <Stack spacing={1} sx={{ flex: 1, p: { xs: 2, sm: 2.5 } }}>
+                      <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
                         <Typography variant="h6">{item.dish.name}</Typography>
-                        <Typography variant="body2">{item.dish.ingredients}</Typography>
-                        <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between', px: 2 }}>
-                          <Typography variant="h6">{item.price} $</Typography>
-                          <Stack
-                            direction="row"
-                            spacing={1}
-                            sx={{
-                              backgroundColor: 'var(--mui-palette-primary-700)',
-                              color: 'white',
-                              borderRadius: 2,
-                              boxShadow: '0px 4px 6px var(--mui-palette-primary-300)',
-                              '&:hover': {
-                                backgroundColor: 'var(--mui-palette-primary-800)',
-                              },
-                            }}
-                          >
-                            <Button sx={{ color: 'white', width: '30px' }}>-</Button>
-                            <Typography variant="body1" sx={{ alignContent: 'center' }}>
-                              {item.quantity}
-                            </Typography>
-                            <Button sx={{ color: 'white', width: '30px' }}>+</Button>
-                          </Stack>
+                        <IconButton
+                          aria-label="Supprimer le plat"
+                          onClick={() => {
+                            dispatch(removeAtIndex(index));
+                          }}
+                          size="small"
+                          sx={{
+                            color: 'var(--mui-palette-error-main)',
+                            bgcolor: 'rgba(0,0,0,0.04)',
+                            '&:hover': { bgcolor: 'rgba(0,0,0,0.08)' },
+                          }}
+                        >
+                          <Trash size={18} />
+                        </IconButton>
+                      </Stack>
+                      <Typography color="text.secondary" variant="body2">
+                        {item.dish.ingredients}
+                      </Typography>
+                      <Stack
+                        direction={{ xs: 'column', sm: 'row' }}
+                        spacing={{ xs: 1.5, sm: 2 }}
+                        sx={{ alignItems: { xs: 'flex-start', sm: 'center' }, justifyContent: 'space-between' }}
+                      >
+                        <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                          {item.price} $
+                        </Typography>
+                        <Stack
+                          direction="row"
+                          spacing={1}
+                          sx={{
+                            backgroundColor: 'var(--mui-palette-primary-700)',
+                            color: 'white',
+                            borderRadius: 999,
+                            px: 0.5,
+                            py: 0.25,
+                            boxShadow: '0px 6px 14px rgba(25, 118, 210, 0.25)',
+                          }}
+                        >
+                          <Button sx={{ color: 'white', minWidth: 36, px: 0 }}>-</Button>
+                          <Typography variant="body1" sx={{ alignContent: 'center', px: 0.5 }}>
+                            {item.quantity}
+                          </Typography>
+                          <Button sx={{ color: 'white', minWidth: 36, px: 0 }}>+</Button>
                         </Stack>
                       </Stack>
                     </Stack>
-                  </CardContent>
+                  </Stack>
                 </Card>
               );
             })}
@@ -245,83 +274,85 @@ export function Page() {
       <Box
         sx={{
           position: 'fixed',
-          maxWidth: 'var(--Content-maxWidth)',
           bottom: 0,
-          boxShadow: 'rgba(0, 0, 0, 0.1) 0px 10px 50px; !important;',
-          width: 'var(--Content-width)',
+          left: { xs: 0, lg: 'var(--SideNav-width)' },
+          right: 0,
+          width: { xs: '100%', lg: 'calc(100% - var(--SideNav-width))' },
+          zIndex: 'var(--mui-zIndex-appBar)',
+          pointerEvents: 'none',
         }}
       >
-        <Card
+        <Box
           sx={{
-            borderRadius: 0,
-            overflow: 'hidden',
+            maxWidth: 'var(--Content-maxWidth)',
+            m: '0 auto',
+            px: 'var(--Content-paddingX)',
+            pb: { xs: 2, sm: 3 },
+            width: '100%',
+            boxSizing: 'border-box',
+            pointerEvents: 'auto',
           }}
         >
-          <CardContent
+          <Card
             sx={{
-              px: '20px !important',
-              pt: '20px !important',
-              pb: '20px !important',
+              borderRadius: 3,
+              overflow: 'hidden',
+              boxShadow: '0px 12px 30px rgba(0, 0, 0, 0.12)',
             }}
           >
-            <Stack
-              direction="row"
-              spacing={3}
-              sx={{
-                alignItems: 'center',
-                flexWrap: 'wrap',
-                justifyContent: 'space-between',
-                pr: 7,
-              }}
-            >
-              <ButtonGroup
-                variant="contained"
-                sx={{
-                  boxShadow: '0px 4px 6px var(--mui-palette-primary-300)',
-                  borderRadius: 2,
-                  overflow: 'hidden',
-                  '& .MuiButton-root': {
-                    border: 'none',
-                    py: 1.5,
-                    px: 2,
-                    minWidth: 'auto',
-                    whiteSpace: 'nowrap',
-                  },
-                }}
+            <CardContent sx={{ px: { xs: 2, sm: 3 }, py: { xs: 2, sm: 2.5 } }}>
+              <Stack
+                spacing={2}
+                direction={{ xs: 'column', sm: 'row' }}
+                sx={{ alignItems: { xs: 'stretch', sm: 'center' }, justifyContent: 'space-between' }}
               >
-                <Button
-                  startIcon={<CreditCard size={20} />}
-                  sx={{
-                    backgroundColor: 'var(--mui-palette-primary-700)',
-                    color: 'white',
-                    minWidth: '140px',
-                    '&:hover': {
-                      backgroundColor: 'var(--mui-palette-primary-800)',
-                    },
-                  }}
-                  onClick={() => handlePayClick('card')}
+                <Stack spacing={0.5}>
+                  <Typography color="text.secondary" variant="body2">
+                    Total
+                  </Typography>
+                  <Typography variant="h5" sx={{ fontWeight: 700 }}>
+                    {totalPrice} $
+                  </Typography>
+                </Stack>
+                <Stack
+                  direction={{ xs: 'column', sm: 'row' }}
+                  spacing={1.5}
+                  sx={{ alignItems: 'stretch' }}
                 >
-                  Payer par carte
-                </Button>
-                <Button
-                  startIcon={<Money size={20} />}
-                  sx={{
-                    backgroundColor: 'var(--mui-palette-secondary-700)',
-                    color: 'white',
-                    minWidth: '120px',
-                    '&:hover': {
-                      backgroundColor: 'var(--mui-palette-secondary-800)',
-                    },
-                  }}
-                  onClick={() => handlePayClick('cash')}
-                >
-                  Payer en espèces
-                </Button>
-              </ButtonGroup>
-              <Typography variant="h6">Total : {totalPrice} $</Typography>
-            </Stack>
-          </CardContent>
-        </Card>
+                  <Button
+                    startIcon={<Money size={20} />}
+                    onClick={() => handlePayClick('cash')}
+                    variant="outlined"
+                    sx={{
+                      borderColor: 'var(--mui-palette-secondary-700)',
+                      color: 'var(--mui-palette-secondary-700)',
+                      '&:hover': {
+                        borderColor: 'var(--mui-palette-secondary-800)',
+                        bgcolor: 'rgba(0,0,0,0.04)',
+                      },
+                    }}
+                  >
+                    Payer en espèces
+                  </Button>
+                  <Button
+                    startIcon={<CreditCard size={20} />}
+                    onClick={() => handlePayClick('card')}
+                    variant="contained"
+                    sx={{
+                      backgroundColor: 'var(--mui-palette-primary-700)',
+                      boxShadow: '0px 4px 6px var(--mui-palette-primary-300)',
+                      '&:hover': {
+                        backgroundColor: 'var(--mui-palette-primary-800)',
+                      },
+                    }}
+                  >
+                    Payer par carte
+                  </Button>
+                </Stack>
+              </Stack>
+            </CardContent>
+          </Card>
+        </Box>
       </Box>
       <Dialog open={guestDialogOpen} onClose={() => setGuestDialogOpen(false)}>
         <DialogTitle>Continuer en tant qu&apos;invité ?</DialogTitle>

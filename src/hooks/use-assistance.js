@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addToBasket } from '../stores/slices/BasketSlice';
 import axios from 'axios';
 
-export function useFetchMessages() {
+export function useFetchMessages(enabled = true) {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -76,6 +76,9 @@ export function useFetchMessages() {
   };
 
   useEffect(() => {
+    if (!enabled || hasFetchedMessages.current) {
+      return;
+    }
     if (!hasFetchedMessages.current) {
       fetchMessages([
         {
@@ -85,7 +88,7 @@ export function useFetchMessages() {
       ]);
       hasFetchedMessages.current = true;
     }
-  }, []);
+  }, [enabled]);
 
   return { messages, loading, error, handleAddMessage };
 }

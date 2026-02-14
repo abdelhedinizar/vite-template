@@ -157,7 +157,7 @@ function BasketButton() {
 
   return (
     <React.Fragment>
-      <Tooltip title="Basket">
+      <Tooltip title="Panier">
         <Badge color="error" badgeContent={items.length} sx={{ top: '3px' }} max={9}>
           <IconButton onClick={() => openBasketDetail()} ref={popover.anchorRef}>
             <BasketIcon />

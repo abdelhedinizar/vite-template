@@ -15,7 +15,7 @@ import { MessageBox } from '@/components/dashboard/chat/message-box';
 import { TypingIndicator } from '@/components/dashboard/chat/TypingIndicator';
 
 export function AssistanceDrawer({ onClose, open }) {
-  const { messages, loading, error, handleAddMessage } = useFetchMessages();
+  const { messages, loading, error, handleAddMessage } = useFetchMessages(open);
   const { user } = useUser();
   const [isUserTyping, setIsUserTyping] = React.useState(false);
   
