@@ -165,7 +165,7 @@ export function Page() {
           width: 'var(--Content-width)',
         }}
       >
-        <Stack spacing={4} sx={{ paddingBottom: '100px' }}>
+        <Stack spacing={4} sx={{ paddingBottom: { xs: '220px', sm: '180px' } }}>
           <Stack spacing={3}>
             <div>
               <Link
@@ -340,6 +340,7 @@ export function Page() {
                     variant="contained"
                     sx={{
                       backgroundColor: 'var(--mui-palette-primary-700)',
+                      boxShadow: '0px 4px 6px var(--mui-palette-primary-300)',
                       '&:hover': {
                         backgroundColor: 'var(--mui-palette-primary-800)',
                       },

@@ -201,13 +201,6 @@ export const route = {
             return { Component: Page };
           },
         },
-        {
-          path: 'integrations',
-          lazy: async () => {
-            const { Page } = await import('@/pages/dashboard/settings/integrations');
-            return { Component: Page };
-          },
-        },
       ],
     },
   ],

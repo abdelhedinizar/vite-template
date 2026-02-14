@@ -29,7 +29,7 @@ export function SupabaseSignOut() {
 
   return (
     <MenuItem component="div" onClick={handleSignOut} sx={{ justifyContent: 'center' }}>
-      Sign out
+      Se déconnecter
     </MenuItem>
   );
 }

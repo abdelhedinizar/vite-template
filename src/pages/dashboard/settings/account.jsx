@@ -7,7 +7,6 @@ import { config } from '@/config';
 import { useUser } from '@/hooks/use-user';
 import { AccountDetails } from '@/components/dashboard/settings/account-details';
 import { DeleteAccount } from '@/components/dashboard/settings/delete-account';
-import { Privacy } from '@/components/dashboard/settings/privacy';
 import { ThemeSwitch } from '@/components/dashboard/settings/theme-switch';
 
 const metadata = { title: `Account | Settings | Dashboard | ${config.site.name}` };
@@ -26,7 +25,6 @@ export function Page() {
         <Stack spacing={4}>
           <AccountDetails user={user} />
           <ThemeSwitch />
-          <Privacy />
           <DeleteAccount />
         </Stack>
       </Stack>

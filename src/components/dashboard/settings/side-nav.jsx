@@ -8,7 +8,6 @@ import Typography from '@mui/material/Typography';
 import { Bell as BellIcon } from '@phosphor-icons/react/dist/ssr/Bell';
 import { CreditCard as CreditCardIcon } from '@phosphor-icons/react/dist/ssr/CreditCard';
 import { LockKey as LockKeyIcon } from '@phosphor-icons/react/dist/ssr/LockKey';
-import { PlugsConnected as PlugsConnectedIcon } from '@phosphor-icons/react/dist/ssr/PlugsConnected';
 import { UserCircle as UserCircleIcon } from '@phosphor-icons/react/dist/ssr/UserCircle';
 import { UsersThree as UsersThreeIcon } from '@phosphor-icons/react/dist/ssr/UsersThree';
 
@@ -36,12 +35,6 @@ const navItems = [
     items: [
       { key: 'billing', title: 'Billing & plans', href: paths.dashboard.settings.billing, icon: 'credit-card' },
       { key: 'team', title: 'Team', href: paths.dashboard.settings.team, icon: 'users-three' },
-      {
-        key: 'integrations',
-        title: 'Integrations',
-        href: paths.dashboard.settings.integrations,
-        icon: 'plugs-connected',
-      },
     ],
   },
 ];
@@ -49,7 +42,6 @@ const navItems = [
 const icons = {
   'credit-card': CreditCardIcon,
   'lock-key': LockKeyIcon,
-  'plugs-connected': PlugsConnectedIcon,
   'user-circle': UserCircleIcon,
   'users-three': UsersThreeIcon,
   bell: BellIcon,

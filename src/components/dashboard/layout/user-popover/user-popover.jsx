@@ -45,19 +45,19 @@ export function UserPopover({ anchorEl, onClose, open, user }) {
           <ListItemIcon>
             <UserIcon />
           </ListItemIcon>
-          Account
+          Compte
         </MenuItem>
         <MenuItem component={RouterLink} href={paths.dashboard.settings.security} onClick={onClose}>
           <ListItemIcon>
             <LockKeyIcon />
           </ListItemIcon>
-          Security
+          Sécurité
         </MenuItem>
         <MenuItem component={RouterLink} href={paths.dashboard.settings.billing} onClick={onClose}>
           <ListItemIcon>
             <CreditCardIcon />
           </ListItemIcon>
-          Billing
+          Facturation
         </MenuItem>
       </List>
       <Divider />
