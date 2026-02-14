@@ -184,10 +184,8 @@ export function Page() {
           </Stack>
           <Stack spacing={3}>
             {items.map((item, index) => {
-              let dishImage = item.dish.image;
-              if (dishImage.startsWith('../')) {
-                dishImage = dishImage.replace('..', '');
-              }
+              const dishImage = item?.dish?.image;
+              const safeImage = dishImage && dishImage.startsWith('../') ? dishImage.replace('..', '') : dishImage;
 
               return (
                 <Card
