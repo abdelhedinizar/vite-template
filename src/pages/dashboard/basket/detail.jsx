@@ -206,7 +206,7 @@ export function Page() {
                   >
                     <Box
                       component="img"
-                      src={dishImage}
+                      src={safeImage}
                       sx={{
                         width: { xs: '100%', sm: 200 },
                         height: { xs: 160, sm: '100%' },
