@@ -26,7 +26,7 @@ import { useOrdersSelection } from './orders-selection-context';
 const columns = [
   {
     formatter: (row) => (
-      <IconButton component={RouterLink} to={paths.dashboard.orders.details(row.id)} type="error">
+      <IconButton component={RouterLink} to={paths.dashboard.orders.details(row._id)} type="error">
         <PathIcon />
       </IconButton>
     ),

@@ -26,7 +26,7 @@ import { useOrdersSelection } from './orders-selection-context';
 const columns = [
   {
     formatter: (row) => (
-      <IconButton component={RouterLink} to={paths.dashboard.orders.preview(row.id)}>
+      <IconButton component={RouterLink} to={paths.dashboard.orders.preview(row._id)}>
         <EyeIcon />
       </IconButton>
     ),

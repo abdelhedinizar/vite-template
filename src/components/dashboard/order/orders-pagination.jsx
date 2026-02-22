@@ -7,7 +7,14 @@ function noop() {
   return undefined;
 }
 
-export function OrdersPagination({ count, page }) {
+export function OrdersPagination({
+  count,
+  onPageChange = noop,
+  onRowsPerPageChange = noop,
+  page,
+  rowsPerPage = 5,
+  rowsPerPageOptions = [5, 10, 25],
+}) {
   // You should implement the pagination using a similar logic as the filters.
   // Note that when page change, you should keep the filter search params.
 
@@ -15,11 +22,11 @@ export function OrdersPagination({ count, page }) {
     <TablePagination
       component="div"
       count={count}
-      onPageChange={noop}
-      onRowsPerPageChange={noop}
+      onPageChange={onPageChange}
+      onRowsPerPageChange={onRowsPerPageChange}
       page={page}
-      rowsPerPage={5}
-      rowsPerPageOptions={[5, 10, 25]}
+      rowsPerPage={rowsPerPage}
+      rowsPerPageOptions={rowsPerPageOptions}
     />
   );
 }

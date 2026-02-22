@@ -21,14 +21,32 @@ const metadata = { title: `List | Orders | Dashboard | ${config.site.name}` };
 
 export function Page() {
   const [orders, setOrders] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const orderResponse = await axios.get(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/orders`);
-        setOrders(orderResponse.data.data.orders);
+        const token = localStorage.getItem('custom-auth-token');
+        const restaurantId = import.meta.env.VITE_REACT_APP_RESTAURANT_ID;
+        const orderResponse = await axios.get(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/orders`, {
+          params: {
+            page: page + 1,
+            sort: '-createdAt',
+            limit: rowsPerPage,
+          },
+          headers: {
+            Authorization: token ? `Bearer ${token}` : undefined,
+            'X-Restaurant-Id': restaurantId,
+          },
+        });
+        const ordersData = orderResponse.data.data?.orders || [];
+        setOrders(ordersData);
+        const total = orderResponse.data?.totalLength || 0;
+        setTotalCount(total);
       } catch (err) {
         setError(err);
       } finally {
@@ -37,7 +55,7 @@ export function Page() {
     };
 
     fetchOrders();
-  }, []);
+  }, [page, rowsPerPage]);
 
   const { customer, id, previewId, sortDir, status } = useExtractSearchParams();
 
@@ -88,7 +106,18 @@ export function Page() {
                 <OrdersTable rows={filteredOrders} />
               </Box>
               <Divider />
-              <OrdersPagination count={filteredOrders.length} page={0} />
+              <OrdersPagination
+                count={totalCount}
+                onPageChange={(_, newPage) => {
+                  setPage(newPage);
+                }}
+                onRowsPerPageChange={(event) => {
+                  setRowsPerPage(parseInt(event.target.value, 10));
+                  setPage(0);
+                }}
+                page={page}
+                rowsPerPage={rowsPerPage}
+              />
             </Card>
           </OrdersSelectionProvider>
         </Stack>

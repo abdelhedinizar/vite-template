@@ -10,8 +10,12 @@ class AuthClient {
     const { firstname, lastname, email, password, confirmPassword } = _;
     try {
       const response = await axios.post(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/users/signup`, {
-        firstname, lastname, email,
-        password, confirmPassword
+        firstname,
+        lastname,
+        email,
+        password,
+        confirmPassword,
+        restaurant: import.meta.env.VITE_REACT_APP_RESTAURANT_ID,
       });
       const { token } = response.data.data; // Assuming the API returns a `token`
       localStorage.setItem('custom-auth-token', token);
@@ -32,6 +36,7 @@ class AuthClient {
       const response = await axios.post(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/users/signin`, {
         email,
         password,
+        restaurant: import.meta.env.VITE_REACT_APP_RESTAURANT_ID,
       });
       const { token } = response.data; // Assuming the API returns a `token`
       localStorage.setItem('custom-auth-token', token);

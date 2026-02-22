@@ -24,6 +24,8 @@ import { FirebaseSignOut } from './firebase-sign-out';
 import { SupabaseSignOut } from './supabase-sign-out';
 
 export function UserPopover({ anchorEl, onClose, open, user }) {
+  const isGuestMode = typeof window !== 'undefined' && localStorage.getItem('guest-mode') === 'true';
+
   return (
     <Popover
       anchorEl={anchorEl}
@@ -47,12 +49,14 @@ export function UserPopover({ anchorEl, onClose, open, user }) {
           </ListItemIcon>
           Compte
         </MenuItem>
-        <MenuItem component={RouterLink} href={paths.dashboard.settings.security} onClick={onClose}>
-          <ListItemIcon>
-            <LockKeyIcon />
-          </ListItemIcon>
-          Sécurité
-        </MenuItem>
+        {!isGuestMode ? (
+          <MenuItem component={RouterLink} href={paths.dashboard.settings.security} onClick={onClose}>
+            <ListItemIcon>
+              <LockKeyIcon />
+            </ListItemIcon>
+            Sécurité
+          </MenuItem>
+        ) : null}
         <MenuItem component={RouterLink} href={paths.dashboard.settings.billing} onClick={onClose}>
           <ListItemIcon>
             <CreditCardIcon />
