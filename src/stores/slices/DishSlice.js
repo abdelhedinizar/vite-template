@@ -3,15 +3,18 @@ import axios from 'axios';
 
 export const fetchDishes = createAsyncThunk('dishes/fetchDishes', async () => {
   const token = localStorage.getItem('custom-auth-token');
+  const restaurantId = import.meta.env.VITE_REACT_APP_RESTAURANT_ID;
   const dishesResponse = await axios.get(
-    `${import.meta.env.VITE_REACT_APP_BACK_API_URL}/dishs?fields=_id%2Cname%2Cingredients%2Cprice%2Ccategory%2CAccompaniments%2CPreparationTime%2CSpiceLevel%2CSize%2Cstatus%2ClikesCount%2CisLikedByMe`,
+    `${import.meta.env.VITE_REACT_APP_BACK_API_URL}/dishs?fields=_id%2Cname%2Cingredients%2Cprice%2Ccategory%2CAccompaniments%2CPreparationTime%2CSpiceLevel%2CSize%2Cstatus%2ClikesCount%2CisLikedByMe&restaurant=${restaurantId}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     }
   );
-  const categoriesResponse = await axios.get(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/categories`);
+  const categoriesResponse = await axios.get(
+    `${import.meta.env.VITE_REACT_APP_BACK_API_URL}/categories?restaurant=${restaurantId}`
+  );
   const categories = await categoriesResponse.data.data.categories;
   // for each category I will add dishs for each category
   categories.forEach((category) => {
@@ -21,7 +24,10 @@ export const fetchDishes = createAsyncThunk('dishes/fetchDishes', async () => {
 });
 
 export const fetchDishImages = createAsyncThunk('dishes/fetchDishImages', async () => {
-  const imageResponse = await axios.get(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/dishs?fields=_id%2Cimage`);
+  const restaurantId = import.meta.env.VITE_REACT_APP_RESTAURANT_ID;
+  const imageResponse = await axios.get(
+    `${import.meta.env.VITE_REACT_APP_BACK_API_URL}/dishs?fields=_id%2Cimage&restaurant=${restaurantId}`
+  );
   return imageResponse.data.data.dishs; // Array of {_id, image}
 });
 

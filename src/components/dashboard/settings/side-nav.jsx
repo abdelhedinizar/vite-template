@@ -50,6 +50,7 @@ const icons = {
 export function SideNav() {
   const pathname = usePathname();
   const { user } = useUser();
+  const isGuestMode = typeof window !== 'undefined' && localStorage.getItem('guest-mode') === 'true';
 
   return (
     <div>
@@ -74,9 +75,11 @@ export function SideNav() {
                 </div>
               ) : null}
               <Stack component="ul" spacing={1} sx={{ listStyle: 'none', m: 0, p: 0 }}>
-                {group.items.map((item) => (
-                  <NavItem {...item} key={item.key} pathname={pathname} />
-                ))}
+                {group.items
+                  .filter((item) => !(isGuestMode && item.key === 'security'))
+                  .map((item) => (
+                    <NavItem {...item} key={item.key} pathname={pathname} />
+                  ))}
               </Stack>
             </Stack>
           ))}

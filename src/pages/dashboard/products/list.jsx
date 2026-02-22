@@ -30,7 +30,9 @@ export function Page() {
   React.useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const dishResponse = await axios.get(`${import.meta.env.VITE_REACT_APP_BACK_API_URL}/dishs?sort=-createdAt`);
+        const dishResponse = await axios.get(
+          `${import.meta.env.VITE_REACT_APP_BACK_API_URL}/dishs?sort=-createdAt&restaurant=${import.meta.env.VITE_REACT_APP_RESTAURANT_ID}`
+        );
         setProducts(dishResponse.data.data.dishs);
       } catch (err) {
         setError(err);
